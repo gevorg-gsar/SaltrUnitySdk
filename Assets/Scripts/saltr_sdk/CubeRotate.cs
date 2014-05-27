@@ -19,7 +19,7 @@ public class CubeRotate : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(new Vector3(20, 0));
+       // transform.Rotate(new Vector3(20, 0));
         if (texture != null)
         {
             renderer.material.mainTexture = texture;
