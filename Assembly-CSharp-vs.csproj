@@ -70,11 +70,9 @@
      <Compile Include="Assets\Scripts\saltr_sdk\Parser\game\SLTLevelPack.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\Parser\game\SLTLevelSettings.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTConfig.cs" />
-     <Compile Include="Assets\Scripts\saltr_sdk\SLTDummyRepository.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTError.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTExperiment.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTFeature.cs" />
-     <Compile Include="Assets\Scripts\saltr_sdk\SLTMobileRepository.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTResource.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTResourceTicket.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\SLTRrquestArguments.cs" />
@@ -88,6 +86,8 @@
      <Compile Include="Assets\Scripts\saltr_sdk\SLTUnity.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\Utils.cs" />
      <Compile Include="Assets\Scripts\saltr_sdk\repository\ISLTRepository.cs" />
+     <Compile Include="Assets\Scripts\saltr_sdk\repository\SLTDummyRepository.cs" />
+     <Compile Include="Assets\Scripts\saltr_sdk\repository\SLTMobileRepository.cs" />
      <Compile Include="Assets\UnityTestTools\Assertions\AssertionComponent.cs" />
      <Compile Include="Assets\UnityTestTools\Assertions\AssertionException.cs" />
      <Compile Include="Assets\UnityTestTools\Assertions\Assertions.cs" />
@@ -154,7 +154,7 @@
      <None Include="Assets\UnityTestTools\Examples\IntegrationTestsFrameworkExamples\AngryBotsTests\Shaders\BackgroundAndCharacters\SuperSimpleSelfIllumination.shader" />
      <None Include="Assets\UnityTestTools\Examples\IntegrationTestsFrameworkExamples\AngryBotsTests\Shaders\Fx\ParticleBlend.shader" />
  <Reference Include="LitJSON">
- <HintPath>Assets\Scripts\saltr_sdk\LitJSON.dll</HintPath>
+ <HintPath>Assets\Scripts\saltr_sdk\json-dll\LitJSON.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

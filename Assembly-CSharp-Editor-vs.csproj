@@ -118,7 +118,7 @@
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript.dll</HintPath>
  </Reference>
  <Reference Include="LitJSON">
- <HintPath>Assets\Scripts\saltr_sdk\LitJSON.dll</HintPath>
+ <HintPath>Assets\Scripts\saltr_sdk\json-dll\LitJSON.dll</HintPath>
  </Reference>
  <Reference Include="NSubstitute">
  <HintPath>Assets\UnityTestTools\UnitTesting\Editor\NSubstitute\NSubstitute.dll</HintPath>
