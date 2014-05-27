@@ -46,13 +46,10 @@ namespace saltr_unity_sdk
                     if (trackingType.Contains("trackingType"))
                         trackingType = experimentDictionary["trackingType"].ToString();
 
-                    IEnumerable<object> customEvents = new List<object>();
+                    //??
+                    // var customEvents:Array = experimentInfoNode.customEventList as Array;
 
-                    if (experimentDictionary.ContainsKey("customEventList"))
-                    {
-                        customEvents = (IEnumerable<object>)experimentDictionary["customEventList"];
-                    }
-                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, customEvents.ToList());
+                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, new List<object>());
                     experiments.Add(experimentInfo);
                 }
             }
@@ -82,7 +79,7 @@ namespace saltr_unity_sdk
                         Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
                         string tokken = "";
                         if (featureNod.ContainsKey("token"))
-                            tokken = featureNod["token"].ToString();
+                         tokken =  featureNod["token"].ToString();
 
                         Dictionary<string, object> properties = new Dictionary<string, object>();
 
