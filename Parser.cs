@@ -15,6 +15,7 @@ public class Parser : MonoBehaviour
     {
         SLTUnity saltar = new SLTUnity("a78daba7-89fe-eb1a-7153-3700f699ee4e", "ITA447442", false);
         saltar.start();
+        saltar.requestIdleTimeout = 6;
         saltar.connect(Success, Fail);
     }
 
