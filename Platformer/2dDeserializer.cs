@@ -49,9 +49,10 @@ namespace saltr_unity_sdk
             IEnumerable<object> layerDictionaryList = null;
             List<SLT2dBoardLayer> layers = new List<SLT2dBoardLayer>();
 
-            if (boardNode.ContainsKey("layeers"))
-                layerDictionaryList = (IEnumerable<object>)boardNode["layeers"];
+            if (boardNode.ContainsKey("layers"))
+                layerDictionaryList = (IEnumerable<object>)boardNode["layers"];
             int index = 0;
+
             foreach (var layerDict in layerDictionaryList)
             {
 
@@ -85,13 +86,26 @@ namespace saltr_unity_sdk
 
                 Vector2 position = Vector2.zero;
 
-                IEnumerable<object> positionArray = (IEnumerable<object>)assetsDict.getValue("position");
-                //    string[] positionArray = (string[])assetsDict.getValue("position");
+                float x;
+                float y;
 
-                if (position != null)
+                foreach (var key in assetsDict.Keys)
                 {
-                    position = new Vector2(Int32.Parse(positionArray.ElementAt(0).ToString()), Int32.Parse(positionArray.ElementAt(1).ToString()));
+                    Debug.Log(key);
                 }
+
+
+                x = float.Parse(assetsDict.getValue("x").ToString());
+                y = float.Parse(assetsDict.getValue("y").ToString());
+
+                //IEnumerable<object> positionArray = (IEnumerable<object>)assetsDict.getValue("position");
+                ////    string[] positionArray = (string[])assetsDict.getValue("position");
+
+                //if (position != null)
+                //{
+                //    position = new Vector2(Int32.Parse(positionArray.ElementAt(0).ToString()), Int32.Parse(positionArray.ElementAt(1).ToString()));
+                //}
+                position = new Vector2(x, y);
 
                 float rotationAngle = float.Parse(assetsDict.getValue("rotationAngle").ToString());
 
@@ -110,7 +124,7 @@ namespace saltr_unity_sdk
                     properties = asset.properties;
 
                 }
-                SLT2dAssetInstance asset2d = new SLT2dAssetInstance(assetId, state, properties)
+                SLT2dAssetInstance asset2d = new SLT2dAssetInstance(type, state, properties)
                 {
                     position = position,
                     rotationAngle = rotationAngle,
