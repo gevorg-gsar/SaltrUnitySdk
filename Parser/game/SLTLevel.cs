@@ -7,12 +7,25 @@ namespace saltr_unity_sdk
 {
     public class SLTLevel
     {
-        private string _id;
-        public string id
+        private int _packIndex;
+
+        public int packIndex
         {
-            get { return _id; }
-            set { _id = value; }
+            get { return _packIndex; }
+            private set { _packIndex = value; }
         }
+
+
+        private int _localIndex;
+
+        public int localIndex
+        {
+            get { return _localIndex; }
+            private set { _localIndex = value; }
+        }
+
+        private string _id;
+       
 
         private string _contentDataUrl;
 
@@ -79,8 +92,10 @@ namespace saltr_unity_sdk
             set { _boardsNode = value; }
         }
 
-        public SLTLevel(string id, int index, string contentDataUrl, object properties, string version)
+        public SLTLevel(string id, int index, int localIndex, int packIndex, string contentDataUrl, object properties, string version)
         {
+            _localIndex = localIndex;
+            _packIndex = packIndex;
             _id = id;
             _index = index;
             _contentDataUrl = contentDataUrl;

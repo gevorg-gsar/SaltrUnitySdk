@@ -126,6 +126,37 @@ public class SLTUnity : MonoBehaviour
         _socialNetwork = socialNetwork;
     }
 
+    public List<SLTLevel> allLevels
+    {
+        get
+        {
+            List<SLTLevel> allLevels = new List<SLTLevel>();
+            for (int i = 0; i < _levelPacks.Count; i++)
+            {
+                List<SLTLevel> packLevels = _levelPacks[i].levels;
+                for (int j = 0; j < packLevels.Count; j++)
+                {
+                    allLevels.Add(packLevels[j]);
+                }
+            }
+            return allLevels;
+        }
+    }
+
+    public uint allLevelsCount
+    {
+        get
+        {
+            uint count = 0;
+            for (int i = 0; i < _levelPacks.Count; i++)
+            {
+                count += (uint)_levelPacks[i].levels.Count;
+            }
+            return count;
+        }
+    }
+
+
     public List<string> getActiveFeatureTokens()
     {
         List<string> tokens = new List<string>();
@@ -152,6 +183,45 @@ public class SLTUnity : MonoBehaviour
             Debug.Log("Method 'importLevels()' should be called before 'start()' only.");
         }
     }
+
+    public SLTLevel getLevelByGlobalIndex(int index)
+    {
+        int levelSum = 0;
+        for (int i = 0; i < _levelPacks.Count; i++)
+        {
+            int packLenght = _levelPacks[i].levels.Count;
+            if (index >= levelSum + packLenght)
+            {
+                levelSum += packLenght;
+            }
+            else
+            {
+                int localIndex = index - levelSum;
+                return _levelPacks[i].levels[localIndex];
+            }
+        }
+        return null;
+    }
+
+    public SLTLevelPack getPackByLevelGlobalIndex(int index)
+    {
+        int levelSum = 0;
+        for (int i = 0; i < _levelPacks.Count; i++)
+        {
+            int packLenght = _levelPacks[i].levels.Count;
+            if (index >= levelSum + packLenght)
+            {
+                levelSum += packLenght;
+            }
+
+            else
+            {
+                return _levelPacks[i];
+            }
+        }
+        return null;
+    }
+
 
     public void defineFeature(string token, object properties, bool required = false)
     {
@@ -196,7 +266,7 @@ public class SLTUnity : MonoBehaviour
         _started = true;
     }
 
-    public void connect(Action<SLTResource> successCallback, Action<SLTResource> failCallback)
+    public void connect(Action<SLTResource> successCallback, Action<SLTResource> failCallback, object basicProperties = null, object customProperties = null)
     {
         if (_isLoading || !_started)
             return;
