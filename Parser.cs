@@ -11,22 +11,22 @@ using Assets;
 
 public class Parser : MonoBehaviour
 {
-    void Start()
-    {
-        SLTUnity saltar = new SLTUnity("a78daba7-89fe-eb1a-7153-3700f699ee4e", "ITA447442", false);
-        saltar.start();
-        saltar.requestIdleTimeout = 6;
-        saltar.connect(Success, Fail);
-    }
+//    void Start()
+//    {
+//        SLTUnity saltar = new SLTUnity("a78daba7-89fe-eb1a-7153-3700f699ee4e", "ITA447442", false);
+//        saltar.start();
+//        saltar.requestIdleTimeout = 6;
+//        saltar.connect(Success, Fail);
+//    }
 
-    public void Success(SLTResource res)
-    {
-        Debug.Log("Success!");
+//    public void Success(SLTResource res)
+//    {
+//        Debug.Log("Success!");
 
-    }
+//    }
 
-    public void Fail(SLTResource res)
-    {
-        Debug.Log("Fail");
-    }
+//    public void Fail(SLTResource res)
+//    {
+//        Debug.Log("Fail");
+//    }
 }

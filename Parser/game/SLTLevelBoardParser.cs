@@ -246,6 +246,7 @@ namespace saltr_unity_sdk
             Dictionary<string, object> statesMap = new Dictionary<string, object>();
             foreach (var item in states.Keys)
             {
+                
                 statesMap[item.ToString()] = states[item.ToString()];
             }
             return statesMap;

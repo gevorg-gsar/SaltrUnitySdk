@@ -50,10 +50,10 @@ namespace saltr_unity_sdk
 
         private Dictionary<string, object> _boards;
 
-        public Dictionary<string, object> boards
+        public virtual  Dictionary<string, object> boards
         {
-            get { return _boards; }
-            set { _boards = value; }
+             get { return _boards; }
+             set { _boards = value; }
         }
 
         private bool _contentReady;
@@ -109,7 +109,7 @@ namespace saltr_unity_sdk
             return _boards[id] as SLTLevelBoard;
         }
 
-        public void updateContent(Dictionary<string, object> rootNode)
+        public  void updateContent(Dictionary<string, object> rootNode)
         {
             _rootNode = rootNode;
 
@@ -124,13 +124,13 @@ namespace saltr_unity_sdk
             _contentReady = true;
         }
 
-        public void generateAllBoards()
+        public virtual void generateAllBoards()
         {
             if (_boardsNode != null)
                 _boards = SLTLevelBoardParser.parseLevelBoards(_boardsNode, _levelSettings);
         }
 
-        public void generateBoard(string boardId)
+        public virtual void generateBoard(string boardId)
         {
             if (_boardsNode != null)
                 _boards[boardId] = SLTLevelBoardParser.parseLevelBoard(_boardsNode[boardId].toDictionaryOrNull(), _levelSettings);

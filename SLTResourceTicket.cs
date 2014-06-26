@@ -66,6 +66,9 @@ namespace Assets
             if (args != null)
             {
                 arguments = LitJson.JsonMapper.ToJson(args);
+               
+
+
                 requestUrl += "?cmd=getAppData&args=" + arguments;
             }
 

@@ -9,10 +9,7 @@ namespace saltr_unity_sdk
     public static class Deserializer2d
     {
 
-
-
-
-        public static List<SLT2dBoard> decod2dBoards(Dictionary<string, object> boardsNode, SLTLevelSettings levelSettings)
+        public static Dictionary<string, object> decod2dBoards(Dictionary<string, object> boardsNode, SLTLevelSettings levelSettings)
         {
             List<SLT2dBoard> boards = new List<SLT2dBoard>();
             foreach (var item in boardsNode)
@@ -40,7 +37,14 @@ namespace saltr_unity_sdk
                 boards.Add(board);
             }
 
-            return boards;
+            Dictionary<string, object> dictionartToReturn = new Dictionary<string, object>();
+
+            foreach (var board in boards)
+            {
+                dictionartToReturn[board.id] = board;
+
+            }
+            return dictionartToReturn;
         }
 
 
@@ -78,6 +82,7 @@ namespace saltr_unity_sdk
                 Dictionary<string, object> assetsDict = item.toDictionaryOrNull();
                 string assetId = assetsDict.getValue("assetId").ToString();
                 string stateId = null;
+
                 if (assetsDict.ContainsKey("stateId"))
                 {
                     object obj = assetsDict["stateId"];
@@ -88,12 +93,6 @@ namespace saltr_unity_sdk
 
                 float x;
                 float y;
-
-                foreach (var key in assetsDict.Keys)
-                {
-                    Debug.Log(key);
-                }
-
 
                 x = float.Parse(assetsDict.getValue("x").ToString());
                 y = float.Parse(assetsDict.getValue("y").ToString());
@@ -107,7 +106,7 @@ namespace saltr_unity_sdk
                 //}
                 position = new Vector2(x, y);
 
-                float rotationAngle = float.Parse(assetsDict.getValue("rotationAngle").ToString());
+                float rotationAngle = float.Parse(assetsDict.getValue("rotation").ToString());
 
                 SLTAsset asset = levelSettings.assetMap.getValue(assetId) as SLTAsset;
                 string type = "";
@@ -115,8 +114,16 @@ namespace saltr_unity_sdk
 
                 string state = null;
 
+                //  if (stateId != null)   For Match3
+                //   state = levelSettings.stateMap.getValue(stateId) as String;
+
+
                 if (stateId != null)
-                    state = levelSettings.stateMap.getValue(stateId) as String;
+                {
+                    Dictionary<string, object> statesDict = levelSettings.stateMap.toDictionaryOrNull();
+                    state = statesDict[stateId].toDictionaryOrNull()["token"].ToString();
+                }
+
 
                 if (asset != null)
                 {

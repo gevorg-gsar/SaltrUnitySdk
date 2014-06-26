@@ -7,13 +7,21 @@ using Assets;
 using System.Timers;
 
 
-public class SLTUnity : MonoBehaviour
+public enum SLTGameTypes
+{
+    BoardBased,
+    SideScrolling,
+    Isometric,
+    TopDown
+}
+
+public class SLTUnity
 {
     protected string _socialId;
     protected string _socialNetwork;
     private string _deviceId;
 
-    protected string deviceId
+    public string deviceId
     {
         get { return _deviceId; }
         set { _deviceId = value; }
@@ -41,12 +49,14 @@ public class SLTUnity : MonoBehaviour
     }
     private List<SLTLevelPack> _levelPacks = new List<SLTLevelPack>();
 
-    protected List<SLTLevelPack> levelPacks
+    public List<SLTLevelPack> levelPacks
     {
         get { return _levelPacks; }
     }
-    protected Action<SLTResource> _appDataLoadSuccessCalback;
-    protected Action<SLTResource> _appDataLoadFailCalback;
+    protected Action _appDataLoadSuccessCalback;
+    protected Action<SLTStatus> _appDataLoadFailCalback;
+
+
     protected Action _levelContentLoadSuccessCalbck;
     protected Action<SLTStatusLevelContentLoadFail> _levelContentLoadFailCallback;
 
@@ -86,9 +96,16 @@ public class SLTUnity : MonoBehaviour
         set { _useNoFeatures = value; }
     }
 
+    public SLTGameTypes gameType
+    {
+        get { return SLTDeserializer.gameType; }
+        set { SLTDeserializer.gameType = value; }
+
+    }
 
     public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
     {
+
         GameObject saltr = new GameObject();
         saltr.name = "saltr";
         saltr.AddComponent<GETPOSTWrapper>();
@@ -118,12 +135,13 @@ public class SLTUnity : MonoBehaviour
 
     public void setSocial(string socialId, string socialNetwork)
     {
-        if (_socialId == null || socialNetwork == null)
+        if (socialId == null || socialNetwork == null)
         {
+            return;
         }
 
-        _socialId = socialId;
-        _socialNetwork = socialNetwork;
+        this._socialId = socialId;
+        this._socialNetwork = socialNetwork;
     }
 
     public List<SLTLevel> allLevels
@@ -266,8 +284,10 @@ public class SLTUnity : MonoBehaviour
         _started = true;
     }
 
-    public void connect(Action<SLTResource> successCallback, Action<SLTResource> failCallback, object basicProperties = null, object customProperties = null)
+    public void connect(Action successCallback, Action<SLTStatus> failCallback, object basicProperties = null, object customProperties = null)
     {
+        if (_socialId == null || _socialNetwork == null)
+            Debug.Log("NULL!!");
         if (_isLoading || !_started)
             return;
 
@@ -290,6 +310,7 @@ public class SLTUnity : MonoBehaviour
         else
             Debug.Log("Field 'deviceId' is required.");
 
+
         if (_socialId != null && _socialNetwork != null)
         {
             args.socialId = _socialId;
@@ -297,6 +318,8 @@ public class SLTUnity : MonoBehaviour
         }
 
         args.clientKey = _clientKey;
+
+        Debug.Log("::" + _deviceId + "  " + _socialId + "  " + _socialNetwork);
         SLTResourceTicket ticket = new SLTResourceTicket(SLTConfig.SALTR_API_URL, args);
 
         if (_requestIdleTimeout > 0)
@@ -348,9 +371,11 @@ public class SLTUnity : MonoBehaviour
     private void loadLevelContentFromSaltr(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel)
     {
         string dataUrl = SLTLevel.contentDataUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
-        SLTResourceTicket ticket = new SLTResourceTicket();
+        SLTResourceTicket ticket = new SLTResourceTicket(dataUrl, null);
         if (_requestIdleTimeout > 0)
             ticket.idleTimeout = _requestIdleTimeout;
+
+
 
         Action<SLTResource> loadSuccessInternalHandler = delegate(SLTResource res)
         {
@@ -375,6 +400,10 @@ public class SLTUnity : MonoBehaviour
       };
 
         SLTResource resource = new SLTResource("saltr", ticket, loadSuccessInternalHandler, loadFailInternalHandler);
+
+        resource.ticket.idleTimeout = requestIdleTimeout;
+        resource.ticket.dropTimeout = requestIdleTimeout;
+        resource.load();
     }
 
 
@@ -472,7 +501,7 @@ public class SLTUnity : MonoBehaviour
             _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", responseData);
 
             _activeFeatures = saltrFeatures;
-            _appDataLoadSuccessCalback(null);
+            _appDataLoadSuccessCalback();
 
             Debug.Log("[SALTR] AppData load success. LevelPacks loaded: " + _levelPacks.Count);
         }

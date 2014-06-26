@@ -7,6 +7,7 @@ namespace saltr_unity_sdk
 {
     public class SLTDeserializer
     {
+        public static SLTGameTypes gameType { get; set; }
         public SLTDeserializer()
         { }
 
@@ -79,7 +80,7 @@ namespace saltr_unity_sdk
                         Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
                         string tokken = "";
                         if (featureNod.ContainsKey("token"))
-                         tokken =  featureNod["token"].ToString();
+                            tokken = featureNod["token"].ToString();
 
                         Dictionary<string, object> properties = new Dictionary<string, object>();
 
@@ -129,6 +130,10 @@ namespace saltr_unity_sdk
                     if (levelPackDictionary.ContainsKey("levels"))
                         leveldictionaryList = (IEnumerable<object>)levelPackDictionary["levels"];
 
+
+                    object prop = null;
+
+
                     foreach (var levelobj in leveldictionaryList)
                     {
                         Dictionary<string, object> levelDict = (Dictionary<string, object>)levelobj;
@@ -150,12 +155,31 @@ namespace saltr_unity_sdk
                         if (levelDict.ContainsKey("version"))
                             version = levelDict["version"].toIntegerOrZero();
 
+                        int packIndex = 0;
+                        if (levelDict.ContainsKey("index"))
+                            packIndex = Int32.Parse(levelDict["index"].ToString());
 
-                        object prop = null;
                         if (levelDict.ContainsKey("properties"))
                             prop = levelDict["properties"];
 
-                        SLTLevel lv = new SLTLevel(id.ToString(), ind, url, prop, version.ToString());
+
+                        int localIndex = 0;
+                        if (levelDict.ContainsKey("localIndex"))
+                            localIndex = Int32.Parse(levelDict["localNode"].ToString());
+                        else
+                            localIndex = Int32.Parse(levelDict["index"].ToString());
+
+                        SLTLevel lv = null;
+                        switch (gameType)
+                        {
+                            case SLTGameTypes.BoardBased:
+                                lv = new SLTLevel(id.ToString(), ind, localIndex, packIndex, url, prop, version.ToString());
+                                break;
+                            case SLTGameTypes.SideScrolling:
+                                lv = new SLT2dLevel(id.ToString(), ind, localIndex, packIndex, url, prop, version.ToString());
+                                break;
+                        }
+
                         if (lv != null)
                             levelStructureList.Add(lv);
                     }

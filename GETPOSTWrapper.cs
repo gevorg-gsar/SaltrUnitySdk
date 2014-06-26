@@ -25,7 +25,7 @@ public class GETPOSTWrapper : MonoBehaviour
             Debug.Log("[Asset] Loading is too long, so it stopped by force.");
             _appDataLoadFailHandler(_resource);
             isDownloading = false;
-            WWW.Dispose();
+          //  WWW.Dispose();
         }
     }
 
@@ -43,6 +43,7 @@ public class GETPOSTWrapper : MonoBehaviour
         else
             this.dropTimeout = 3;
 
+        Debug.Log("URL " + url);
         StartCoroutine(WaitForRequest(url, appDataLoadSuccessHandler, appDataLoadFailHandler, resource));
     }
 
@@ -82,9 +83,8 @@ public class GETPOSTWrapper : MonoBehaviour
 
         if (WWW.error == null)
         {
-            Debug.Log("Download is finished!");
+            Debug.Log("Download is finished!" + WWW.text);
             resource.data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
-         
            
             appDataLoadSuccessHandler(resource);
         }
@@ -95,5 +95,6 @@ public class GETPOSTWrapper : MonoBehaviour
             appDataLoadFailHandler(resource);
             resource.ioErrorHandler();
         }
+       // WWW.Dispose();
     }
 }
