@@ -65,7 +65,7 @@ namespace Assets
             string requestUrl = _url;
             if (args != null)
             {
-                arguments = LitJson.JsonMapper.ToJson(args);
+                arguments = WWW.EscapeURL(LitJson.JsonMapper.ToJson(args));
                
 
 
