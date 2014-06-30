@@ -9,6 +9,13 @@ namespace saltr_unity_sdk
     {
         private string _token;
         private object _properties;
+        private Dictionary<string, object> _states;
+
+        public Dictionary<string, object> states
+        {
+            get { return _states; }
+            set { _states = value; }
+        }
 
         public string token
         {
@@ -20,10 +27,11 @@ namespace saltr_unity_sdk
             get { return _properties; }
         }
 
-        public SLTAsset(string token, object properties)
+        public SLTAsset(string token, object properties, Dictionary<string,object> States)
         {
             _token = token;
             _properties = properties;
+            _states = States;
         }
 
         public override string ToString()

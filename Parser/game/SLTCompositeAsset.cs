@@ -9,8 +9,8 @@ namespace saltr_unity_sdk
     {
         public IEnumerable<object> _cellInfos { get; set; }
 
-        public SLTCompositeAsset(string token, IEnumerable<object> cellInfos, object properties)
-            : base(token, properties)
+        public SLTCompositeAsset(string token, IEnumerable<object> cellInfos, object properties, Dictionary<string,object> states)
+            : base(token, properties,states)
         {
             _cellInfos = cellInfos;
         }

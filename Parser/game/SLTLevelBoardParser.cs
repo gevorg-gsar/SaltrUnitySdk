@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace saltr_unity_sdk
 {
@@ -246,7 +247,7 @@ namespace saltr_unity_sdk
             Dictionary<string, object> statesMap = new Dictionary<string, object>();
             foreach (var item in states.Keys)
             {
-                
+
                 statesMap[item.ToString()] = states[item.ToString()];
             }
             return statesMap;
@@ -268,10 +269,16 @@ namespace saltr_unity_sdk
         {
             string token = "";
             object properties = null;
+            Dictionary<string, object> States = new Dictionary<string, object>();
 
             if (assetNode.ContainsKey("properties"))
 
                 properties = assetNode["properties"];
+
+            if (assetNode.ContainsKey("states"))
+            {
+                States = assetNode["states"].toDictionaryOrNull();
+            }
 
             if (assetNode.ContainsKey("token"))
             {
@@ -284,12 +291,48 @@ namespace saltr_unity_sdk
                     token = assetNode["type"].ToString();
                 }
             }
-            //if asset is complete asset!
-            if (assetNode.ContainsKey("cells") && assetNode["cells"] != null || assetNode.ContainsKey("cellInfos") && assetNode["cellInfos"] != null)
+
+            SLTAsset asset = null;
+
+            switch (SLTDeserializer.gameType)
             {
-                return new SLTCompositeAsset(token, (IEnumerable<object>)assetNode["cellInfos"], properties);
+                case SLTGameTypes.BoardBased:
+                    //if asset is complete asset!
+                    if (assetNode.ContainsKey("cells") && assetNode["cells"] != null || assetNode.ContainsKey("cellInfos") && assetNode["cellInfos"] != null)
+                    {
+                        asset = new SLTCompositeAsset(token, (IEnumerable<object>)assetNode["cellInfos"], properties, States);
+                    }
+                    break;
+
+                case SLTGameTypes.SideScrolling:
+
+                    float width = 0;
+                    float height = 0;
+                    if (assetNode.ContainsKey("width"))
+                    {
+                        width = assetNode["width"].ToString().toIntegerOrZero();
+                    }
+                    if (assetNode.ContainsKey("height"))
+                    {
+                        width = assetNode["height"].ToString().toIntegerOrZero();
+                    }
+
+                    float pivotX = 0;
+                    float pivotY = 0;
+
+                    if (assetNode.ContainsKey("pivotX"))
+                    {
+                        pivotX = assetNode["pivotX"].ToString().toIntegerOrZero();
+                        pivotY = assetNode["pivotY"].ToString().toIntegerOrZero();
+                    }
+
+                    SLT2dAsset asset2d = new SLT2dAsset(token, States, properties.toDictionaryOrNull(), new Vector2(width, height), new Vector2(pivotX, pivotY));
+                    asset = asset2d;
+
+                    break;
             }
-            return new SLTAsset(token, properties);
+
+            return asset;
         }
     }
 }

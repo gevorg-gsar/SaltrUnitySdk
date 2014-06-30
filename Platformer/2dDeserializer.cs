@@ -97,18 +97,11 @@ namespace saltr_unity_sdk
                 x = float.Parse(assetsDict.getValue("x").ToString());
                 y = float.Parse(assetsDict.getValue("y").ToString());
 
-                //IEnumerable<object> positionArray = (IEnumerable<object>)assetsDict.getValue("position");
-                ////    string[] positionArray = (string[])assetsDict.getValue("position");
-
-                //if (position != null)
-                //{
-                //    position = new Vector2(Int32.Parse(positionArray.ElementAt(0).ToString()), Int32.Parse(positionArray.ElementAt(1).ToString()));
-                //}
                 position = new Vector2(x, y);
 
                 float rotationAngle = float.Parse(assetsDict.getValue("rotation").ToString());
 
-                SLTAsset asset = levelSettings.assetMap.getValue(assetId) as SLTAsset;
+                SLT2dAsset asset = levelSettings.assetMap.getValue(assetId) as SLT2dAsset;
                 string type = "";
                 object properties = null;
 
@@ -120,7 +113,7 @@ namespace saltr_unity_sdk
 
                 if (stateId != null)
                 {
-                    Dictionary<string, object> statesDict = levelSettings.stateMap.toDictionaryOrNull();
+                    Dictionary<string, object> statesDict = asset.states;
                     state = statesDict[stateId].toDictionaryOrNull()["token"].ToString();
                 }
 
@@ -135,7 +128,9 @@ namespace saltr_unity_sdk
                 {
                     position = position,
                     rotationAngle = rotationAngle,
-                    // size
+                    size = asset.size,
+                    pivot = asset.pivot
+                   
                 };
                 assets.Add(asset2d);
             }
