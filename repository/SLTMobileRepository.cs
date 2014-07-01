@@ -36,21 +36,28 @@ namespace Assets
 
         public object getObjectFromApplication(string fileName)
         {
-            string file = _applicationDirectory + "/" + fileName;
-            return getIntenrnal(new FileInfo(file));
+            //string file = _applicationDirectory + "/" + fileName;
+            // return getIntenrnal(new FileInfo(file));
+
+            Debug.Log(fileName);
+            return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
         }
 
         public object getObjectFromCache(string fileName)
         {
             string file = _cacheDirectory + "/" + fileName;
-
-            return getIntenrnal(new FileInfo(file));
+           // if (File.Exists(file))
+                return getIntenrnal(new FileInfo(file));
+          //  else
+             //   return null;
         }
 
         public object getObjectFromStorage(string name)
         {
-            string file = _storageDirectory + "/" + name;
-            return getIntenrnal(new FileInfo(file));
+         //   string file = _storageDirectory + "/" + name;
+           // return getIntenrnal(new FileInfo(file));
+            Debug.Log(name);
+            return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(name).text);
         }
 
         public string getObjectVersion(string name)

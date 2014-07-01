@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Assets;
 using System.Timers;
-
+using System.Linq;
 
 public enum SLTGameTypes
 {
@@ -52,6 +52,7 @@ public class SLTUnity
     public List<SLTLevelPack> levelPacks
     {
         get { return _levelPacks; }
+        set { _levelPacks = value; }
     }
     protected Action _appDataLoadSuccessCalback;
     protected Action<SLTStatus> _appDataLoadFailCalback;
@@ -129,7 +130,7 @@ public class SLTUnity
         if (useCache)
             _repository = new SLTMobileRepository();
         else
-            _repository = new SLTDummyRepository();
+            _repository = new SLTMobileRepository();
     }
 
 
@@ -148,6 +149,9 @@ public class SLTUnity
     {
         get
         {
+           
+
+           // levelPacks = levelPacks.OrderByDescending(l => l.index).ToList();
             List<SLTLevel> allLevels = new List<SLTLevel>();
             for (int i = 0; i < _levelPacks.Count; i++)
             {
@@ -264,23 +268,24 @@ public class SLTUnity
         if (_levelPacks.Count == 0 && !_useNoLevels)
             Debug.Log("Levels should be imported.");
 
-        object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
-        if (cachedData == null)
+
+        // object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
+        // if (cachedData == null)
         {
             foreach (var item in _developerFeatures.Keys)
             {
                 _activeFeatures[item] = _developerFeatures[item];
             }
         }
-        else
-        {
-            if (cachedData != null)
-            {
-                _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
-                _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
-                //_saltrUserId = cachedData.toDictionaryOrNull()["saltrUserId"].ToString();
-            }
-        }
+        //else
+        //{
+        //    if (cachedData != null)
+        //    {
+        //        _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
+        //        _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
+        //        //_saltrUserId = cachedData.toDictionaryOrNull()["saltrUserId"].ToString();
+        //    }
+        //}
         _started = true;
     }
 
@@ -348,6 +353,7 @@ public class SLTUnity
                 loadLevelContentFromSaltr(SLTLevelPack, SLTLevel);
             else
             {
+                Debug.Log("1");
                 content = loadLevelContentFromCache(SLTLevelPack, SLTLevel);
                 levelContentLoadSuccessHandler(SLTLevel, content);
             }
@@ -358,11 +364,13 @@ public class SLTUnity
     private object loadLevelContentFromDisk(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel)
     {
         string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE, SLTLevelPack.index.ToString(), SLTLevel.index.ToString());
+
         return _repository.getObjectFromApplication(url);
     }
 
     private object loadLevelContentFromCache(SLTLevelPack levelPack, SLTLevel level)
     {
+
         string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, levelPack.index.ToString(), level.index.ToString());
         return _repository.getObjectFromCache(url);
     }
@@ -395,7 +403,7 @@ public class SLTUnity
         Action<SLTResource> loadFailInternalHandler = delegate(SLTResource SLTResource)
       {
           object contentData = loadLevelContentInternally(SLTLevelPack, SLTLevel);
-          levelContentLoadSuccessHandler(SLTLevel, SLTLevelPack);
+          levelContentLoadSuccessHandler(SLTLevel, contentData);
           SLTResource.dispose();
       };
 
@@ -451,7 +459,7 @@ public class SLTUnity
             Dictionary<string, object> saltrFeatures = new Dictionary<string, object>();
             try
             {
-                saltrFeatures = SLTDeserializer.decodeFeatures(data);
+                saltrFeatures = SLTDeserializer.decodeFeatures(data["responseData"].toDictionaryOrNull());
 
                 foreach (var item in saltrFeatures.Keys)
                 {
@@ -461,13 +469,13 @@ public class SLTUnity
             catch (Exception e)
             {
                 Debug.Log(e.Message);
-                // _appDataLoadFailCalback(null,new SLTStatusFeaturesParseError());
-                //     return;
+                _appDataLoadFailCalback(new SLTStatusFeaturesParseError());
+                return;
             }
 
             try
             {
-                _experiments = SLTDeserializer.decodeExperiments(data);
+                _experiments = SLTDeserializer.decodeExperiments(data["responseData"].toDictionaryOrNull());
 
                 foreach (var item in _experiments)
                 {
@@ -476,13 +484,13 @@ public class SLTUnity
             }
             catch
             {
-                // _appDataLoadFailCalback(new SLTStatusExperimentsParseError());
+                _appDataLoadFailCalback(new SLTStatusExperimentsParseError());
                 return;
             }
 
             try
             {
-                _levelPacks = SLTDeserializer.decodeLevels(data);
+                _levelPacks = SLTDeserializer.decodeLevels(data["responseData"].toDictionaryOrNull());
 
                 foreach (var item in _levelPacks)
                 {
@@ -492,7 +500,7 @@ public class SLTUnity
             }
             catch
             {
-                // _appDataLoadFailCallback(new SLTStatusLevelsParseError());
+				_appDataLoadFailCalback(new SLTStatusLevelsParseError());
                 return;
             }
 
@@ -505,9 +513,8 @@ public class SLTUnity
 
             Debug.Log("[SALTR] AppData load success. LevelPacks loaded: " + _levelPacks.Count);
         }
-
-        //  else
-        //  _appDataLoadFailCalback(new SLTStatus(responseData.errorCode, responseData.errorMessage));
+        else
+          	_appDataLoadFailCalback(new SLTStatus(int.Parse(responseData["errorCode"].ToString()), responseData["errorMessage"].ToString()));
 
         resource.dispose();
     }
@@ -550,7 +557,7 @@ public class SLTUnity
     {
         SLTResource.dispose();
         _isLoading = false;
-        //  _appDataLoadFailCalback(new SLTStatusAppDataLoadFail());
+		_appDataLoadFailCalback(new SLTStatusAppDataLoadFail());
     }
 
 

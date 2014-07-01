@@ -17,7 +17,8 @@ namespace saltr_unity_sdk
                 return new List<SLTExperiment>();
             List<SLTExperiment> experiments = new List<SLTExperiment>();
 
-            Dictionary<string, object> rootDictionary = (Dictionary<string, object>)rootNod["responseData"];
+
+            Dictionary<string, object> rootDictionary = rootNod; //  (Dictionary<string, object>)rootNod["responseData"];
 
             if (rootDictionary == null)
                 return null;
@@ -64,7 +65,11 @@ namespace saltr_unity_sdk
             if (rootNod == null)
                 return new Dictionary<string, object>();
             Dictionary<string, object> features = new Dictionary<string, object>();
-            Dictionary<string, object> rootDictionary = (Dictionary<string, object>)rootNod["responseData"];
+
+            //if (!rootNod.ContainsKey("responseData"))
+            //    return null;
+
+            Dictionary<string, object> rootDictionary = rootNod;// (Dictionary<string, object>)rootNod["responseData"];
 
             if (rootDictionary == null)
                 return null;
@@ -103,7 +108,7 @@ namespace saltr_unity_sdk
 
             List<SLTLevelPack> levelPacks = new List<SLTLevelPack>();
 
-            Dictionary<string, object> rootDictionary = rootNod["responseData"].toDictionaryOrNull();
+            Dictionary<string, object> rootDictionary = rootNod;  // rootNod["responseData"].toDictionaryOrNull();
             if (rootDictionary == null)
                 return null;
 
@@ -122,7 +127,7 @@ namespace saltr_unity_sdk
 
                     int index = 0;
                     if (levelPackDictionary.ContainsKey("index"))
-                        levelPackDictionary["index"].toIntegerOrZero();
+                      index =  levelPackDictionary["index"].toIntegerOrZero();
 
                     List<SLTLevel> levelStructureList = new List<SLTLevel>();
 

@@ -53,17 +53,17 @@ namespace Assets
 
         public object getObjectFromCache(string fileName)
         {
-            return "";
+            throw new NotImplementedException();
         }
 
         public object getObjectFromStorage(string name)
         {
-            return "";
+            throw new NotImplementedException();
         }
 
         public string getObjectVersion(string name)
         {
-            return "";
+            throw new NotImplementedException();
         }
 
         public void saveObject(string name, object Object)

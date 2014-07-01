@@ -7,16 +7,18 @@ namespace saltr_unity_sdk
 {
     public class SLTStatus
     {
-        public static readonly int AUTHORIZATION_ERROR = 1001;
-        public static readonly int VALIDATION_ERROR = 1002;
-        public static readonly int API_ERROR = 1003;
+        public const int AUTHORIZATION_ERROR = 1001;
+		public const int VALIDATION_ERROR = 1002;
+		public const int API_ERROR = 1003;
 
-        public static readonly int GENERAL_ERROR_CODE = 2001;
-        public static readonly int CLIENT_ERROR_CODE = 2002;
+		public const int GENERAL_ERROR_CODE = 2001;
+		public const int CLIENT_ERROR_CODE = 2002;
 
-        public static readonly int CLIENT_FEATURES_PARSE_ERROR = 2050;
-        public static readonly int CLIENT_EXPERIMENTS_PARSE_ERROR = 2051;
-        public static readonly int CLIENT_LEVELS_PARSE_ERROR = 2052;
+		public const int CLIENT_APP_DATA_LOAD_FAIL = 2040;
+		public const int CLIENT_LEVEL_CONTENT_LOAD_FAIL = 2041;
+		public const int CLIENT_FEATURES_PARSE_ERROR = 2050;
+		public const int CLIENT_EXPERIMENTS_PARSE_ERROR = 2051;
+		public const int CLIENT_LEVELS_PARSE_ERROR = 2052;
 
         private int _statusCode;
 

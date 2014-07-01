@@ -41,6 +41,7 @@ namespace Assets
             // TODO: Complete member initialization
             this._url = url;
             this.args = args;
+            this.maxAttempts = 2;
         }
 
         public SLTResourceTicket()
@@ -66,7 +67,7 @@ namespace Assets
             if (args != null)
             {
                 arguments = WWW.EscapeURL(LitJson.JsonMapper.ToJson(args));
-               
+
 
 
                 requestUrl += "?cmd=getAppData&args=" + arguments;
