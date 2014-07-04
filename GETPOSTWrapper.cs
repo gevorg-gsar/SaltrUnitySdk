@@ -12,30 +12,68 @@ public class GETPOSTWrapper : MonoBehaviour
     private WWW WWW = null;
     private int dropTimeout;
     private SLTResource _resource;
+	private Action<SLTResource> _appDataLoadSuccessHandler;
     private Action<SLTResource> _appDataLoadFailHandler;
 
     void Start() { }
 
     void Update()
     {
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime >= dropTimeout && isDownloading)
-        {
-            StopCoroutine("WaitForRequest");
-            Debug.Log("[Asset] Loading is too long, so it stopped by force.");
-            _appDataLoadFailHandler(_resource);
-            isDownloading = false;
-          //  WWW.Dispose();
-        }
-    }
-
-    public void GET(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+		if(isDownloading)
+		{
+        	elapsedTime += Time.deltaTime;
+        	if (elapsedTime >= dropTimeout)
+        	{
+            	Debug.Log("[Asset] Loading is too long, so it stopped by force.");
+				isDownloading = false;
+				if(WWW!=null)
+				{	
+					WWW.Dispose();
+					WWW=null;
+				}
+				_appDataLoadFailHandler(_resource);
+        	} 
+			else if(WWW!=null && WWW.isDone)
+			{	
+				//if (WWW == null)
+				//{
+				//	Debug.Log("WWW is null!");
+				//	resource.ioErrorHandler();
+				//	isDownloading = false;
+				//}
+				
+				if (WWW.error == null)
+				{
+					Debug.Log("Download is finished!" + WWW.text);
+					_resource.data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
+					isDownloading = false;
+					WWW.Dispose();
+					WWW=null;
+					_appDataLoadSuccessHandler(_resource);
+				}
+				
+				else
+				{
+					Debug.Log("Download error : " + WWW.error);
+					isDownloading = false;
+					WWW.Dispose();
+					WWW=null;
+					_appDataLoadFailHandler(_resource);
+					//_resource.ioErrorHandler();
+				}
+			}
+		} 
+		else elapsedTime = 0;
+	}
+	
+	public void GET(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
     {
-        if (isDownloading)
+        if (isDownloading){
+			Debug.Log ("Force Returned from GET");
             return;
-
+		}
         this._appDataLoadFailHandler = appDataLoadFailHandler;
-
+		this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
         this._resource = resource;
 
         if (resource.ticket.dropTimeout != 0)
@@ -44,7 +82,7 @@ public class GETPOSTWrapper : MonoBehaviour
             this.dropTimeout = 3;
 
         Debug.Log("URL " + url);
-        StartCoroutine(WaitForRequest(url, appDataLoadSuccessHandler, appDataLoadFailHandler, resource));
+        StartDownloading(url);
     }
 
 
@@ -65,36 +103,10 @@ public class GETPOSTWrapper : MonoBehaviour
         return null;
     }
 
-    private IEnumerator WaitForRequest(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+    private void StartDownloading(string url)
     {
         elapsedTime = 0.0f;
         isDownloading = true;
-
         WWW = new WWW(url);
-        yield return WWW;
-
-        isDownloading = false;
-
-        if (WWW == null)
-        {
-            Debug.Log("WWW is null!");
-            resource.ioErrorHandler();
-        }
-
-        if (WWW.error == null)
-        {
-            Debug.Log("Download is finished!" + WWW.text);
-            resource.data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
-           
-            appDataLoadSuccessHandler(resource);
-        }
-
-        else
-        {
-            Debug.Log("Download error : " + WWW.error);
-            appDataLoadFailHandler(resource);
-            resource.ioErrorHandler();
-        }
-       // WWW.Dispose();
     }
 }

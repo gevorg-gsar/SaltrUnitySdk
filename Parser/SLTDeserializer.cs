@@ -160,9 +160,9 @@ namespace saltr_unity_sdk
                         if (levelDict.ContainsKey("version"))
                             version = levelDict["version"].toIntegerOrZero();
 
-                        int packIndex = 0;
-                        if (levelDict.ContainsKey("index"))
-                            packIndex = Int32.Parse(levelDict["index"].ToString());
+                        int packIndex = index;
+                       // if (levelDict.ContainsKey("index"))
+                         //   packIndex = Int32.Parse(levelDict["index"].ToString());
 
                         if (levelDict.ContainsKey("properties"))
                             prop = levelDict["properties"];
