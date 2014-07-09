@@ -498,8 +498,9 @@ public class SLTUnity
                 }
 
             }
-            catch
+            catch (Exception e)
             {
+                Debug.Log(e.Message);
 				_appDataLoadFailCalback(new SLTStatusLevelsParseError());
                 return;
             }

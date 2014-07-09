@@ -130,7 +130,7 @@ namespace saltr_unity_sdk
                 {
                     IEnumerable<object> position = (IEnumerable<object>)cellPosition.ElementAt(j);
                     SLTCell cell = cells.retrieve(position.ElementAt(0).toIntegerOrZero(), position.ElementAt(1).toIntegerOrZero());
-                    cell.setAssetInstance(layer.layerId, layer.layerIndex, new SLTAssetInstance(asset.token, state, asset.properties));
+                   // cell.setAssetInstance(layer.layerId, layer.layerIndex, new SLTAssetInstance(asset.token, state, asset.properties));
                 }
             }
         }

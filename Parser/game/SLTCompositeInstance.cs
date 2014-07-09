@@ -14,7 +14,7 @@ namespace saltr_unity_sdk
             get { return _cells; }
         }
 
-        public SLTCompositeInstance(string Token, string state, object Properties, IEnumerable<SLTCell> cells)
+        public SLTCompositeInstance(string Token, List<SLTAssetState> state, object Properties, IEnumerable<SLTCell> cells)
             : base(Token, state, Properties)
         {
             _cells = cells;

@@ -212,7 +212,7 @@ namespace saltr_unity_sdk
                 if(_availableCells.Any())
                 randCell = _availableCells[randCellIndex];
 
-                randCell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTAssetInstance(asset.token, state, asset.properties));
+             //   randCell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTAssetInstance(asset.token, state, asset.properties));
 
                 if(_availableCells.Any())
                 _availableCells.RemoveAt(randCellIndex);

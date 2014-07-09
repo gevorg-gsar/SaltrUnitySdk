@@ -35,7 +35,7 @@ namespace saltr_unity_sdk
         {
             SLTCompositeAsset asset = _assetMap[_assetId] as SLTCompositeAsset;
             string state = _stateMap[_stateId].ToString();
-            _cell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTCompositeInstance(asset.token, state, asset.properties, asset._cellInfos as IEnumerable<SLTCell>));
+         //   _cell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTCompositeInstance(asset.token, state, asset.properties, asset._cellInfos as IEnumerable<SLTCell>));
         }
     }
 }

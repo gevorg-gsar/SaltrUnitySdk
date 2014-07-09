@@ -7,7 +7,7 @@ namespace saltr_unity_sdk
 {
     public class SLT2dAssetInstance : SLTAssetInstance
     {
-        public SLT2dAssetInstance(string token, string state, object properties)
+        public SLT2dAssetInstance(string token, List<SLTAssetState> state, object properties)
             : base(token,state, properties)
         {
         }

@@ -12,8 +12,8 @@ namespace saltr_unity_sdk
         {
             get { return _properties; }
         }
-        private string _state;
-        public string state
+        private List<SLTAssetState> _state;
+        public List<SLTAssetState> state
         {
             get { return _state; }
         }
@@ -24,7 +24,7 @@ namespace saltr_unity_sdk
             get { return _token; }
         }
 
-        public SLTAssetInstance(string Token, string state, object Properties)
+        public SLTAssetInstance(string Token, List<SLTAssetState> state, object Properties)
         {
             _token = Token;
             _state = state;

@@ -105,7 +105,7 @@ namespace saltr_unity_sdk
                 string type = "";
                 object properties = null;
 
-                string state = null;
+                List<SLTAssetState> states =  new List<SLTAssetState>();
 
                 //  if (stateId != null)   For Match3
                 //   state = levelSettings.stateMap.getValue(stateId) as String;
@@ -114,7 +114,32 @@ namespace saltr_unity_sdk
                 if (stateId != null)
                 {
                     Dictionary<string, object> statesDict = asset.states;
-                    state = statesDict[stateId].toDictionaryOrNull()["token"].ToString();
+
+                    if (item.toDictionaryOrNull().ContainsKey("states"))
+                    {
+                        foreach (var stateItem in (IEnumerable<object>)item.toDictionaryOrNull()["states"])
+                        {
+                            if (statesDict.ContainsKey(stateItem.ToString()))
+                            {
+                                Dictionary<string, object> tempStateDict = statesDict[stateItem.ToString()].toDictionaryOrNull();
+                                string token = "";
+                                Dictionary<string, object> Properties = new Dictionary<string, object>();
+
+                                if (tempStateDict.ContainsKey("properties"))
+                                {
+                                    Properties = tempStateDict["properties"].toDictionaryOrNull();
+                                }
+
+                                if (tempStateDict.ContainsKey("token"))
+                                {
+                                    token = tempStateDict["token"].ToString();
+                                }
+
+                                states.Add(new SLTAssetState(token, Properties));
+                            }
+
+                        }
+                    }
                 }
 
 
@@ -124,13 +149,13 @@ namespace saltr_unity_sdk
                     properties = asset.properties;
 
                 }
-                SLT2dAssetInstance asset2d = new SLT2dAssetInstance(type, state, properties)
+                SLT2dAssetInstance asset2d = new SLT2dAssetInstance(type, states, properties)
                 {
                     position = position,
                     rotationAngle = rotationAngle,
                     size = asset.size,
                     pivot = asset.pivot
-                   
+
                 };
                 assets.Add(asset2d);
             }

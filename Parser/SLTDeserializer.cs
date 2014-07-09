@@ -127,7 +127,7 @@ namespace saltr_unity_sdk
 
                     int index = 0;
                     if (levelPackDictionary.ContainsKey("index"))
-                      index =  levelPackDictionary["index"].toIntegerOrZero();
+                        index = levelPackDictionary["index"].toIntegerOrZero();
 
                     List<SLTLevel> levelStructureList = new List<SLTLevel>();
 
@@ -161,8 +161,8 @@ namespace saltr_unity_sdk
                             version = levelDict["version"].toIntegerOrZero();
 
                         int packIndex = index;
-                       // if (levelDict.ContainsKey("index"))
-                         //   packIndex = Int32.Parse(levelDict["index"].ToString());
+                        // if (levelDict.ContainsKey("index"))
+                        //   packIndex = Int32.Parse(levelDict["index"].ToString());
 
                         if (levelDict.ContainsKey("properties"))
                             prop = levelDict["properties"];
@@ -170,10 +170,12 @@ namespace saltr_unity_sdk
 
                         int localIndex = 0;
                         if (levelDict.ContainsKey("localIndex"))
-                            localIndex = Int32.Parse(levelDict["localNode"].ToString());
+                            localIndex = Int32.Parse(levelDict["localIndex"].ToString());
                         else
-                            localIndex = Int32.Parse(levelDict["index"].ToString());
-
+                        {
+                            if (levelDict.ContainsKey("index"))
+                                localIndex = Int32.Parse(levelDict["index"].ToString());
+                        }
                         SLTLevel lv = null;
                         switch (gameType)
                         {
