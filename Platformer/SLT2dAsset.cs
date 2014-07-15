@@ -7,31 +7,30 @@ using UnityEngine;
 
 namespace saltr_unity_sdk
 {
-    class SLT2dAsset : SLTAsset
+    class SLT2DAssetState : SLTAssetState
     {
-        public SLT2dAsset(string token, Dictionary<string ,object> states, Dictionary<string,object> properties, Vector2 size, Vector2 pivot):base(token,properties,states)
+        private float _pivotX;
+        private float _pivotY;
+
+        public SLT2DAssetState(string token, Dictionary<string, object> properties, float pivotX, float pivotY)
+            : base(token, properties)
         {
-            _size = size;
-            _pivot = pivot;
-        }
-
-        private Vector2 _size;
-
-        public Vector2 size
-        {
-            get { return _size; }
-            set { _size = value; }
-        }
-
-        private Vector2 _pivot;
-
-        public Vector2 pivot
-        {
-            get { return _pivot; }
-            set { _pivot = value; }
+            _pivotX = pivotX;
+            _pivotY = pivotY;
         }
 
 
+        public float pivotX
+        {
+            get { return _pivotX; }
+            private set { _pivotX = value; }
+        }
+
+        public float pivotY
+        {
+            get { return _pivotY; }
+            private set { _pivotY = value; }
+        }
 
     }
 }

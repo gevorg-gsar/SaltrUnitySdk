@@ -13,10 +13,13 @@ namespace saltr_unity_sdk
                 boards = Deserializer2d.decod2dBoards(boardsNode, levelSettings);
         }
 
-        public override void generateBoard(string boardId)
+     public SLT2dBoard getBoard(string id)
         {
-            generateAllBoards();
+            return boards[id] as SLT2dBoard;
+
         }
+
+       
 
         public SLT2dLevel(string id, int index, int localIndex, int packIndex, string contentDataUrl, object properties, string version)
             : base(id, index, localIndex, packIndex, contentDataUrl, properties, version)

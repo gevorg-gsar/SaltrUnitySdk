@@ -271,12 +271,12 @@ public class SLTUnity
 
         // object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
         // if (cachedData == null)
-        {
+       // {
             foreach (var item in _developerFeatures.Keys)
             {
                 _activeFeatures[item] = _developerFeatures[item];
             }
-        }
+       // }
         //else
         //{
         //    if (cachedData != null)
@@ -459,7 +459,7 @@ public class SLTUnity
             Dictionary<string, object> saltrFeatures = new Dictionary<string, object>();
             try
             {
-                saltrFeatures = SLTDeserializer.decodeFeatures(data["responseData"].toDictionaryOrNull());
+                saltrFeatures = SLTDeserializer.decodeFeatures(responseData);
 
                 foreach (var item in saltrFeatures.Keys)
                 {
@@ -520,23 +520,58 @@ public class SLTUnity
         resource.dispose();
     }
 
+    public Dictionary<string,object> getFeatureProperties(string token)
+    {
+        Debug.Log(_developerFeatures[_developerFeatures.Keys.ElementAt(0)]);
+        if (_activeFeatures.ContainsKey(token))
+        {
+            return ( _activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
+        }
+        else
+            if (_developerFeatures.ContainsKey(token))
+            {
+                return _developerFeatures[token].toDictionaryOrNull();
+            }
+
+            else return null;
+    }
+
 
     private void syncDeveloperFeatures()
     {
         SLTRequestArguments args = new SLTRequestArguments();
+
+        if (_deviceId != null)
+            args.deviceId = _deviceId;
+        else
+            Debug.Log("Field 'deviceId' is required.");
+
+
+        if (_socialId != null && _socialNetwork != null)
+        {
+            args.socialId = _socialId;
+            args.socialNetwork = _socialNetwork;
+        }
+
         args.clientKey = _clientKey;
-        if (_appVersion != null)
-            args.appVersion = _appVersion;
+
         List<object> featureList = new List<object>();
+
+
         foreach (string i in _developerFeatures.Keys)
         {
             SLTFeature SLTFeature = _developerFeatures[i] as SLTFeature;
-            featureList.Add(new { token = SLTFeature.token, value = MiniJSON.Json.Serialize(SLTFeature.properties) });
+            featureList.Add(new { token = SLTFeature.token, value = LitJson.JsonMapper.ToJson(SLTFeature.properties) });
         }
-        args.developerFeature = featureList;
-        object urlVars = MiniJSON.Json.Serialize(args);
-        SLTResourceTicket SLTTicket = new SLTResourceTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars);
-        SLTTicket.method = "post";
+
+        args.developerFeatures = featureList;
+
+        SLTResourceTicket SLTTicket = new SLTResourceTicket(SLTConfig.SALTR_DEVAPI_URL, args);
+
+        SLTTicket.isGet = false;
+       // SLTTicket.method = "post";
+        SLTTicket.dropTimeout = 4;
+        SLTTicket.idleTimeout = 4;
         SLTResource SLTResource = new SLTResource("syncFeatures", SLTTicket, syncSuccessHandler, syncFailHandler);
         SLTResource.load();
     }

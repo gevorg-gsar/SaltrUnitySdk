@@ -119,7 +119,7 @@ namespace saltr_unity_sdk
             if (rootNode.ContainsKey("properties"))
                 _properties = rootNode["properties"].toDictionaryOrNull();
 
-            _levelSettings = SLTLevelBoardParser.parseLevelSettings(rootNode);
+            _levelSettings = SLTLevelParser.parseLevelSettings(rootNode);
             generateAllBoards();
             _contentReady = true;
         }
@@ -127,14 +127,17 @@ namespace saltr_unity_sdk
         public virtual void generateAllBoards()
         {
             if (_boardsNode != null)
-                _boards = SLTLevelBoardParser.parseLevelBoards(_boardsNode, _levelSettings);
+                _boards = SLTLevelParser.parseLevelBoards(_boardsNode, _levelSettings);
         }
 
         public virtual void generateBoard(string boardId)
         {
             if (_boardsNode != null)
-                _boards[boardId] = SLTLevelBoardParser.parseLevelBoard(_boardsNode[boardId].toDictionaryOrNull(), _levelSettings);
+                _boards[boardId] = SLTLevelParser.parseLevelBoard(_boardsNode[boardId].toDictionaryOrNull(), _levelSettings);
         }
+
+        protected virtual SLTLevelParser 
+
 
         internal void dispose()
         {

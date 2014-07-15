@@ -68,5 +68,12 @@ namespace saltr_unity_sdk
                 _instancesByLayerId[layerIndex.ToString()] = assetInstance;
             }
         }
+
+		public void removeAssetInctance(string layerId, int layerIndex)
+		{
+			_instancesByLayerId.Remove(layerId);
+			_instancesByLayerIndex.Remove(layerIndex);
+		}
+
     }
 }

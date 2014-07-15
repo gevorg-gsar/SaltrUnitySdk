@@ -48,10 +48,10 @@ namespace saltr_unity_sdk
         }
 
 
-        public static List<SLT2dBoardLayer> decodeLayers(Dictionary<string, object> boardNode, SLTLevelSettings levelSettings)
+        public static List<SLT2DBoardLayer> decodeLayers(Dictionary<string, object> boardNode, SLTLevelSettings levelSettings)
         {
             IEnumerable<object> layerDictionaryList = null;
-            List<SLT2dBoardLayer> layers = new List<SLT2dBoardLayer>();
+            List<SLT2DBoardLayer> layers = new List<SLT2DBoardLayer>();
 
             if (boardNode.ContainsKey("layers"))
                 layerDictionaryList = (IEnumerable<object>)boardNode["layers"];
@@ -60,7 +60,7 @@ namespace saltr_unity_sdk
             foreach (var layerDict in layerDictionaryList)
             {
 
-                SLT2dBoardLayer layer = new SLT2dBoardLayer();
+                SLT2DBoardLayer layer = new SLT2DBoardLayer();
                 layer._layerId = layerDict.toDictionaryOrNull()["layerId"].ToString();
                 layer.assets = decodeAssets(layerDict.toDictionaryOrNull(), levelSettings);
                 layer._layerIndex = index;
@@ -71,9 +71,9 @@ namespace saltr_unity_sdk
             return layers;
         }
 
-        public static List<SLT2dAssetInstance> decodeAssets(Dictionary<string, object> layerNode, SLTLevelSettings levelSettings)
+        public static List<SLT2DAssetInstance> decodeAssets(Dictionary<string, object> layerNode, SLTLevelSettings levelSettings)
         {
-            List<SLT2dAssetInstance> assets = new List<SLT2dAssetInstance>();
+            List<SLT2DAssetInstance> assets = new List<SLT2DAssetInstance>();
             IEnumerable<object> assetsDictList = null;
             assetsDictList = (IEnumerable<object>)layerNode["assets"];
 
@@ -101,7 +101,7 @@ namespace saltr_unity_sdk
 
                 float rotationAngle = float.Parse(assetsDict.getValue("rotation").ToString());
 
-                SLT2dAsset asset = levelSettings.assetMap.getValue(assetId) as SLT2dAsset;
+                SLT2DAssetState asset = levelSettings.assetMap.getValue(assetId) as SLT2DAssetState;
                 string type = "";
                 object properties = null;
 
@@ -149,14 +149,8 @@ namespace saltr_unity_sdk
                     properties = asset.properties;
 
                 }
-                SLT2dAssetInstance asset2d = new SLT2dAssetInstance(type, states, properties)
-                {
-                    position = position,
-                    rotationAngle = rotationAngle,
-                    size = asset.size,
-                    pivot = asset.pivot
-
-                };
+                SLT2DAssetInstance asset2d = new SLT2DAssetInstance(type, states, properties,position.x,position.y,rotationAngle);
+                
                 assets.Add(asset2d);
             }
             return assets;

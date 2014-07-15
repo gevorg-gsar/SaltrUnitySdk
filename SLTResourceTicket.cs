@@ -12,6 +12,7 @@ namespace Assets
         private string _url;
         private SLTRequestArguments args;
         private object urlVars;
+       public bool isGet;
 
         private int _maxAttempts;
 
@@ -38,22 +39,29 @@ namespace Assets
 
         public SLTResourceTicket(string url, SLTRequestArguments args)
         {
+            isGet = true;
             // TODO: Complete member initialization
             this._url = url;
             this.args = args;
             this.maxAttempts = 2;
         }
 
+       public object GetUrlVars()
+        {
+            return urlVars;
+        }
         public SLTResourceTicket()
         {
             // TODO: Complete member initialization
         }
 
-        public SLTResourceTicket(string url, object urlVars)
+        public SLTResourceTicket(string url, SLTRequestArguments args, object urlVars)
         {
+            isGet = false;
             // TODO: Complete member initialization
             this._url = url;
             this.urlVars = urlVars;
+            this.args = args;
         }
         public int idleTimeout { get; set; }
 
@@ -68,9 +76,12 @@ namespace Assets
             {
                 arguments = WWW.EscapeURL(LitJson.JsonMapper.ToJson(args));
 
-
-
+                if(isGet)
                 requestUrl += "?cmd=getAppData&args=" + arguments;
+                else
+                {
+                    requestUrl += "?cmd=syncFeatures&args=" + arguments;  
+                }
             }
 
             return requestUrl;

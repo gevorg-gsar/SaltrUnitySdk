@@ -7,41 +7,51 @@ namespace saltr_unity_sdk
 {
     public class SLTChunk
     {
-        private SLTLevelBoardLayer _layer;
+        private SLTBoardLayer _layer;
         private List<SLTChunkAssetRule> _chunkAssetRules;
         private List<SLTCell> _chunkCells;
         private List<SLTCell> _availableCells;
         private Dictionary<string, object> _assetMap;
-        private Dictionary<string, object> _stateMap;
 
-        public SLTChunk(SLTLevelBoardLayer layer, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, SLTLevelSettings levelSettings)
+        public SLTChunk(SLTBoardLayer layer, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, Dictionary<string,object> assetMap)
         {
             _layer = layer;
             _chunkCells = chunkCells;
-            _chunkAssetRules = chunkAssetInfos;
+			_chunkAssetRules = chunkAssetInfos;
+			_assetMap = assetMap;
 
-            _availableCells = new List<SLTCell>();
-            _assetMap = levelSettings.assetMap;
-            _stateMap = levelSettings.stateMap;
-            generateCellContent();
+            //_availableCells = new List<SLTCell>();
         }
 
-        private void generateCellContent()
-        {
-            List<SLTCell> tempCells = new List<SLTCell>();
-            foreach (var item in _chunkCells)
-            {
-                if (item == null)
-                    continue;
-                SLTCell cell = new SLTCell(item.col, item.row)
-                {
-                    isBlocked = item.isBlocked,
-                    properties = item.properties
-                };
-                tempCells.Add(cell);
-            }
+		void resetChunkCells ()
+		{
+			foreach(SLTCell cell in _chunkCells)
+			{
+				cell.removeAssetInctance(_layer.layerId, _layer.layerIndex);
+			}
+		}
 
-            _availableCells = tempCells;
+        public void generateContent()
+        {
+			resetChunkCells();
+
+			_availableCells = _chunkCells.ToList();
+
+//            List<SLTCell> tempCells = new List<SLTCell>();
+//            foreach (var item in _chunkCells)
+//            {
+//                if (item == null)
+//                    continue;
+//                SLTCell cell = new SLTCell(item.col, item.row)
+//                {
+//                    isBlocked = item.isBlocked,
+//                    properties = item.properties
+//                };
+//                tempCells.Add(cell);
+//            }
+//
+//            _availableCells = tempCells;
+
             List<SLTChunkAssetRule> countChunkAssetRules = new List<SLTChunkAssetRule>();
             List<SLTChunkAssetRule> ratioChunkAssetRules = new List<SLTChunkAssetRule>();
             List<SLTChunkAssetRule> randomChunkAssetRules = new List<SLTChunkAssetRule>();
@@ -75,6 +85,7 @@ namespace saltr_unity_sdk
             {
                 generateAssetInstancesRandomly(randomChunkAssetRules);
             }
+			_availableCells.Clear();
         }
 
         private void generateAssetInstancesRandomly(List<SLTChunkAssetRule> randomChunkAssetRules)
@@ -193,14 +204,9 @@ namespace saltr_unity_sdk
         }
 
 
-        private void generateAssetInstances(int count, string assetId, string stateId)
+        private void generateAssetInstances(int count, string assetId, IEnumerable<object> stateIds)
         {
             SLTAsset asset = _assetMap[assetId] as SLTAsset;
-
-            string state = "";
-            if(_stateMap.ContainsKey(stateId))
-
-            state = _stateMap[stateId].ToString();
 
             SLTCell randCell = new SLTCell(0,0);
             int randCellIndex;
@@ -212,7 +218,7 @@ namespace saltr_unity_sdk
                 if(_availableCells.Any())
                 randCell = _availableCells[randCellIndex];
 
-             //   randCell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTAssetInstance(asset.token, state, asset.properties));
+				randCell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTAssetInstance(asset.token, asset.getInctanceStates(stateIds), asset.properties));
 
                 if(_availableCells.Any())
                 _availableCells.RemoveAt(randCellIndex);

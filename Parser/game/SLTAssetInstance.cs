@@ -12,10 +12,10 @@ namespace saltr_unity_sdk
         {
             get { return _properties; }
         }
-        private List<SLTAssetState> _state;
-        public List<SLTAssetState> state
+        private List<SLTAssetState> _states;
+        public List<SLTAssetState> states
         {
-            get { return _state; }
+            get { return _states; }
         }
         private string _token;
 

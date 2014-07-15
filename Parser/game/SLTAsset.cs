@@ -9,12 +9,12 @@ namespace saltr_unity_sdk
     {
         private string _token;
         private object _properties;
-        private Dictionary<string, object> _states;
+        private Dictionary<string, object> _stateMap;
 
-        public Dictionary<string, object> states
+        public Dictionary<string, object> stateMap
         {
-            get { return _states; }
-            set { _states = value; }
+            get { return _stateMap; }
+            set { _stateMap = value; }
         }
 
         public string token
@@ -27,16 +27,30 @@ namespace saltr_unity_sdk
             get { return _properties; }
         }
 
-        public SLTAsset(string token, object properties, Dictionary<string,object> States)
+        public SLTAsset(string token, object properties, Dictionary<string,object> StateMap)
         {
             _token = token;
             _properties = properties;
-            _states = States;
+            _stateMap = StateMap;
         }
 
         public override string ToString()
         {
             return "[Asset] type: " + _token + ", " + " keys: " + _properties;
         }
+
+	public List<SLTAssetState> getInctanceStates(IEnumerable<object> stateIds)
+	{
+		List<SLTAssetState> states = new List<SLTAssetState>(); 
+		foreach(object stateId in stateIds)
+		{
+			SLTAssetState state = _stateMap[stateId.ToString()] as SLTAssetState;
+			if(state != null)
+			{
+				states.Add(state);
+			}
+		}
+		return states;
+	}
     }
 }

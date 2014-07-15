@@ -8,7 +8,7 @@ namespace saltr_unity_sdk
     public class SLTChunkAssetRule
     {
         private string _assetId;
-        private string _stateId;
+		private IEnumerable<object> _stateIds;
         private string _distributionType;
         private int _distributionValue;
 
@@ -17,9 +17,9 @@ namespace saltr_unity_sdk
             get { return _assetId; }
         }
 
-        public string stateId
+		public IEnumerable<object> stateId
         {
-            get { return _stateId; }
+            get { return _stateIds; }
         }
 
         public string distributionType
@@ -32,12 +32,12 @@ namespace saltr_unity_sdk
             get { return _distributionValue; }
         }
 
-        public SLTChunkAssetRule(string assetId, string distributionType, int distributionValue, string stateId)
+        public SLTChunkAssetRule(string assetId, string distributionType, int distributionValue, IEnumerable<object> stateIds)
         {
             _assetId = assetId;
             _distributionType = distributionType;
             _distributionValue = distributionValue;
-            _stateId = stateId;
+            _stateIds = stateIds;
         }
     }
 }

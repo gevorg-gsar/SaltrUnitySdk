@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +19,8 @@ namespace saltr_unity_sdk
             get { return _cols; }
         }
 
-        private SLTCellMatrix _cells;
-        public SLTCellMatrix cells
+        private SLTCells _cells;
+        public SLTCells cells
         {
             get { return _cells; }
         }
@@ -37,7 +37,7 @@ namespace saltr_unity_sdk
             get { return _layers; }
         }
 
-        public SLTLevelBoard(SLTCellMatrix cells, Dictionary<string, object> layers, Dictionary<string, object> properties)
+        public SLTLevelBoard(SLTCells cells, Dictionary<string, object> layers, Dictionary<string, object> properties)
         {
             _cells = cells;
             _cols = cells.width;

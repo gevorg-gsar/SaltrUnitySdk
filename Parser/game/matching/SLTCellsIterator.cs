@@ -5,13 +5,13 @@ using System.Text;
 
 namespace saltr_unity_sdk
 {
-    public class SLTCellMatrixIterator
+    public class SLTCellsIterator
     {
-        public SLTCellMatrix _cells;
+        public SLTCells _cells;
         public uint _vectorLength;
         public int _currentPosition;
 
-        public SLTCellMatrixIterator(SLTCellMatrix cells)
+        public SLTCellsIterator(SLTCells cells)
         {
             _cells = cells;
             reset();

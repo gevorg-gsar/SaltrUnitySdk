@@ -17,6 +17,6 @@ namespace Assets
 
         public string appVersion { get; set; }
 
-        public List<object> developerFeature { get; set; }
+        public List<object> developerFeatures { get; set; }
     }
 }

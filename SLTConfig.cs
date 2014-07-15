@@ -12,10 +12,10 @@ namespace saltr_unity_sdk
         public static readonly string CMD_ADD_PROPERTY = "addProperty";
         public static readonly string CMD_DEV_SYNC_FEATURES = "syncFeatures";
 
-        //        public static readonly string SALTR_API_URL = "https://api.saltr.com/call";
-        public static readonly string SALTR_API_URL = "https://saltapi.includiv.com/call";
-        //        public static readonly string SALTR_DEVAPI_URL = "https://devapi.saltr.com/call";
-        public static readonly string SALTR_DEVAPI_URL = "https://saltadmin.includiv.com/call";
+        public static readonly string SALTR_API_URL = "https://api.saltr.com/call";
+        //public static readonly string SALTR_API_URL = "https://saltapi.includiv.com/call";
+        public static readonly string SALTR_DEVAPI_URL = "https://devapi.saltr.com/call";
+        //public static readonly string SALTR_DEVAPI_URL = "https://saltadmin.includiv.com/call";
 
 
         //used to

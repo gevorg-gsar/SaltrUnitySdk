@@ -5,12 +5,12 @@ using System.Text;
 
 namespace saltr_unity_sdk
 {
-    public class SLTCellMatrix
+    public class SLTCells
     {
         private int _width;
         private int _height;
         private SLTCell[] _rawData;
-        private SLTCellMatrixIterator _iterator;
+        private SLTCellsIterator _iterator;
 
         public int width
         {
@@ -27,19 +27,19 @@ namespace saltr_unity_sdk
             get { return _rawData; }
         }
 
-        public SLTCellMatrixIterator iterator
+        public SLTCellsIterator iterator
         {
             get
             {
                 if (_iterator == null)
                 {
-                    _iterator = new SLTCellMatrixIterator(this);
+                    _iterator = new SLTCellsIterator(this);
                 }
                 return _iterator;
             }
         }
 
-        public SLTCellMatrix(int width, int height)
+        public SLTCells(int width, int height)
         {
             _width = width;
             _height = height;
@@ -67,9 +67,9 @@ namespace saltr_unity_sdk
             return _rawData[(row * _width) + row];
         }
 
-        public SLTCellMatrixIterator getIterator()
+        public SLTCellsIterator getIterator()
         {
-            _iterator = new SLTCellMatrixIterator(this);
+            _iterator = new SLTCellsIterator(this);
             return _iterator;
         }
     }

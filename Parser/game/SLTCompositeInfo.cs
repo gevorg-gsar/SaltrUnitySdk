@@ -13,9 +13,9 @@ namespace saltr_unity_sdk
         private Dictionary<string, object> _assetMap;
 
         private Dictionary<string, object> _stateMap;
-        private SLTLevelBoardLayer _layer;
+        private SLTBoardLayer _layer;
 
-        public SLTComposite(SLTLevelBoardLayer layer, string compositeAssetId, string stateId, SLTCell cell, SLTLevelSettings levelSettings)
+        public SLTComposite(SLTBoardLayer layer, string compositeAssetId, string stateId, SLTCell cell, SLTLevelSettings levelSettings)
         {
             _assetId = compositeAssetId;
             _stateId = stateId;

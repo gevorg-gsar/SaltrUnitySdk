@@ -8,6 +8,7 @@ using System.Timers;
 using UnityEngine;
 using System.Threading;
 using System.ComponentModel;
+using saltr_unity_sdk;
 
 namespace Assets
 {
@@ -82,7 +83,13 @@ namespace Assets
             _fails++;
             GameObject go = GameObject.Find("saltr");
             GETPOSTWrapper wrapper = (GETPOSTWrapper)go.GetComponent(typeof(GETPOSTWrapper));
-            wrapper.GET(_ticket.getURLRequest(), _onSuccess, _onFail, this);
+            if (ticket.method == "post")
+                //post
+
+                wrapper.POST(ticket.getURLRequest(), ticket.GetUrlVars().toDictionaryOrNull(), _onSuccess , _onFail, this);
+
+            else
+                wrapper.GET(_ticket.getURLRequest(), _onSuccess, _onFail, this);
         }
 
 
