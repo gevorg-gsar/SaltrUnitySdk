@@ -51,6 +51,28 @@ namespace saltr_unity_sdk
         }
 
 
+        public static float toFloatOrZero(this object obj)
+        {
+            float x = 0;
+            string str = "";
+
+            try
+            {
+                str = obj.ToString();
+
+                x = float.Parse(str);
+                return x;
+            }
+
+            catch
+            {
+                return x;
+            }
+        }
+
+
+
+
         public static int toIntegerOrZero(this object obj)
         {
             int x = 0;

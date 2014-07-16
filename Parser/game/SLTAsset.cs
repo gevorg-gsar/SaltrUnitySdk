@@ -39,7 +39,7 @@ namespace saltr_unity_sdk
             return "[Asset] type: " + _token + ", " + " keys: " + _properties;
         }
 
-	public List<SLTAssetState> getInctanceStates(IEnumerable<object> stateIds)
+	public List<SLTAssetState> getInstanceStates(IEnumerable<object> stateIds)
 	{
 		List<SLTAssetState> states = new List<SLTAssetState>(); 
 		foreach(object stateId in stateIds)

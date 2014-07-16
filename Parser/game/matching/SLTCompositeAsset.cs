@@ -18,7 +18,7 @@ namespace saltr_unity_sdk
     
     SLTAssetInstance getInstance(IEnumerable<object> stateIds)
         {
-            return new SLTCompositeInstance (token, getInctanceStates(stateIds),
+            return new SLTCompositeInstance (token, getInstanceStates(stateIds),
                 properties, _cellInfos);
         }
 

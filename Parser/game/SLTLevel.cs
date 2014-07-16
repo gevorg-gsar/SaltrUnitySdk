@@ -8,7 +8,7 @@ using System;
 
 namespace saltr_unity_sdk
 {
-    public class SLTLevel
+    public abstract class SLTLevel
     {
         private int _packIndex;
 
