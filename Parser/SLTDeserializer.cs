@@ -121,6 +121,13 @@ namespace saltr_unity_sdk
                 return new List<SLTLevelPack>();
             string levelType = SLTLevel.LEVEL_TYPE_MATCHING;
 
+			List<string> keys = new List<string> ();
+	foreach (var item in rootNod.Keys) 
+			{
+				UnityEngine.Debug.Log(item);
+				keys.Add(item);
+			}
+
             if(rootNod.ContainsKey("levelType"))
             {
                 levelType = rootNod["levelType"].ToString();

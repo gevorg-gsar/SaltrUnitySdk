@@ -120,11 +120,13 @@ namespace saltr_unity_sdk
 
         public void updateContent(Dictionary<string, object> rootNode)
         {
-
-
-
             Dictionary<string, object> boardsNode = new Dictionary<string, object>();
 
+			List<string> kieys = new List<string>();
+			foreach (var item in rootNode.Keys) {
+				kieys.Add(item);
+	
+			}
 
             if (rootNode.ContainsKey("boards"))
             {
@@ -177,6 +179,9 @@ namespace saltr_unity_sdk
         {
             foreach (var key in _boards.Keys)
             {
+                if (_boards[key] as SLTBoard == null)
+                    Debug.Log("castNull");
+
                 (_boards[key] as SLTBoard).regenerate();
             }
         }

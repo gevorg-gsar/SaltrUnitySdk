@@ -60,12 +60,14 @@ namespace saltr_unity_sdk
 
 
 
-        public Dictionary<string, object> parseLevelAssets(Dictionary<string, object> assetNodes)
-        {
+        public Dictionary<string, object> parseLevelAssets(Dictionary<string, object> rootNode)
+		{ 
+			Dictionary<string, object> assetsNodes = rootNode["assets"].toDictionaryOrNull();
+
             Dictionary<string, object> assetMap = new Dictionary<string, object>();
-            foreach (var assetId in assetNodes.Keys)
+			foreach (var assetId in assetsNodes.Keys)
             {
-                assetMap[assetId.ToString()] = parseAsset(assetNodes[assetId.ToString()].toDictionaryOrNull());
+				assetMap[assetId.ToString()] = parseAsset(assetsNodes[assetId.ToString()].toDictionaryOrNull());
             }
             return assetMap;
         }

@@ -12,7 +12,7 @@ namespace saltr_unity_sdk
 
         public static SLT2DLevelParser getInstance()
         {
-            if (INSTANCE != null)
+            if (INSTANCE == null)
             {
                 INSTANCE = new SLT2DLevelParser();
             }

@@ -113,20 +113,73 @@ namespace saltr_unity_sdk
         }
 
 
+        private SLTMatchingBoard parseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
+        {
+            Dictionary<string, object> boardProperties = new Dictionary<string, object>();
+            if (boardNode.ContainsKey("properties") && boardNode["properties"].toDictionaryOrNull().ContainsKey("board"))
+            {
+                boardProperties = boardNode["properties"].toDictionaryOrNull()["board"].toDictionaryOrNull();
+            }
+
+            SLTCells cells = new SLTCells(boardNode["cols"].toIntegerOrZero(), boardNode["rows"].toIntegerOrZero());
+            initializeCells(cells, boardNode);
+            List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
+            IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode["layers"];
+            for (int i = 0; i < layerNodes.Count(); i++)
+            {
+                Dictionary<string, object> layerNode = layerNodes.ElementAt(i).toDictionaryOrNull();
+                SLTMatchingBoardLayer layer = parseLayer(layerNode, i, cells, assetMap);
+                layers.Add(layer);
+            }
+
+            return new SLTMatchingBoard(cells, layers, boardProperties);
+        }
+
+
+        private SLTMatchingBoardLayer parseLayer(Dictionary<string, object> layerNode, int layerIndex, SLTCells cells, Dictionary<string, object> assetMap)
+        {
+            string layerId = layerNode["layerId"].ToString();
+            SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer(layerId, layerIndex);
+
+            parseFixedAssets(layer, (IEnumerable<object>)layerNode["fixedAssets"], cells, assetMap);
+            parseLayerChunks(layer, (IEnumerable<object>)layerNode["chunks"], cells, assetMap);
+
+            return layer;
+        }
+
+
+        private void parseFixedAssets(SLTMatchingBoardLayer layer, IEnumerable<object> assetNodes, SLTCells cells, Dictionary<string, object> assetMap)
+        {
+            for (int i = 0; i < assetNodes.Count(); i++)
+            {
+                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i).toDictionaryOrNull();
+                SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
+                IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
+                IEnumerable<object> cellPositions = (IEnumerable<object>)assetInstanceNode["cells"];
+
+                for (int j = 0; j < cellPositions.Count(); j++)
+                {
+                    IEnumerable<object> position = (IEnumerable<object>)cellPositions.ElementAt(j);
+                    SLTCell cell = cells.retrieve(position.ElementAt(0).toIntegerOrZero(), position.ElementAt(1).toIntegerOrZero());
+                    cell.setAssetInstance(layer.layerId, layer.layerIndex, new SLTAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties));
+                }
+            }
+        }
+
+
+
         public override Dictionary<string, object> parseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
         {
-
-
             Dictionary<string, object> boards = new Dictionary<string, object>();
 
             foreach (var boardId in boardNodes.Keys)
             {
                 Dictionary<string, object> boardNode = boardNodes[boardId].toDictionaryOrNull();
                 boards[boardId] = parseLevelBoard(boardNode, assetMap);
-
             }
-
+            return boards;
         }
+
 
     }
 }
