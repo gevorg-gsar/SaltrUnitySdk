@@ -89,7 +89,7 @@ public class GETPOSTWrapper : MonoBehaviour
 
 
 
-    public WWW POST(string url, Dictionary<string, object> post, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+    public WWW POST(string url, Dictionary<string, string> post, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
     {
         Debug.Log("EnteredToPost" + "url: " +  url);
 

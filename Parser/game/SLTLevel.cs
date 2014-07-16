@@ -86,13 +86,7 @@ namespace saltr_unity_sdk
             get { return _rootNode; }
             set { _rootNode = value; }
         }
-        private SLTLevelSettings _levelSettings;
-
-        public SLTLevelSettings levelSettings
-        {
-            get { return _levelSettings; }
-            set { _levelSettings = value; }
-        }
+        
         private Dictionary<string, object> _boardsNode;
 
         public Dictionary<string, object> boardsNode

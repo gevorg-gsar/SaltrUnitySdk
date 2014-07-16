@@ -10,22 +10,21 @@ namespace saltr_unity_sdk
         public SLTDeserializer()
         { }
 
-        public static List<SLTExperiment> decodeExperiments(Dictionary<string, object> rootNod)
+        public static List<SLTExperiment> decodeExperiments(Dictionary<string, object> rootNode)
         {
-            if (rootNod == null)
+            if (rootNode == null)
                 return new List<SLTExperiment>();
             List<SLTExperiment> experiments = new List<SLTExperiment>();
 
 
-            Dictionary<string, object> rootDictionary = rootNod; //  (Dictionary<string, object>)rootNod["responseData"];
+            Dictionary<string, object> rootDictionary = rootNode; //  (Dictionary<string, object>)rootNod["responseData"];
 
             if (rootDictionary == null)
                 return null;
 
-            //TODO @daal. supporting partitionName(old) and partition.
-            if (rootDictionary.ContainsKey("experimentInfo"))
+			if (rootDictionary.ContainsKey("experiments"))
             {
-                IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary["experimentInfo"];
+				IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary["experiments"];
                 foreach (var experimentDictionaryObj in experimentDictionaryList)
                 {
                     Dictionary<string, object> experimentDictionary = (Dictionary<string, object>)experimentDictionaryObj;
@@ -33,7 +32,7 @@ namespace saltr_unity_sdk
                     string token = "";
                     string partition = "";
                     string type = "";
-                    string trackingType = "";
+					IEnumerable<object> customEvents = null;
 
                     if (experimentDictionary.ContainsKey("token"))
                         token = experimentDictionary["token"].ToString();
@@ -44,13 +43,12 @@ namespace saltr_unity_sdk
                     if (experimentDictionary.ContainsKey("type"))
                         type = experimentDictionary["type"].ToString();
 
-                    if (trackingType.Contains("trackingType"))
-                        trackingType = experimentDictionary["trackingType"].ToString();
+					if (experimentDictionary.ContainsKey("customEventList"))
+						customEvents = (IEnumerable<object>) experimentDictionary["customEventList"];
 
-                    //??
-                    // var customEvents:Array = experimentInfoNode.customEventList as Array;
+         
 
-                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, new List<object>());
+					SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, customEvents);
                     experiments.Add(experimentInfo);
                 }
             }
@@ -77,23 +75,25 @@ namespace saltr_unity_sdk
             {
                 IEnumerable<object> featureDictionaryList = (IEnumerable<object>)rootDictionary["features"];
 
-                foreach (var featureDictionaryObj in featureDictionaryList)
-                {
-                    foreach (var featureDictionary in featureDictionaryList)
-                    {
-                        Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
-                        string tokken = "";
-                        if (featureNod.ContainsKey("token"))
-                            tokken = featureNod["token"].ToString();
+            foreach (var featureDictionary in featureDictionaryList)
+            {
+                Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
+                string tokken = "";
+                if (featureNod.ContainsKey("token"))
+                    tokken = featureNod["token"].ToString();
 
-                        Dictionary<string, object> properties = new Dictionary<string, object>();
+                Dictionary<string, object> properties = new Dictionary<string, object>();
+				//TODO @GSAR: remove "data" check later when API versioning is done.
+                if (featureNod.ContainsKey("data"))
+                    properties = (Dictionary<string, object>)featureNod["data"];
 
-                        if (featureNod.ContainsKey("data"))
-                            properties = (Dictionary<string, object>)featureNod["data"];
 
-                        features[tokken] = new SLTFeature(tokken, properties);
-                    }
-                }
+				bool required = false;
+				if(featureNod.ContainsKey("required"))
+						required = featureNod["required"].ToString() == "true";
+
+                features[tokken] = new SLTFeature(tokken, properties, required);
+            }
             }
 
             return features;

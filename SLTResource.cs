@@ -85,8 +85,7 @@ namespace Assets
             GETPOSTWrapper wrapper = (GETPOSTWrapper)go.GetComponent(typeof(GETPOSTWrapper));
             if (ticket.method == "post")
                 //post
-
-                wrapper.POST(ticket.getURLRequest(), ticket.GetUrlVars().toDictionaryOrNull(), _onSuccess , _onFail, this);
+                wrapper.POST(ticket.getURLRequest(), ticket.GetUrlVars(), _onSuccess , _onFail, this);
 
             else
                 wrapper.GET(_ticket.getURLRequest(), _onSuccess, _onFail, this);

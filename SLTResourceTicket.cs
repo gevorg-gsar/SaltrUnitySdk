@@ -10,9 +10,7 @@ namespace Assets
     public class SLTResourceTicket : MonoBehaviour
     {
         private string _url;
-        private SLTRequestArguments args;
-        private object urlVars;
-       public bool isGet;
+        private Dictionary<string,string> _variables;
 
         private int _maxAttempts;
 
@@ -35,33 +33,18 @@ namespace Assets
             get { return _dropTimeout; }
             set { _dropTimeout = value; }
         }
+		
 
-
-        public SLTResourceTicket(string url, SLTRequestArguments args)
+       	public Dictionary<string,string> GetUrlVars()
         {
-            isGet = true;
+            return _variables;
+        }
+
+        public SLTResourceTicket(string url, Dictionary<string,string> urlVars)
+        {
             // TODO: Complete member initialization
             this._url = url;
-            this.args = args;
-            this.maxAttempts = 2;
-        }
-
-       public object GetUrlVars()
-        {
-            return urlVars;
-        }
-        public SLTResourceTicket()
-        {
-            // TODO: Complete member initialization
-        }
-
-        public SLTResourceTicket(string url, SLTRequestArguments args, object urlVars)
-        {
-            isGet = false;
-            // TODO: Complete member initialization
-            this._url = url;
-            this.urlVars = urlVars;
-            this.args = args;
+            this._variables = urlVars;
         }
         public int idleTimeout { get; set; }
 
@@ -70,19 +53,16 @@ namespace Assets
 
         internal string getURLRequest()
         {
-            string arguments = "";
             string requestUrl = _url;
-            if (args != null)
-            {
-                arguments = WWW.EscapeURL(LitJson.JsonMapper.ToJson(args));
-
-                if(isGet)
-                requestUrl += "?cmd=getAppData&args=" + arguments;
-                else
-                {
-                    requestUrl += "?cmd=syncFeatures&args=" + arguments;  
-                }
-            }
+			char seperator = '?';
+			if(_variables != null)
+				foreach (string key in _variables.Keys)
+	            {
+	                requestUrl += seperator;
+					requestUrl += key + "=" + WWW.EscapeURL(_variables[key]);	
+					if('?' == seperator)
+						seperator = '&';
+	            }
 
             return requestUrl;
         }

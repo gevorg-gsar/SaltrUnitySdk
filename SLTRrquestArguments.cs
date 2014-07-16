@@ -21,9 +21,6 @@ namespace Assets
 
         public string apiVersion { get; set; }
 
-        public string cmd { get; set; }
-        public string action { get; set; }
-
         public string saltrUserId { get; set; }
 
         public Dictionary<string,object> basicProperties { get; set; }

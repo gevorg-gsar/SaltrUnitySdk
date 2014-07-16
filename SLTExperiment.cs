@@ -29,13 +29,13 @@ namespace saltr_unity_sdk
             get { return _type; }
         }
 
-        private List<object> _customEvents;
+		private IEnumerable<object> _customEvents;
 
-        public List<object> customEvents
+		public IEnumerable<object> customEvents
         {
             get { return _customEvents; }
         }
-        public SLTExperiment(string token, string partition, string type, List<object> customEvents)
+        public SLTExperiment(string token, string partition, string type, IEnumerable<object> customEvents)
         {
             _token = token;
             _partition = partition;

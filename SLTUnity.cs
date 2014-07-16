@@ -15,7 +15,6 @@ public class SLTUnity
 
 
     protected string _socialId;
-    protected string _socialNetwork;
     private string _deviceId;
 
     public string deviceId
@@ -71,13 +70,8 @@ public class SLTUnity
     {
         set { _devMode = value; }
     }
-    private string _appVersion;
+    
 
-    public string appVersion
-    {
-        get { return _appVersion; }
-        set { _appVersion = value; }
-    }
     private bool _started;
     private bool _useNoLevels;
 
@@ -94,18 +88,24 @@ public class SLTUnity
         set { _useNoFeatures = value; }
     }
 
+	private string _levelType;
+
+
     public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
     {
         if (basicProperties == null && customProperties == null || _saltrUserId == null)
             return;
 
-        SLTRequestArguments args = new SLTRequestArguments()
+		Dictionary<string,string> urlVars = new Dictionary<string, string>();
+		urlVars["cmd"] = SLTConfig.ACTION_ADD_PROPERTIES; //TODO @GSAR: remove later
+		urlVars["action"] = SLTConfig.ACTION_ADD_PROPERTIES; 
+		
+		SLTRequestArguments args = new SLTRequestArguments()
         {
-            cmd = SLTConfig.ACTION_ADD_PROPERTIES,
-            action = SLTConfig.ACTION_ADD_PROPERTIES,
             apiVersion = API_VERSION,
             clientKey = _clientKey
         };
+
         if (_deviceId != null)
         {
             args.deviceId = _deviceId;
@@ -138,17 +138,18 @@ public class SLTUnity
            res.dispose();
        };
 
+		urlVars["args"] = LitJson.JsonMapper.ToJson(args);
 
-        SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, args, _requestIdleTimeout);
+        SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
         SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
         resource.load();
     }
 
 
-    private static SLTResourceTicket getTicket(string url, SLTRequestArguments args, int timeout = 0)
+    private static SLTResourceTicket getTicket(string url, Dictionary<string,string> urlVars, int timeout = 0)
     {
-        SLTResourceTicket ticket = new SLTResourceTicket(url, args);
-        ticket.method = "POST";
+		SLTResourceTicket ticket = new SLTResourceTicket(url, urlVars);
+		//ticket.method = "post";
         if (timeout > 0)
         {
             ticket.idleTimeout = timeout;
@@ -173,6 +174,7 @@ public class SLTUnity
         _useNoLevels = false;
         _useNoFeatures = false;
         _deviceId = DeviceId;
+		_levelType = null;
         _devMode = false;
         _started = false;
         _requestIdleTimeout = 0;
@@ -189,15 +191,9 @@ public class SLTUnity
     }
 
 
-    public void setSocial(string socialId, string socialNetwork)
+    public string socialId
     {
-        if (socialId == null || socialNetwork == null)
-        {
-            return;
-        }
-
-        this._socialId = socialId;
-        this._socialNetwork = socialNetwork;
+		set{ _socialId = value;}
     }
 
     public List<SLTLevel> allLevels
@@ -249,6 +245,11 @@ public class SLTUnity
 
     public void importLevels(string path = null)
     {
+		if(_useNoLevels) 
+		{
+			return;
+		}
+
         if (_started == false)
         {
             path = path == null ? SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL : path;
@@ -299,9 +300,16 @@ public class SLTUnity
         return null;
     }
 
-
+	/**
+     * If you want to have a feature synced with SALTR you should call define before getAppData call.
+     */
     public void defineFeature(string token, object properties, bool required = false)
     {
+		if(_useNoFeatures)
+		{
+			return;
+		}
+
         if (_started == false)
         {
             _developerFeatures["token"] = new SLTFeature(token, properties, required);
@@ -324,23 +332,23 @@ public class SLTUnity
             Debug.Log("Levels should be imported.");
 
 
-        // object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
-        // if (cachedData == null)
-        // {
-        foreach (var item in _developerFeatures.Keys)
+        object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
+        if (cachedData == null)
         {
-            _activeFeatures[item] = _developerFeatures[item];
+	        foreach (var item in _developerFeatures.Keys)
+	        {
+	            _activeFeatures[item] = _developerFeatures[item];
+	        }
+         }
+        else
+        {
+            if (cachedData != null)
+            {
+                _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
+                _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
+                _saltrUserId = cachedData.toDictionaryOrNull()["saltrUserId"].ToString();
+            }
         }
-        // }
-        //else
-        //{
-        //    if (cachedData != null)
-        //    {
-        //        _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
-        //        _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
-        //        //_saltrUserId = cachedData.toDictionaryOrNull()["saltrUserId"].ToString();
-        //    }
-        //}
         _started = true;
     }
 
@@ -354,30 +362,30 @@ public class SLTUnity
         _connectSuccessCallback = successCallback;
 
         _isLoading = true;
-
-        SLTResource resource = createAppDataResource(appDataLoadSuccessHandler, appDataLoadFailHandler,basicProperties,customProperties);
-        resource.ticket.idleTimeout = requestIdleTimeout;
-        resource.ticket.dropTimeout = requestIdleTimeout;
+        SLTResource resource = createAppDataResource(appDataLoadSuccessCallback, appDataLoadFailCallback,basicProperties,customProperties);
         resource.load();
     }
 
-    private SLTResource createAppDataResource(Action<SLTResource> appDataAssetLoadCompleteHandler, Action<SLTResource> appDataAssetLoadErrorHandler, Dictionary<string,object> basicProperties,
+	private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, Dictionary<string,object> basicProperties,
         Dictionary<string,object> customProperties)
     {
-        SLTRequestArguments args = new SLTRequestArguments();
+		Dictionary<string,string> urlVars = new Dictionary<string, string>();
 
-        args.cmd = SLTConfig.ACTION_GET_APP_DATA;
+		urlVars["cmd"] = SLTConfig.ACTION_GET_APP_DATA; //TODO @GSAR: remove later
+		urlVars["action"] = SLTConfig.ACTION_GET_APP_DATA;
+
+		SLTRequestArguments args = new SLTRequestArguments();
+		args.apiVersion = API_VERSION;
+		args.clientKey = _clientKey;
 
         if (_deviceId != null)
             args.deviceId = _deviceId;
         else
             Debug.Log("Field 'deviceId' is required.");
 
-
-        if (_socialId != null && _socialNetwork != null)
+        if (_socialId != null)
         {
             args.socialId = _socialId;
-            args.socialNetwork = _socialNetwork;
         }
 
         if(_saltrUserId != null)
@@ -395,16 +403,10 @@ public class SLTUnity
             args.customProperties = customProperties;
         }
 
+		urlVars["args"] = LitJson.JsonMapper.ToJson(args);
 
-        args.clientKey = _clientKey;
-
-        Debug.Log("::" + _deviceId + "  " + _socialId + "  " + _socialNetwork);
-        SLTResourceTicket ticket = new SLTResourceTicket(SLTConfig.SALTR_API_URL, args);
-
-        if (_requestIdleTimeout > 0)
-            ticket.idleTimeout = _requestIdleTimeout;
-
-        return new SLTResource("saltAppConfig", ticket, appDataAssetLoadCompleteHandler, appDataAssetLoadErrorHandler);
+        SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
+		return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
     }
 
     public void loadLevelContent(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache = true)
@@ -427,7 +429,6 @@ public class SLTUnity
                 loadLevelContentFromSaltr(SLTLevelPack, SLTLevel);
             else
             {
-                Debug.Log("1");
                 content = loadLevelContentFromCache(SLTLevelPack, SLTLevel);
                 levelContentLoadSuccessHandler(SLTLevel, content);
             }
@@ -496,9 +497,9 @@ public class SLTUnity
     }
 
 
-    private void levelContentLoadSuccessHandler(SLTLevel SLTLevel, object data)
+	private void levelContentLoadSuccessHandler(SLTLevel sltLevel, object content)
     {
-        SLTLevel.updateContent(data.toDictionaryOrNull());
+		sltLevel.updateContent(content.toDictionaryOrNull());
         _levelContentLoadSuccessCalbck();
     }
 
@@ -511,34 +512,51 @@ public class SLTUnity
         return contentData;
     }
 
-
-    private void appDataLoadSuccessHandler(SLTResource resource)
+	// complete
+    private void appDataLoadSuccessCallback(SLTResource resource)
     {
         Dictionary<string, object> data = resource.data;
-        string status = "";
-        Dictionary<string, object> responseData = new Dictionary<string, object>();
-        if (data.ContainsKey("status"))
-            status = data["status"].ToString();
 
-        if (data.ContainsKey("responseData"))
-            responseData = data["responseData"].toDictionaryOrNull();
+		if(data == null)
+		{
+			_connectFailCallback(new SLTStatusAppDataLoadFail());
+			resource.dispose();
+			return;
+		}
 
-        _isLoading = false;
+		bool success = false;
+		Dictionary<string, object> response = new Dictionary<string, object>();
 
-        if (_devMode)
-            syncDeveloperFeatures();
+        if(data.ContainsKey("response")) 
+		{
+			IEnumerable<object> res = (IEnumerable<object>)data["response"];
+			response = res.FirstOrDefault().toDictionaryOrNull();
+		}
+		else
+		{
+			//TODO @GSAR: remove later when API is versioned!
+			if (data.ContainsKey("responseData"))
+				response = data["responseData"].toDictionaryOrNull();
 
-        if (status == SLTConfig.RESULT_SUCCEED)
+			success = (data.ContainsKey("status") && data["status"].ToString() == SLTConfig.RESULT_SUCCEED);
+		}
+
+		_isLoading = false;		
+
+        if (success)
         {
+			if (_devMode)
+				syncDeveloperFeatures();
+
+			if(response.ContainsKey("levelType"))
+			{
+				_levelType = response["levelType"].ToString();
+			}
+
             Dictionary<string, object> saltrFeatures = new Dictionary<string, object>();
             try
             {
-                saltrFeatures = SLTDeserializer.decodeFeatures(responseData);
-
-                foreach (var item in saltrFeatures.Keys)
-                {
-                    Debug.Log("F -" + item);
-                }
+                saltrFeatures = SLTDeserializer.decodeFeatures(response);
             }
             catch (Exception e)
             {
@@ -549,7 +567,7 @@ public class SLTUnity
 
             try
             {
-                _experiments = SLTDeserializer.decodeExperiments(data["responseData"].toDictionaryOrNull());
+                _experiments = SLTDeserializer.decodeExperiments(response);
 
                 foreach (var item in _experiments)
                 {
@@ -562,34 +580,42 @@ public class SLTUnity
                 return;
             }
 
-            try
-            {
-                _levelPacks = SLTDeserializer.decodeLevels(data["responseData"].toDictionaryOrNull());
+			// if developer didn't announce use without levels, and levelType in returned JSON is not "noLevels",
+			// then - parse levels
+			if(!_useNoLevels && _levelType != SLTLevel.LEVEL_TYPE_NONE)
+			{
+				List<SLTLevelPack> newLevelPacks = null;
+	            try
+	            {
+					newLevelPacks = SLTDeserializer.decodeLevels(response);
+	            }
+	            catch (Exception e)
+	            {
+	                Debug.Log(e.Message);
+	                _connectFailCallback(new SLTStatusLevelsParseError());
+	                return;
+	            }
 
-                foreach (var item in _levelPacks)
-                {
-                    Debug.Log("LP -" + item.token);
-                }
+				// if new levels are received and parsed, then only dispose old ones and assign new ones.
+				if (newLevelPacks != null) 
+				{    
+					disposeLevelPacks();
+					_levelPacks = newLevelPacks;
+				}
+			}
 
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.Message);
-                _connectFailCallback(new SLTStatusLevelsParseError());
-                return;
-            }
-
-            _saltrUserId = responseData["saltrUserId"].ToString();
+            _saltrUserId = response["saltrUserId"].ToString();
             _conected = true;
-            _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", responseData);
+            _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", response);
 
             _activeFeatures = saltrFeatures;
             _connectSuccessCallback();
 
             Debug.Log("[SALTR] AppData load success. LevelPacks loaded: " + _levelPacks.Count);
+			//TODO @GSAR: later we need to report the feature set differences by an event or a callback to client;
         }
         else
-            _connectFailCallback(new SLTStatus(int.Parse(responseData["errorCode"].ToString()), responseData["errorMessage"].ToString()));
+            _connectFailCallback(new SLTStatus(int.Parse(response["errorCode"].ToString()), response["errorMessage"].ToString()));
 
         resource.dispose();
     }
@@ -610,28 +636,41 @@ public class SLTUnity
             else return null;
     }
 
+	void disposeLevelPacks ()
+	{
+		for(int i =0; i<_levelPacks.Count; ++i)
+		{
+			_levelPacks[i].dispose();
+		}
+		_levelPacks.Clear();
+	}
 
     private void syncDeveloperFeatures()
     {
-        SLTRequestArguments args = new SLTRequestArguments();
+		Dictionary<string,string> urlVars = new Dictionary<string, string>();
+		urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_FEATURES; //TODO @GSAR: remove later
+		urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_FEATURES;
+
+		SLTRequestArguments args = new SLTRequestArguments();
+		args.apiVersion = API_VERSION;
+		args.clientKey = _clientKey;
+
 
         if (_deviceId != null)
             args.deviceId = _deviceId;
         else
             Debug.Log("Field 'deviceId' is required.");
 
-
-        if (_socialId != null && _socialNetwork != null)
+        if (_socialId != null)
         {
             args.socialId = _socialId;
-            args.socialNetwork = _socialNetwork;
         }
 
-        args.clientKey = _clientKey;
+		if (_saltrUserId != null) {
+			args.saltrUserId = _saltrUserId;
+		}
 
-        List<object> featureList = new List<object>();
-
-
+		List<object> featureList = new List<object>();
         foreach (string i in _developerFeatures.Keys)
         {
             SLTFeature SLTFeature = _developerFeatures[i] as SLTFeature;
@@ -640,14 +679,11 @@ public class SLTUnity
 
         args.developerFeatures = featureList;
 
-        SLTResourceTicket SLTTicket = new SLTResourceTicket(SLTConfig.SALTR_DEVAPI_URL, args);
+		urlVars["args"] = LitJson.JsonMapper.ToJson(args);
 
-        SLTTicket.isGet = false;
-        // SLTTicket.method = "post";
-        SLTTicket.dropTimeout = 4;
-        SLTTicket.idleTimeout = 4;
-        SLTResource SLTResource = new SLTResource("syncFeatures", SLTTicket, syncSuccessHandler, syncFailHandler);
-        SLTResource.load();
+		SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
+		SLTResource resource = new SLTResource("syncFeatures", ticket, syncSuccessHandler, syncFailHandler);
+		resource.load();
     }
 
 
@@ -663,9 +699,9 @@ public class SLTUnity
     }
 
 
-    private void appDataLoadFailHandler(SLTResource SLTResource)
+	private void appDataLoadFailCallback(SLTResource resource)
     {
-        SLTResource.dispose();
+		resource.dispose();
         _isLoading = false;
         _connectFailCallback(new SLTStatusAppDataLoadFail());
     }
@@ -682,15 +718,6 @@ public class SLTUnity
     {
         _levelContentLoadFailCallback(new SLTStatusLevelContentLoadFail());
     }
-
-
-    private class URLVariable
-    {
-        public string cmd { get; set; }
-        public object args { get; set; }
-
-    }
-
 
     //TODO @GSAR: port this later when SALTR is ready
 
