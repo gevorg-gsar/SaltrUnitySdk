@@ -9,8 +9,7 @@ namespace saltr_unity_sdk
 
     public class SLTLevelParser
     {
-<<<<<<< HEAD
-=======
+
         public static Dictionary<string, object> parseLevelBoards(Dictionary<string, object> boardNodes, SLTLevelSettings levelSettings)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();
@@ -58,7 +57,7 @@ namespace saltr_unity_sdk
                 string layerId = "";
                 if (layerNod.ContainsKey("layerId"))
                     layerId = layerNod["layerId"].ToString();
->>>>>>> ed3d50691f84445c23f4f6e525500142ff463692
+
 
 
         //private static void parseComposites(SLTBoardLayer layer, SLTCells cellMatrix, SLTLevelSettings levelSettings)
@@ -70,11 +69,11 @@ namespace saltr_unity_sdk
         //        IEnumerable<object> cells = new List<object>();
         //        IEnumerable<object> cellPosition = new List<object>();
 
-<<<<<<< HEAD
+
         //        if (compositeNodes.Contains("cell"))
         //        {
         //            cellPosition = (IEnumerable<object>)compositeNode["cell"];
-=======
+
                 IEnumerable<object> composites = new List<object>();
                 if (layerNod.ContainsKey("composites"))
                     composites = (IEnumerable<object>)layerNod["composites"];
@@ -85,14 +84,14 @@ namespace saltr_unity_sdk
             }
             return new SLTLevelBoard(cells, layers, boardProperties);
         }
->>>>>>> ed3d50691f84445c23f4f6e525500142ff463692
+
 
         //            string assetId = "";
         //            string stateId = "";
         //            if (compositeNode.ContainsKey("assetId"))
         //                assetId = compositeNode["assetId"].ToString();
 
-<<<<<<< HEAD
+
         //            if (compositeNode.ContainsKey("stateId"))
         //                stateId = compositeNode["stateId"].ToString();
 
@@ -101,7 +100,7 @@ namespace saltr_unity_sdk
         //        }
         //    }
         //}
-=======
+
         private static void parseLayer(SLTBoardLayer layer, SLTCells cells, SLTLevelSettings levelSettings)
         {
             parseFixedAssets(layer, cells, levelSettings);
@@ -160,7 +159,7 @@ namespace saltr_unity_sdk
                 }
             }
         }
->>>>>>> ed3d50691f84445c23f4f6e525500142ff463692
+
 
 
 		//complete

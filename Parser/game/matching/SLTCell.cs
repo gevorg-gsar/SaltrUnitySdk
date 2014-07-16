@@ -72,11 +72,9 @@ namespace saltr_unity_sdk
 		public void removeAssetInctance(string layerId, int layerIndex)
 		{
 			_instancesByLayerId.Remove(layerId);
-<<<<<<< HEAD:Assets/Scripts/Saltr_SDK/Parser/game/matching/SLTCell.cs
+
 			_instancesByLayerIndex.Remove(layerIndex.ToString());
-=======
-			_instancesByLayerIndex.Remove(layerIndex);
->>>>>>> ed3d50691f84445c23f4f6e525500142ff463692:Assets/Scripts/saltr_sdk/Parser/game/SLTCell.cs
+
 		}
 
     }

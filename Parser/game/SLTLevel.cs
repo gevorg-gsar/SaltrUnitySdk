@@ -12,9 +12,9 @@ namespace saltr_unity_sdk
     {
         private int _packIndex;
 
-        public static const string LEVEL_TYPE_NONE = "noLevels";
-        public static const string LEVEL_TYPE_MATCHING = "matching";
-        public static const string LEVEL_TYPE_2DCANVAS = "canvas2D";
+        public  const string LEVEL_TYPE_NONE = "noLevels";
+        public  const string LEVEL_TYPE_MATCHING = "matching";
+        public  const string LEVEL_TYPE_2DCANVAS = "canvas2D";
 
         Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
