@@ -106,7 +106,7 @@ public class GETPOSTWrapper : MonoBehaviour
 
       
             form.AddField("args", MiniJSON.Json.Serialize( post));
-            form.AddField("cmd", SLTConfig.CMD_DEV_SYNC_FEATURES);
+            form.AddField("cmd", SLTConfig.ACTION_DEV_SYNC_FEATURES);
 
 
             //foreach (var item in post.Keys)

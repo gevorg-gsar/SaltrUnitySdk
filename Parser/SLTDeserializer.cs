@@ -7,7 +7,6 @@ namespace saltr_unity_sdk
 {
     public class SLTDeserializer
     {
-        public static SLTGameTypes gameType { get; set; }
         public SLTDeserializer()
         { }
 
@@ -101,10 +100,33 @@ namespace saltr_unity_sdk
         }
 
 
+         private static SLTLevel createLevel( string levelType, string id, int index, int  localIndex, int packIndex, string url, Dictionary<string,object> properties,string version)
+         {
+        switch (levelType) {
+            case SLTLevel.LEVEL_TYPE_MATCHING:
+                return new SLTMatchingLevel(id, index, localIndex, packIndex, url, properties, version);
+                break;
+            case SLTLevel.LEVEL_TYPE_2DCANVAS:
+                return new SLT2DLevel(id, index, localIndex, packIndex, url, properties, version);
+                break;
+        }
+        return null;
+    }
+
+
+
         public static List<SLTLevelPack> decodeLevels(Dictionary<string, object> rootNod)
         {
             if (rootNod == null)
                 return new List<SLTLevelPack>();
+            string levelType = SLTLevel.LEVEL_TYPE_MATCHING;
+
+            if(rootNod.ContainsKey("levelType"))
+            {
+                levelType = rootNod["levelType"].ToString();
+            }
+
+
 
             List<SLTLevelPack> levelPacks = new List<SLTLevelPack>();
 
@@ -176,19 +198,9 @@ namespace saltr_unity_sdk
                             if (levelDict.ContainsKey("index"))
                                 localIndex = Int32.Parse(levelDict["index"].ToString());
                         }
-                        SLTLevel lv = null;
-                        switch (gameType)
-                        {
-                            case SLTGameTypes.BoardBased:
-                                lv = new SLTLevel(id.ToString(), ind, localIndex, packIndex, url, prop, version.ToString());
-                                break;
-                            case SLTGameTypes.SideScrolling:
-                                lv = new SLT2dLevel(id.ToString(), ind, localIndex, packIndex, url, prop, version.ToString());
-                                break;
-                        }
-
-                        if (lv != null)
-                            levelStructureList.Add(lv);
+                        
+                      
+                            levelStructureList.Add(createLevel(levelType, id.ToString(), index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
                     }
 
                     levelStructureList.Sort(new saltr_unity_sdk.SLTLevel.SortById());

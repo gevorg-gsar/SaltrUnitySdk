@@ -18,5 +18,18 @@ namespace Assets
         public string appVersion { get; set; }
 
         public List<object> developerFeatures { get; set; }
+
+        public string apiVersion { get; set; }
+
+        public string cmd { get; set; }
+        public string action { get; set; }
+
+        public string saltrUserId { get; set; }
+
+        public Dictionary<string,object> basicProperties { get; set; }
+
+        public Dictionary<string, object> customProperties { get; set; }
+
+
     }
 }

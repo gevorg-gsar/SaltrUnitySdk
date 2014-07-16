@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
+using System;
+
 
 namespace saltr_unity_sdk
 {
     public class SLTLevel
     {
         private int _packIndex;
+
+        public static const string LEVEL_TYPE_NONE = "noLevels";
+        public static const string LEVEL_TYPE_MATCHING = "matching";
+        public static const string LEVEL_TYPE_2DCANVAS = "canvas2D";
+
+        Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
         public int packIndex
         {
@@ -25,7 +34,7 @@ namespace saltr_unity_sdk
         }
 
         private string _id;
-       
+
 
         private string _contentDataUrl;
 
@@ -48,12 +57,12 @@ namespace saltr_unity_sdk
             get { return _properties; }
         }
 
-        private Dictionary<string, object> _boards;
+        protected Dictionary<string, object> _boards;
 
-        public virtual  Dictionary<string, object> boards
+        public virtual Dictionary<string, object> boards
         {
-             get { return _boards; }
-             set { _boards = value; }
+            get { return _boards; }
+            set { _boards = value; }
         }
 
         private bool _contentReady;
@@ -109,34 +118,71 @@ namespace saltr_unity_sdk
             return _boards[id] as SLTLevelBoard;
         }
 
-        public  void updateContent(Dictionary<string, object> rootNode)
+        public void updateContent(Dictionary<string, object> rootNode)
         {
-            _rootNode = rootNode;
+
+
+
+            Dictionary<string, object> boardsNode = new Dictionary<string, object>();
+
 
             if (rootNode.ContainsKey("boards"))
-                _boardsNode = rootNode["boards"].toDictionaryOrNull();
+            {
+                boardsNode = rootNode["boards"].toDictionaryOrNull();
 
-            if (rootNode.ContainsKey("properties"))
-                _properties = rootNode["properties"].toDictionaryOrNull();
+            }
+            else
+            {
+                Debug.Log("[SALTR: ERROR] Level content's 'boards' node can not be found.");
+            }
 
-            _levelSettings = SLTLevelParser.parseLevelSettings(rootNode);
-            generateAllBoards();
+            SLTLevelParser parser = getParser();
+
+            _properties = rootNode["properties"];
+
+            try
+            {
+                _assetMap = parser.parseLevelAssets(rootNode);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[SALTR: ERROR] Level content asset parsing failed.");
+            }
+
+            try
+            {
+                _boards = parser.parseLevelContent(boardsNode, _assetMap);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[SALTR: ERROR] Level content boards parsing failed.");
+            }
+
+            regenerateAllBoards();
             _contentReady = true;
+
         }
 
-        public virtual void generateAllBoards()
+        public void regenerateBoard(string boardId)
         {
-            if (_boardsNode != null)
-                _boards = SLTLevelParser.parseLevelBoards(_boardsNode, _levelSettings);
+            if (_boards != null && _boards[boardId] != null)
+            {
+                SLTBoard board = _boards[boardId] as SLTBoard;
+                board.regenerate();
+
+            }
         }
 
-        public virtual void generateBoard(string boardId)
+        public void regenerateAllBoards()
         {
-            if (_boardsNode != null)
-                _boards[boardId] = SLTLevelParser.parseLevelBoard(_boardsNode[boardId].toDictionaryOrNull(), _levelSettings);
+            foreach (var key in _boards.Keys)
+            {
+                (_boards[key] as SLTBoard).regenerate();
+            }
         }
 
-        protected virtual SLTLevelParser 
+
+        protected abstract SLTLevelParser getParser();
 
 
         internal void dispose()

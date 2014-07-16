@@ -8,9 +8,12 @@ namespace saltr_unity_sdk
     public class SLTConfig
     {
 
-        public static readonly string CMD_APP_DATA = "getAppData";
-        public static readonly string CMD_ADD_PROPERTY = "addProperty";
-        public static readonly string CMD_DEV_SYNC_FEATURES = "syncFeatures";
+
+        public static readonly string ACTION_GET_APP_DATA = "getAppData";
+        public static readonly string ACTION_ADD_PROPERTIES = "addProperties";
+        public static readonly string ACTION_DEV_SYNC_FEATURES = "syncFeatures";
+
+        
 
         public static readonly string SALTR_API_URL = "https://api.saltr.com/call";
         //public static readonly string SALTR_API_URL = "https://saltapi.includiv.com/call";

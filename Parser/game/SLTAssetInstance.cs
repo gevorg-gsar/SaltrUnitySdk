@@ -27,7 +27,7 @@ namespace saltr_unity_sdk
         public SLTAssetInstance(string Token, List<SLTAssetState> state, object Properties)
         {
             _token = Token;
-            _state = state;
+            _states = state;
             _properties = Properties;
         }
     }

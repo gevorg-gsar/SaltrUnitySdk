@@ -9,6 +9,8 @@ namespace saltr_unity_sdk
 
     public class SLTLevelParser
     {
+<<<<<<< HEAD
+=======
         public static Dictionary<string, object> parseLevelBoards(Dictionary<string, object> boardNodes, SLTLevelSettings levelSettings)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();
@@ -56,15 +58,23 @@ namespace saltr_unity_sdk
                 string layerId = "";
                 if (layerNod.ContainsKey("layerId"))
                     layerId = layerNod["layerId"].ToString();
+>>>>>>> ed3d50691f84445c23f4f6e525500142ff463692
 
-                IEnumerable<object> fixedAssets = new List<object>();
-                if (layerNod.ContainsKey("fixedAssets"))
-                    fixedAssets = (IEnumerable<object>)layerNod["fixedAssets"];
 
-                IEnumerable<object> chunks = new List<object>();
-                if (layerNod.ContainsKey("chunks"))
-                    chunks = (IEnumerable<object>)layerNod["chunks"];
+        //private static void parseComposites(SLTBoardLayer layer, SLTCells cellMatrix, SLTLevelSettings levelSettings)
+        //{
+        //    IEnumerable<object> compositeNodes = layer.compositeNodes;/
+        //    for (int i = 0; i < compositeNodes.Count(); i++)
+        //    {
+        //        Dictionary<string, object> compositeNode = compositeNodes.ElementAt(i).toDictionaryOrNull();
+        //        IEnumerable<object> cells = new List<object>();
+        //        IEnumerable<object> cellPosition = new List<object>();
 
+<<<<<<< HEAD
+        //        if (compositeNodes.Contains("cell"))
+        //        {
+        //            cellPosition = (IEnumerable<object>)compositeNode["cell"];
+=======
                 IEnumerable<object> composites = new List<object>();
                 if (layerNod.ContainsKey("composites"))
                     composites = (IEnumerable<object>)layerNod["composites"];
@@ -75,8 +85,23 @@ namespace saltr_unity_sdk
             }
             return new SLTLevelBoard(cells, layers, boardProperties);
         }
+>>>>>>> ed3d50691f84445c23f4f6e525500142ff463692
+
+        //            string assetId = "";
+        //            string stateId = "";
+        //            if (compositeNode.ContainsKey("assetId"))
+        //                assetId = compositeNode["assetId"].ToString();
+
+<<<<<<< HEAD
+        //            if (compositeNode.ContainsKey("stateId"))
+        //                stateId = compositeNode["stateId"].ToString();
 
 
+        //            new SLTComposite(layer, assetId, stateId, (cellMatrix.retrieve(cellPosition.ElementAt(0).toIntegerOrZero(), cellPosition.ElementAt(1).toIntegerOrZero())) as SLTCell, levelSettings);
+        //        }
+        //    }
+        //}
+=======
         private static void parseLayer(SLTBoardLayer layer, SLTCells cells, SLTLevelSettings levelSettings)
         {
             parseFixedAssets(layer, cells, levelSettings);
@@ -135,6 +160,7 @@ namespace saltr_unity_sdk
                 }
             }
         }
+>>>>>>> ed3d50691f84445c23f4f6e525500142ff463692
 
 
 		//complete
@@ -152,7 +178,7 @@ namespace saltr_unity_sdk
 
 
         //complete
-        protected  SLTAssetState parseAssetState(Dictionary<string, object> stateNode)
+        protected virtual  SLTAssetState parseAssetState(Dictionary<string, object> stateNode)
         {
             string token = String.Empty;
             Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -187,7 +213,7 @@ namespace saltr_unity_sdk
 
 
         //complete
-        private  Dictionary<string, object> parseLevelAssets(Dictionary<string, object> assetNodes)
+        public  Dictionary<string, object> parseLevelAssets(Dictionary<string, object> assetNodes)
         {
             Dictionary<string, object> assetMap = new Dictionary<string, object>();
             foreach (var assetId in assetNodes.Keys)

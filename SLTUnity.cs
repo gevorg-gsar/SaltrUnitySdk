@@ -7,16 +7,13 @@ using Assets;
 using System.Timers;
 using System.Linq;
 
-public enum SLTGameTypes
-{
-    BoardBased,
-    SideScrolling,
-    Isometric,
-    TopDown
-}
+
 
 public class SLTUnity
 {
+    public const string API_VERSION = "1.0.1";
+
+
     protected string _socialId;
     protected string _socialNetwork;
     private string _deviceId;
@@ -54,8 +51,8 @@ public class SLTUnity
         get { return _levelPacks; }
         set { _levelPacks = value; }
     }
-    protected Action _appDataLoadSuccessCalback;
-    protected Action<SLTStatus> _appDataLoadFailCalback;
+    protected Action _connectSuccessCallback;
+    protected Action<SLTStatus> _connectFailCallback;
 
 
     protected Action _levelContentLoadSuccessCalbck;
@@ -97,12 +94,70 @@ public class SLTUnity
         set { _useNoFeatures = value; }
     }
 
-    public SLTGameTypes gameType
+    public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
     {
-        get { return SLTDeserializer.gameType; }
-        set { SLTDeserializer.gameType = value; }
+        if (basicProperties == null && customProperties == null || _saltrUserId == null)
+            return;
 
+        SLTRequestArguments args = new SLTRequestArguments()
+        {
+            cmd = SLTConfig.ACTION_ADD_PROPERTIES,
+            action = SLTConfig.ACTION_ADD_PROPERTIES,
+            apiVersion = API_VERSION,
+            clientKey = _clientKey
+        };
+        if (_deviceId != null)
+        {
+            args.deviceId = _deviceId;
+        }
+        else
+            Debug.Log("DeviceId is required");
+
+        if (_socialId != null)
+            args.socialId = _socialId;
+
+        if (_saltrUserId != null)
+            args.saltrUserId = _saltrUserId;
+
+        if (basicProperties != null)
+            args.basicProperties = basicProperties;
+
+        if (customProperties != null)
+            args.customProperties = customProperties;
+
+        Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
+        {
+            Debug.Log("success");
+            Dictionary<string, object> data = res.data;
+            res.dispose();
+        };
+
+        Action<SLTResource> propertyAddFail = delegate(SLTResource res)
+       {
+           Debug.Log("error");
+           res.dispose();
+       };
+
+
+        SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, args, _requestIdleTimeout);
+        SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
+        resource.load();
     }
+
+
+    private static SLTResourceTicket getTicket(string url, SLTRequestArguments args, int timeout = 0)
+    {
+        SLTResourceTicket ticket = new SLTResourceTicket(url, args);
+        ticket.method = "POST";
+        if (timeout > 0)
+        {
+            ticket.idleTimeout = timeout;
+        }
+
+        return ticket;
+    }
+
+
 
     public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
     {
@@ -149,9 +204,9 @@ public class SLTUnity
     {
         get
         {
-           
 
-           // levelPacks = levelPacks.OrderByDescending(l => l.index).ToList();
+
+            // levelPacks = levelPacks.OrderByDescending(l => l.index).ToList();
             List<SLTLevel> allLevels = new List<SLTLevel>();
             for (int i = 0; i < _levelPacks.Count; i++)
             {
@@ -271,12 +326,12 @@ public class SLTUnity
 
         // object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
         // if (cachedData == null)
-       // {
-            foreach (var item in _developerFeatures.Keys)
-            {
-                _activeFeatures[item] = _developerFeatures[item];
-            }
-       // }
+        // {
+        foreach (var item in _developerFeatures.Keys)
+        {
+            _activeFeatures[item] = _developerFeatures[item];
+        }
+        // }
         //else
         //{
         //    if (cachedData != null)
@@ -289,26 +344,29 @@ public class SLTUnity
         _started = true;
     }
 
-    public void connect(Action successCallback, Action<SLTStatus> failCallback, object basicProperties = null, object customProperties = null)
+    public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string,object> basicProperties = null, Dictionary<string,object> customProperties = null)
     {
-        if (_socialId == null || _socialNetwork == null)
-            Debug.Log("NULL!!");
+     
         if (_isLoading || !_started)
             return;
 
-        _appDataLoadFailCalback = failCallback;
-        _appDataLoadSuccessCalback = successCallback;
+        _connectFailCallback = failCallback;
+        _connectSuccessCallback = successCallback;
+
         _isLoading = true;
 
-        SLTResource resource = createAppDataResource(appDataLoadSuccessHandler, appDataLoadFailHandler);
+        SLTResource resource = createAppDataResource(appDataLoadSuccessHandler, appDataLoadFailHandler,basicProperties,customProperties);
         resource.ticket.idleTimeout = requestIdleTimeout;
         resource.ticket.dropTimeout = requestIdleTimeout;
         resource.load();
     }
 
-    private SLTResource createAppDataResource(Action<SLTResource> appDataAssetLoadCompleteHandler, Action<SLTResource> appDataAssetLoadErrorHandler)
+    private SLTResource createAppDataResource(Action<SLTResource> appDataAssetLoadCompleteHandler, Action<SLTResource> appDataAssetLoadErrorHandler, Dictionary<string,object> basicProperties,
+        Dictionary<string,object> customProperties)
     {
         SLTRequestArguments args = new SLTRequestArguments();
+
+        args.cmd = SLTConfig.ACTION_GET_APP_DATA;
 
         if (_deviceId != null)
             args.deviceId = _deviceId;
@@ -321,6 +379,22 @@ public class SLTUnity
             args.socialId = _socialId;
             args.socialNetwork = _socialNetwork;
         }
+
+        if(_saltrUserId != null)
+        {
+            args.saltrUserId = _saltrUserId;
+        }
+
+        if (basicProperties != null)
+        {
+            args.basicProperties = basicProperties;
+        }
+
+        if (customProperties != null)
+        {
+            args.customProperties = customProperties;
+        }
+
 
         args.clientKey = _clientKey;
 
@@ -469,7 +543,7 @@ public class SLTUnity
             catch (Exception e)
             {
                 Debug.Log(e.Message);
-                _appDataLoadFailCalback(new SLTStatusFeaturesParseError());
+                _connectFailCallback(new SLTStatusFeaturesParseError());
                 return;
             }
 
@@ -484,7 +558,7 @@ public class SLTUnity
             }
             catch
             {
-                _appDataLoadFailCalback(new SLTStatusExperimentsParseError());
+                _connectFailCallback(new SLTStatusExperimentsParseError());
                 return;
             }
 
@@ -501,7 +575,7 @@ public class SLTUnity
             catch (Exception e)
             {
                 Debug.Log(e.Message);
-				_appDataLoadFailCalback(new SLTStatusLevelsParseError());
+                _connectFailCallback(new SLTStatusLevelsParseError());
                 return;
             }
 
@@ -510,22 +584,22 @@ public class SLTUnity
             _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", responseData);
 
             _activeFeatures = saltrFeatures;
-            _appDataLoadSuccessCalback();
+            _connectSuccessCallback();
 
             Debug.Log("[SALTR] AppData load success. LevelPacks loaded: " + _levelPacks.Count);
         }
         else
-          	_appDataLoadFailCalback(new SLTStatus(int.Parse(responseData["errorCode"].ToString()), responseData["errorMessage"].ToString()));
+            _connectFailCallback(new SLTStatus(int.Parse(responseData["errorCode"].ToString()), responseData["errorMessage"].ToString()));
 
         resource.dispose();
     }
 
-    public Dictionary<string,object> getFeatureProperties(string token)
+    public Dictionary<string, object> getFeatureProperties(string token)
     {
         Debug.Log(_developerFeatures[_developerFeatures.Keys.ElementAt(0)]);
         if (_activeFeatures.ContainsKey(token))
         {
-            return ( _activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
+            return (_activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
         }
         else
             if (_developerFeatures.ContainsKey(token))
@@ -569,7 +643,7 @@ public class SLTUnity
         SLTResourceTicket SLTTicket = new SLTResourceTicket(SLTConfig.SALTR_DEVAPI_URL, args);
 
         SLTTicket.isGet = false;
-       // SLTTicket.method = "post";
+        // SLTTicket.method = "post";
         SLTTicket.dropTimeout = 4;
         SLTTicket.idleTimeout = 4;
         SLTResource SLTResource = new SLTResource("syncFeatures", SLTTicket, syncSuccessHandler, syncFailHandler);
@@ -593,7 +667,7 @@ public class SLTUnity
     {
         SLTResource.dispose();
         _isLoading = false;
-		_appDataLoadFailCalback(new SLTStatusAppDataLoadFail());
+        _connectFailCallback(new SLTStatusAppDataLoadFail());
     }
 
 
