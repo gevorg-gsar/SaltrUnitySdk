@@ -65,14 +65,13 @@ namespace saltr_unity_sdk
             if (_isBlocked == false)
             {
                 _instancesByLayerId[layerId] = assetInstance;
-                _instancesByLayerId[layerIndex.ToString()] = assetInstance;
+				_instancesByLayerIndex[layerIndex.ToString()] = assetInstance;
             }
         }
 
 		public void removeAssetInctance(string layerId, int layerIndex)
 		{
 			_instancesByLayerId.Remove(layerId);
-
 			_instancesByLayerIndex.Remove(layerIndex.ToString());
 
 		}

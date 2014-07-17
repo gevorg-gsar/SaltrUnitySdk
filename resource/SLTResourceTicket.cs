@@ -59,12 +59,12 @@ namespace Assets
 				foreach (string key in _variables.Keys)
 	            {
 	                requestUrl += seperator;
-					requestUrl += key + "=" + WWW.EscapeURL(_variables[key]);	
+					requestUrl += key + "=" + _variables[key];	
 					if('?' == seperator)
 						seperator = '&';
 	            }
 
-            return requestUrl;
+			return WWW.EscapeURL(requestUrl);
         }
     }
 }

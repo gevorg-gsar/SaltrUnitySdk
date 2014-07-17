@@ -33,8 +33,10 @@ namespace saltr_unity_sdk
 
         public void generateContent()
         {
+			//resetting chunk cells, as when chunk can contain empty cells, previous generation can leave assigned values to cells
 			resetChunkCells();
 
+			//availableCells are being always overwritten here, so no need to initialize
 			_availableCells = _chunkCells.ToList();
 
 //            List<SLTCell> tempCells = new List<SLTCell>();

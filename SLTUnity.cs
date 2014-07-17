@@ -8,7 +8,7 @@ using System.Timers;
 using System.Linq;
 
 
-
+//TODO:: @daal add some flushCache method.
 public class SLTUnity
 {
     public const string API_VERSION = "1.0.1";
@@ -409,7 +409,7 @@ public class SLTUnity
 		return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
     }
 
-    public void loadLevelContent(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache = true)
+    public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache = true)
     {
         _levelContentLoadSuccessCalbck = loadSuccessCallback;
         _levelContentLoadFailCallback = loadFailCallback;
@@ -417,82 +417,74 @@ public class SLTUnity
         if (_conected == false)
         {
             if (useCache)
-                content = loadLevelContentInternally(SLTLevelPack, SLTLevel);
+                content = loadLevelContentInternally(SLTLevel);
             else
-                content = loadLevelContentFromDisk(SLTLevelPack, SLTLevel);
+                content = loadLevelContentFromDisk(SLTLevel);
 
             levelContentLoadSuccessHandler(SLTLevel, content);
         }
         else
         {
-            if (useCache == false || SLTLevel.version != getCachedLevelVersion(SLTLevelPack, SLTLevel))
-                loadLevelContentFromSaltr(SLTLevelPack, SLTLevel);
+            if (useCache == false || SLTLevel.version != getCachedLevelVersion(SLTLevel))
+                loadLevelContentFromSaltr(SLTLevel);
             else
             {
-                content = loadLevelContentFromCache(SLTLevelPack, SLTLevel);
+                content = loadLevelContentFromCache(SLTLevel);
                 levelContentLoadSuccessHandler(SLTLevel, content);
             }
         }
     }
 
 
-    private object loadLevelContentFromDisk(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel)
+	private object loadLevelContentFromDisk(SLTLevel sltLevel)
     {
-        string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE, SLTLevelPack.index.ToString(), SLTLevel.index.ToString());
-
+		string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
         return _repository.getObjectFromApplication(url);
     }
 
-    private object loadLevelContentFromCache(SLTLevelPack levelPack, SLTLevel level)
+    private object loadLevelContentFromCache(SLTLevel sltLevel)
     {
 
-        string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, levelPack.index.ToString(), level.index.ToString());
+		string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
         return _repository.getObjectFromCache(url);
     }
 
 
-    private void loadLevelContentFromSaltr(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel)
+    private void loadLevelContentFromSaltr( SLTLevel sltLevel)
     {
-        string dataUrl = SLTLevel.contentDataUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
-        SLTResourceTicket ticket = new SLTResourceTicket(dataUrl, null);
-        if (_requestIdleTimeout > 0)
-            ticket.idleTimeout = _requestIdleTimeout;
-
-
-
-        Action<SLTResource> loadSuccessInternalHandler = delegate(SLTResource res)
+		string dataUrl = sltLevel.contentDataUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
+        SLTResourceTicket ticket = getTicket(dataUrl , null, _requestIdleTimeout);
+        
+		Action<SLTResource> loadFromSaltrSuccessCallback = delegate(SLTResource res)
         {
             object contentData = res.data;
             if (contentData != null)
-                cacheLevelContent(SLTLevelPack, SLTLevel, contentData);
+				cacheLevelContent( sltLevel, contentData);
             else
-                contentData = loadLevelContentInternally(SLTLevelPack, SLTLevel);
+				contentData = loadLevelContentInternally(sltLevel);
             if (contentData != null)
-                levelContentLoadSuccessHandler(SLTLevel, contentData);
+				levelContentLoadSuccessHandler(sltLevel, contentData);
             else
                 levelContentLoadFailHandler();
             res.dispose();
 
         };
 
-        Action<SLTResource> loadFailInternalHandler = delegate(SLTResource SLTResource)
-      {
-          object contentData = loadLevelContentInternally(SLTLevelPack, SLTLevel);
-          levelContentLoadSuccessHandler(SLTLevel, contentData);
-          SLTResource.dispose();
-      };
+		Action<SLTResource> loadFromSaltrFailCallback = delegate(SLTResource SLTResource)
+      	{
+			object contentData = loadLevelContentInternally(sltLevel);
+			levelContentLoadSuccessHandler(sltLevel, contentData);
+          	SLTResource.dispose();
+      	};
 
-        SLTResource resource = new SLTResource("saltr", ticket, loadSuccessInternalHandler, loadFailInternalHandler);
-
-        resource.ticket.idleTimeout = requestIdleTimeout;
-        resource.ticket.dropTimeout = requestIdleTimeout;
+		SLTResource resource = new SLTResource("saltr", ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
         resource.load();
     }
 
 
-    private string getCachedLevelVersion(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel)
+	private string getCachedLevelVersion(SLTLevel sltLevel)
     {
-        string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, SLTLevelPack.index.ToString(), SLTLevel.index.ToString());
+		string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
         return _repository.getObjectVersion(cachedFileName);
     }
 
@@ -504,11 +496,11 @@ public class SLTUnity
     }
 
 
-    private object loadLevelContentInternally(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel)
+    private object loadLevelContentInternally( SLTLevel sltLevel)
     {
-        object contentData = loadLevelContentFromCache(SLTLevelPack, SLTLevel);
+		object contentData = loadLevelContentFromCache( sltLevel);
         if (contentData == null)
-            contentData = loadLevelContentFromDisk(SLTLevelPack, SLTLevel);
+			contentData = loadLevelContentFromDisk(sltLevel);
         return contentData;
     }
 
@@ -707,10 +699,10 @@ public class SLTUnity
     }
 
 
-    private void cacheLevelContent(SLTLevelPack SLTLevelPack, SLTLevel SLTLevel, object content)
+	private void cacheLevelContent(SLTLevel sltLevel, object content)
     {
-        string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, SLTLevelPack.index.ToString(), SLTLevel.index.ToString());
-        _repository.cacheObject(cachedFileName, SLTLevel.version.ToString(), content);
+		string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
+		_repository.cacheObject(cachedFileName, sltLevel.version.ToString(), content);
     }
 
 
