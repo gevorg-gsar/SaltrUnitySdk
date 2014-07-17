@@ -16,12 +16,6 @@ public class SLTUnity
 
     protected string _socialId;
     private string _deviceId;
-
-    public string deviceId
-    {
-        get { return _deviceId; }
-        set { _deviceId = value; }
-    }
     protected bool _conected;
     protected string _clientKey;
     protected string _saltrUserId;
@@ -29,127 +23,29 @@ public class SLTUnity
 
     private ISLTRepository _repository;
 
-    protected ISLTRepository repository
-    {
-        get { return _repository; }
-        set { _repository = value; }
-    }
-
     protected Dictionary<string, object> _activeFeatures;
     protected Dictionary<string, object> _developerFeatures;
-    private List<SLTExperiment> _experiments = new List<SLTExperiment>();
 
-    protected List<SLTExperiment> experiments
-    {
-        get { return _experiments; }
-    }
+    private List<SLTExperiment> _experiments = new List<SLTExperiment>();
     private List<SLTLevelPack> _levelPacks = new List<SLTLevelPack>();
 
-    public List<SLTLevelPack> levelPacks
-    {
-        get { return _levelPacks; }
-        set { _levelPacks = value; }
-    }
     protected Action _connectSuccessCallback;
     protected Action<SLTStatus> _connectFailCallback;
-
-
     protected Action _levelContentLoadSuccessCalbck;
     protected Action<SLTStatusLevelContentLoadFail> _levelContentLoadFailCallback;
 
     private int _requestIdleTimeout;
-
-    public int requestIdleTimeout
-    {
-        get { return _requestIdleTimeout; }
-        set { _requestIdleTimeout = value; }
-    }
     private bool _devMode;
-
-    public bool devMode
-    {
-        set { _devMode = value; }
-    }
-    
-
     private bool _started;
     private bool _useNoLevels;
-
-    public bool useNoLevels
-    {
-        get { return _useNoLevels; }
-        set { _useNoLevels = value; }
-    }
     private bool _useNoFeatures;
-
-    public bool useNoFeatures
-    {
-        get { return _useNoFeatures; }
-        set { _useNoFeatures = value; }
-    }
-
 	private string _levelType;
-
-
-    public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
-    {
-        if (basicProperties == null && customProperties == null || _saltrUserId == null)
-            return;
-
-		Dictionary<string,string> urlVars = new Dictionary<string, string>();
-		urlVars["cmd"] = SLTConfig.ACTION_ADD_PROPERTIES; //TODO @GSAR: remove later
-		urlVars["action"] = SLTConfig.ACTION_ADD_PROPERTIES; 
-		
-		SLTRequestArguments args = new SLTRequestArguments()
-        {
-            apiVersion = API_VERSION,
-            clientKey = _clientKey
-        };
-
-        if (_deviceId != null)
-        {
-            args.deviceId = _deviceId;
-        }
-        else
-            Debug.Log("DeviceId is required");
-
-        if (_socialId != null)
-            args.socialId = _socialId;
-
-        if (_saltrUserId != null)
-            args.saltrUserId = _saltrUserId;
-
-        if (basicProperties != null)
-            args.basicProperties = basicProperties;
-
-        if (customProperties != null)
-            args.customProperties = customProperties;
-
-        Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
-        {
-            Debug.Log("success");
-            Dictionary<string, object> data = res.data;
-            res.dispose();
-        };
-
-        Action<SLTResource> propertyAddFail = delegate(SLTResource res)
-       {
-           Debug.Log("error");
-           res.dispose();
-       };
-
-		urlVars["args"] = LitJson.JsonMapper.ToJson(args);
-
-        SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
-        SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
-        resource.load();
-    }
 
 
     private static SLTResourceTicket getTicket(string url, Dictionary<string,string> urlVars, int timeout = 0)
     {
 		SLTResourceTicket ticket = new SLTResourceTicket(url, urlVars);
-		//ticket.method = "post";
+		//ticket.method = "post"; // to implement
         if (timeout > 0)
         {
             ticket.idleTimeout = timeout;
@@ -158,24 +54,22 @@ public class SLTUnity
         return ticket;
     }
 
-
-
     public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
     {
-
         GameObject saltr = new GameObject();
         saltr.name = "saltr";
         saltr.AddComponent<GETPOSTWrapper>();
 
         _clientKey = clientKey;
+		_deviceId = DeviceId;
         _isLoading = false;
         _conected = false;
-
+		_saltrUserId = null;
         _useNoLevels = false;
         _useNoFeatures = false;
-        _deviceId = DeviceId;
 		_levelType = null;
-        _devMode = false;
+        
+		_devMode = false;
         _started = false;
         _requestIdleTimeout = 0;
 
@@ -187,14 +81,38 @@ public class SLTUnity
         if (useCache)
             _repository = new SLTMobileRepository();
         else
-            _repository = new SLTMobileRepository();
+            _repository = new SLTDummyRepository();
     }
 
+	public ISLTRepository repository
+	{
+		set { _repository = value;}
+	}
 
-    public string socialId
-    {
-		set{ _socialId = value;}
-    }
+	public bool useNoFeatures
+	{
+		set { _useNoFeatures = value; }
+	}
+
+	public bool useNoLevels
+	{
+		set { _useNoLevels = value; }
+	}
+
+	public bool devMode
+	{
+		set { _devMode = value; }
+	}
+
+	public int requestIdleTimeout
+	{
+		set { _requestIdleTimeout = value; }
+	}
+
+	public List<SLTLevelPack> levelPacks
+	{
+		get { return _levelPacks; }
+	}
 
     public List<SLTLevel> allLevels
     {
@@ -229,6 +147,53 @@ public class SLTUnity
         }
     }
 
+	protected List<SLTExperiment> experiments
+	{
+		get { return _experiments; }
+	}
+
+	public string socialId
+	{
+		set{ _socialId = value;}
+	}
+
+	public SLTLevel getLevelByGlobalIndex(int index)
+	{
+		int levelSum = 0;
+		for (int i = 0; i < _levelPacks.Count; i++)
+		{
+			int packLenght = _levelPacks[i].levels.Count;
+			if (index >= levelSum + packLenght)
+			{
+				levelSum += packLenght;
+			}
+			else
+			{
+				int localIndex = index - levelSum;
+				return _levelPacks[i].levels[localIndex];
+			}
+		}
+		return null;
+	}
+	
+	public SLTLevelPack getPackByLevelGlobalIndex(int index)
+	{
+		int levelSum = 0;
+		for (int i = 0; i < _levelPacks.Count; i++)
+		{
+			int packLenght = _levelPacks[i].levels.Count;
+			if (index >= levelSum + packLenght)
+			{
+				levelSum += packLenght;
+			}
+			
+			else
+			{
+				return _levelPacks[i];
+			}
+		}
+		return null;
+	}
 
     public List<string> getActiveFeatureTokens()
     {
@@ -242,6 +207,21 @@ public class SLTUnity
         return tokens;
     }
 
+	public Dictionary<string, object> getFeatureProperties(string token)
+	{
+		Debug.Log(_developerFeatures[_developerFeatures.Keys.ElementAt(0)]);
+		if (_activeFeatures.ContainsKey(token))
+		{
+			return (_activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
+		}
+		else
+			if (_developerFeatures.ContainsKey(token))
+		{
+			return _developerFeatures[token].toDictionaryOrNull();
+		}
+		
+		else return null;
+	}
 
     public void importLevels(string path = null)
     {
@@ -260,44 +240,6 @@ public class SLTUnity
         {
             Debug.Log("Method 'importLevels()' should be called before 'start()' only.");
         }
-    }
-
-    public SLTLevel getLevelByGlobalIndex(int index)
-    {
-        int levelSum = 0;
-        for (int i = 0; i < _levelPacks.Count; i++)
-        {
-            int packLenght = _levelPacks[i].levels.Count;
-            if (index >= levelSum + packLenght)
-            {
-                levelSum += packLenght;
-            }
-            else
-            {
-                int localIndex = index - levelSum;
-                return _levelPacks[i].levels[localIndex];
-            }
-        }
-        return null;
-    }
-
-    public SLTLevelPack getPackByLevelGlobalIndex(int index)
-    {
-        int levelSum = 0;
-        for (int i = 0; i < _levelPacks.Count; i++)
-        {
-            int packLenght = _levelPacks[i].levels.Count;
-            if (index >= levelSum + packLenght)
-            {
-                levelSum += packLenght;
-            }
-
-            else
-            {
-                return _levelPacks[i];
-            }
-        }
-        return null;
     }
 
 	/**
@@ -435,6 +377,59 @@ public class SLTUnity
         }
     }
 
+	public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
+	{
+		if (basicProperties == null && customProperties == null || _saltrUserId == null)
+			return;
+		
+		Dictionary<string,string> urlVars = new Dictionary<string, string>();
+		urlVars["cmd"] = SLTConfig.ACTION_ADD_PROPERTIES; //TODO @GSAR: remove later
+		urlVars["action"] = SLTConfig.ACTION_ADD_PROPERTIES; 
+		
+		SLTRequestArguments args = new SLTRequestArguments()
+		{
+			apiVersion = API_VERSION,
+			clientKey = _clientKey
+		};
+		
+		if (_deviceId != null)
+		{
+			args.deviceId = _deviceId;
+		}
+		else
+			Debug.Log("DeviceId is required");
+		
+		if (_socialId != null)
+			args.socialId = _socialId;
+		
+		if (_saltrUserId != null)
+			args.saltrUserId = _saltrUserId;
+		
+		if (basicProperties != null)
+			args.basicProperties = basicProperties;
+		
+		if (customProperties != null)
+			args.customProperties = customProperties;
+		
+		Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
+		{
+			Debug.Log("success");
+			Dictionary<string, object> data = res.data;
+			res.dispose();
+		};
+		
+		Action<SLTResource> propertyAddFail = delegate(SLTResource res)
+		{
+			Debug.Log("error");
+			res.dispose();
+		};
+		
+		urlVars["args"] = LitJson.JsonMapper.ToJson(args);
+		
+		SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
+		SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
+		resource.load();
+	}
 
 	private object loadLevelContentFromDisk(SLTLevel sltLevel)
     {
@@ -610,22 +605,6 @@ public class SLTUnity
             _connectFailCallback(new SLTStatus(int.Parse(response["errorCode"].ToString()), response["errorMessage"].ToString()));
 
         resource.dispose();
-    }
-
-    public Dictionary<string, object> getFeatureProperties(string token)
-    {
-        Debug.Log(_developerFeatures[_developerFeatures.Keys.ElementAt(0)]);
-        if (_activeFeatures.ContainsKey(token))
-        {
-            return (_activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
-        }
-        else
-            if (_developerFeatures.ContainsKey(token))
-            {
-                return _developerFeatures[token].toDictionaryOrNull();
-            }
-
-            else return null;
     }
 
 	void disposeLevelPacks ()

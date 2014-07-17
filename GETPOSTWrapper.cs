@@ -16,6 +16,11 @@ public class GETPOSTWrapper : MonoBehaviour
     private Action<SLTResource> _appDataLoadSuccessHandler;
     private Action<SLTResource> _appDataLoadFailHandler;
 
+	void Awake()
+	{
+		DontDestroyOnLoad (this);
+	}
+
     void Start() { }
 
     void Update()
