@@ -45,12 +45,12 @@ namespace saltr_unity_sdk
 
 
 
-        private Dictionary<string, object> parseAssetStates(Dictionary<string, object> states)
+        private Dictionary<string, object> parseAssetStates(Dictionary<string, object> stateNodes)
         {
             Dictionary<string, object> statesMap = new Dictionary<string, object>();
-            foreach (var stateId in states.Keys)
+			foreach (var stateId in stateNodes.Keys)
             {
-                statesMap[stateId.ToString()] = parseAssetState(statesMap[stateId.ToString()].toDictionaryOrNull());
+				statesMap[stateId.ToString()] = parseAssetState(stateNodes[stateId.ToString()].toDictionaryOrNull());
             }
 
             return statesMap;
@@ -62,11 +62,15 @@ namespace saltr_unity_sdk
 
         public Dictionary<string, object> parseLevelAssets(Dictionary<string, object> rootNode)
 		{ 
+			if (!rootNode.ContainsKey ("assets"))
+								return new Dictionary<string, object>();
+
 			Dictionary<string, object> assetsNodes = rootNode["assets"].toDictionaryOrNull();
 
             Dictionary<string, object> assetMap = new Dictionary<string, object>();
 			foreach (var assetId in assetsNodes.Keys)
             {
+				if(assetsNodes.ContainsKey(assetId.ToString()))
 				assetMap[assetId.ToString()] = parseAsset(assetsNodes[assetId.ToString()].toDictionaryOrNull());
             }
             return assetMap;
@@ -86,7 +90,7 @@ namespace saltr_unity_sdk
 
             if (assetNode.ContainsKey("states"))
             {
-                States = assetNode["states"].toDictionaryOrNull();
+                States = parseAssetStates(assetNode["states"].toDictionaryOrNull());
             }
 
             if (assetNode.ContainsKey("token"))

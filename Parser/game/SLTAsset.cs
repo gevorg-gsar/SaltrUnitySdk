@@ -44,9 +44,12 @@ namespace saltr_unity_sdk
 		List<SLTAssetState> states = new List<SLTAssetState>(); 
 		foreach(object stateId in stateIds)
 		{
+
 			SLTAssetState state = _stateMap[stateId.ToString()] as SLTAssetState;
+
 			if(state != null)
 			{
+               
 				states.Add(state);
 			}
 		}

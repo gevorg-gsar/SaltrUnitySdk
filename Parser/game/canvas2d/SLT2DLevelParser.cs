@@ -74,9 +74,15 @@ namespace saltr_unity_sdk
                 Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i).toDictionaryOrNull();
                 float x = assetInstanceNode["x"].toFloatOrZero();
                 float y = assetInstanceNode["y"].toFloatOrZero();
+
                 float rotation = assetInstanceNode["rotation"].toFloatOrZero();
+
+
                 SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
+
+
                 IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
+
                 layer.addAssetInctance(new SLT2DAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties, x, y, rotation));
             }
         }

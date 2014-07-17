@@ -36,9 +36,10 @@ namespace saltr_unity_sdk
         {
             _x = x;
             _y = y;
+            _rotation = rotaition;
+           
         }
 
         public Vector3 position { get { return new Vector2(_x, _y); } set { _x = value.x; _y = value.y; } }
-
     }
 }

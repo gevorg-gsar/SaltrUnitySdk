@@ -136,23 +136,23 @@ namespace saltr_unity_sdk
 
             _properties = rootNode["properties"];
 
-            try
-            {
+            //try
+           // {
                 _assetMap = parser.parseLevelAssets(rootNode);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[SALTR: ERROR] Level content asset parsing failed.");
-            }
+           // }
+          //  catch (Exception e)
+           // {
+               // Debug.Log("[SALTR: ERROR] Level content asset parsing failed." + e.Message);
+           // }
 
-            try
-            {
+           // try
+           // {
                 _boards = parser.parseLevelContent(boardsNode, _assetMap);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[SALTR: ERROR] Level content boards parsing failed.");
-            }
+            //}
+            //catch (Exception e)
+            //{
+              //  Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
+           // }
 
             regenerateAllBoards();
             _contentReady = true;

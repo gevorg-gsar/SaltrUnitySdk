@@ -22,9 +22,9 @@ namespace saltr_unity_sdk
             if (rootDictionary == null)
                 return null;
 
-			if (rootDictionary.ContainsKey("experiments"))
+            if (rootDictionary.ContainsKey("experiments"))
             {
-				IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary["experiments"];
+                IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary["experiments"];
                 foreach (var experimentDictionaryObj in experimentDictionaryList)
                 {
                     Dictionary<string, object> experimentDictionary = (Dictionary<string, object>)experimentDictionaryObj;
@@ -32,7 +32,7 @@ namespace saltr_unity_sdk
                     string token = "";
                     string partition = "";
                     string type = "";
-					IEnumerable<object> customEvents = null;
+                    IEnumerable<object> customEvents = null;
 
                     if (experimentDictionary.ContainsKey("token"))
                         token = experimentDictionary["token"].ToString();
@@ -43,12 +43,12 @@ namespace saltr_unity_sdk
                     if (experimentDictionary.ContainsKey("type"))
                         type = experimentDictionary["type"].ToString();
 
-					if (experimentDictionary.ContainsKey("customEventList"))
-						customEvents = (IEnumerable<object>) experimentDictionary["customEventList"];
+                    if (experimentDictionary.ContainsKey("customEventList"))
+                        customEvents = (IEnumerable<object>)experimentDictionary["customEventList"];
 
-         
 
-					SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, customEvents);
+
+                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, customEvents);
                     experiments.Add(experimentInfo);
                 }
             }
@@ -75,43 +75,44 @@ namespace saltr_unity_sdk
             {
                 IEnumerable<object> featureDictionaryList = (IEnumerable<object>)rootDictionary["features"];
 
-            foreach (var featureDictionary in featureDictionaryList)
-            {
-                Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
-                string tokken = "";
-                if (featureNod.ContainsKey("token"))
-                    tokken = featureNod["token"].ToString();
+                foreach (var featureDictionary in featureDictionaryList)
+                {
+                    Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
+                    string tokken = "";
+                    if (featureNod.ContainsKey("token"))
+                        tokken = featureNod["token"].ToString();
 
-                Dictionary<string, object> properties = new Dictionary<string, object>();
-				//TODO @GSAR: remove "data" check later when API versioning is done.
-                if (featureNod.ContainsKey("data"))
-                    properties = (Dictionary<string, object>)featureNod["data"];
+                    Dictionary<string, object> properties = new Dictionary<string, object>();
+                    //TODO @GSAR: remove "data" check later when API versioning is done.
+                    if (featureNod.ContainsKey("data"))
+                        properties = (Dictionary<string, object>)featureNod["data"];
 
 
-				bool required = false;
-				if(featureNod.ContainsKey("required"))
-						required = featureNod["required"].ToString() == "true";
+                    bool required = false;
+                    if (featureNod.ContainsKey("required"))
+                        required = featureNod["required"].ToString() == "true";
 
-                features[tokken] = new SLTFeature(tokken, properties, required);
-            }
+                    features[tokken] = new SLTFeature(tokken, properties, required);
+                }
             }
 
             return features;
         }
 
 
-         private static SLTLevel createLevel( string levelType, string id, int index, int  localIndex, int packIndex, string url, Dictionary<string,object> properties,string version)
-         {
-        switch (levelType) {
-            case SLTLevel.LEVEL_TYPE_MATCHING:
-                return new SLTMatchingLevel(id, index, localIndex, packIndex, url, properties, version);
-                break;
-            case SLTLevel.LEVEL_TYPE_2DCANVAS:
-                return new SLT2DLevel(id, index, localIndex, packIndex, url, properties, version);
-                break;
+        private static SLTLevel createLevel(string levelType, string id, int index, int localIndex, int packIndex, string url, Dictionary<string, object> properties, string version)
+        {
+            switch (levelType)
+            {
+                case SLTLevel.LEVEL_TYPE_MATCHING:
+                    return new SLTMatchingLevel(id, index, localIndex, packIndex, url, properties, version);
+                    break;
+                case SLTLevel.LEVEL_TYPE_2DCANVAS:
+                    return new SLT2DLevel(id, index, localIndex, packIndex, url, properties, version);
+                    break;
+            }
+            return null;
         }
-        return null;
-    }
 
 
 
@@ -121,14 +122,14 @@ namespace saltr_unity_sdk
                 return new List<SLTLevelPack>();
             string levelType = SLTLevel.LEVEL_TYPE_MATCHING;
 
-			List<string> keys = new List<string> ();
-	foreach (var item in rootNod.Keys) 
-			{
-				UnityEngine.Debug.Log(item);
-				keys.Add(item);
-			}
+            List<string> keys = new List<string>();
+            foreach (var item in rootNod.Keys)
+            {
+                UnityEngine.Debug.Log(item);
+                keys.Add(item);
+            }
 
-            if(rootNod.ContainsKey("levelType"))
+            if (rootNod.ContainsKey("levelType"))
             {
                 levelType = rootNod["levelType"].ToString();
             }
@@ -205,10 +206,12 @@ namespace saltr_unity_sdk
                             if (levelDict.ContainsKey("index"))
                                 localIndex = Int32.Parse(levelDict["index"].ToString());
                         }
-                        
-                      
-                            levelStructureList.Add(createLevel(levelType, id.ToString(), index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
+
+
+                        levelStructureList.Add(createLevel(levelType, id.ToString(), index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
                     }
+
+                    levelStructureList.Sort(new SLTLevel.SortById());
 
                     levelStructureList.Sort(new saltr_unity_sdk.SLTLevel.SortById());
                     SLTLevelPack levelPack = new SLTLevelPack(tokken, index, levelStructureList);
