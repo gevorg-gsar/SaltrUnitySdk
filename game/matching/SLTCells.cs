@@ -61,10 +61,10 @@ namespace saltr_unity_sdk
 
         public SLTCell retrieve(int row, int col)
         {
-            if (_rawData.Count() <= row * _width + row)
-                Array.Resize(ref this._rawData, row * _width + row + 1);
+			if (_rawData.Count() <= row * _width + col)
+				Array.Resize(ref this._rawData, row * _width + col + 1);
 
-            return _rawData[(row * _width) + row];
+			return _rawData[(row * _width) + col];
         }
 
         public SLTCellsIterator getIterator()

@@ -134,7 +134,7 @@ namespace saltr_unity_sdk
                     assetRule = ratioChunkAssetRules[j];
 
                     if (ratioSum * availableCellsNum != 0)
-                        proportion = assetRule.distributionValue / ratioSum * availableCellsNum;
+						proportion = assetRule.distributionValue * availableCellsNum / ratioSum;
 
                     count = (int)proportion;
 

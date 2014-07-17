@@ -76,13 +76,13 @@ namespace saltr_unity_sdk
                 List<SLTCell> chunkCells = new List<SLTCell>();
                 foreach (var cellNode in cellNodes)
                 {
-                    int width = 0;
-                    int height = 0;
+                    int row = 0;
+                    int col = 0;
 
-                    width = ((IEnumerable<object>)cellNode).ElementAt(0).toIntegerOrZero();
-                    height = ((IEnumerable<object>)cellNode).ElementAt(1).toIntegerOrZero();
+					row = ((IEnumerable<object>)cellNode).ElementAt(0).toIntegerOrZero();
+					col = ((IEnumerable<object>)cellNode).ElementAt(1).toIntegerOrZero();
 
-                    chunkCells.Add(cells.retrieve(width, height) as SLTCell);
+					chunkCells.Add(cells.retrieve(row, col) as SLTCell);
                 }
 
                 IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode["assets"];
