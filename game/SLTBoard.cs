@@ -9,22 +9,8 @@ namespace saltr_unity_sdk
    public class SLTBoard
     {
         private Dictionary<string, object> _properties;
-
-        protected Dictionary<string, object> properties
-        {
-            get { return _properties; }
-            set { _properties = value; }
-        }
-
         private List<SLTBoardLayer> _layers;
-
-		internal List<SLTBoardLayer> layers
-        {
-            get { return _layers; }
-            set { _layers = value; }
-        }
-
-
+		
         public SLTBoard(List<SLTBoardLayer> layers, Dictionary<string, object> properties)
         {
             _properties = properties;
@@ -32,6 +18,15 @@ namespace saltr_unity_sdk
 
         }
 
+		protected Dictionary<string, object> properties
+		{
+			get { return _properties; }
+		}
+
+		internal List<SLTBoardLayer> layers
+		{
+			get { return _layers; }
+		}
 
         public void regenerate()
         {

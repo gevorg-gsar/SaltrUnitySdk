@@ -55,18 +55,14 @@ namespace saltr_unity_sdk
 
             return experiments;
         }
-
-
+		
         public static Dictionary<string, object> decodeFeatures(Dictionary<string, object> rootNod)
         {
             if (rootNod == null)
                 return new Dictionary<string, object>();
             Dictionary<string, object> features = new Dictionary<string, object>();
 
-            //if (!rootNod.ContainsKey("responseData"))
-            //    return null;
-
-            Dictionary<string, object> rootDictionary = rootNod;// (Dictionary<string, object>)rootNod["responseData"];
+            Dictionary<string, object> rootDictionary = rootNod;;
 
             if (rootDictionary == null)
                 return null;
@@ -98,7 +94,114 @@ namespace saltr_unity_sdk
 
             return features;
         }
-
+		
+		public static List<SLTLevelPack> decodeLevels(Dictionary<string, object> rootNod)
+		{
+			if (rootNod == null)
+				return new List<SLTLevelPack>();
+			string levelType = SLTLevel.LEVEL_TYPE_MATCHING;
+			
+			List<string> keys = new List<string>();
+			foreach (var item in rootNod.Keys)
+			{
+				UnityEngine.Debug.Log(item);
+				keys.Add(item);
+			}
+			
+			if (rootNod.ContainsKey("levelType"))
+			{
+				levelType = rootNod["levelType"].ToString();
+			}
+			
+			
+			
+			List<SLTLevelPack> levelPacks = new List<SLTLevelPack>();
+			
+			Dictionary<string, object> rootDictionary = rootNod;  // rootNod["responseData"].toDictionaryOrNull();
+			if (rootDictionary == null)
+				return null;
+			
+			if (rootDictionary.ContainsKey("levelPacks"))
+			{
+				IEnumerable<object> levelPackDictionaryList = (IEnumerable<object>)rootDictionary["levelPacks"];
+				
+				foreach (var LevelPackDictionaryObj in levelPackDictionaryList)
+				{
+					Dictionary<string, object> levelPackDictionary = (Dictionary<string, object>)LevelPackDictionaryObj;
+					
+					string tokken = "";
+					if (levelPackDictionary.ContainsKey("token"))
+						tokken = (string)levelPackDictionary["token"];
+					
+					
+					int index = 0;
+					if (levelPackDictionary.ContainsKey("index"))
+						index = levelPackDictionary["index"].toIntegerOrZero();
+					
+					List<SLTLevel> levelStructureList = new List<SLTLevel>();
+					
+					IEnumerable<object> leveldictionaryList = null;
+					if (levelPackDictionary.ContainsKey("levels"))
+						leveldictionaryList = (IEnumerable<object>)levelPackDictionary["levels"];
+					
+					
+					object prop = null;
+					
+					
+					foreach (var levelobj in leveldictionaryList)
+					{
+						Dictionary<string, object> levelDict = (Dictionary<string, object>)levelobj;
+						
+						int id = 0;
+						if (levelDict.ContainsKey("id"))
+							id = levelDict["id"].toIntegerOrZero();
+						
+						int ind = 0;
+						if (levelDict.ContainsKey("index"))
+							ind = levelDict["index"].toIntegerOrZero();
+						
+						
+						string url = "";
+						if (levelDict.ContainsKey("url"))
+							url = levelDict["url"].ToString();
+						
+						int version = 0;
+						if (levelDict.ContainsKey("version"))
+							version = levelDict["version"].toIntegerOrZero();
+						
+						int packIndex = index;
+						// if (levelDict.ContainsKey("index"))
+						//   packIndex = Int32.Parse(levelDict["index"].ToString());
+						
+						if (levelDict.ContainsKey("properties"))
+							prop = levelDict["properties"];
+						
+						
+						int localIndex = 0;
+						if (levelDict.ContainsKey("localIndex"))
+							localIndex = Int32.Parse(levelDict["localIndex"].ToString());
+						else
+						{
+							if (levelDict.ContainsKey("index"))
+								localIndex = Int32.Parse(levelDict["index"].ToString());
+						}
+						
+						
+						levelStructureList.Add(createLevel(levelType, id.ToString(), index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
+					}
+					
+					levelStructureList.Sort(new SLTLevel.SortById());
+					
+					levelStructureList.Sort(new saltr_unity_sdk.SLTLevel.SortById());
+					SLTLevelPack levelPack = new SLTLevelPack(tokken, index, levelStructureList);
+					levelPacks.Add(levelPack);
+					
+				}
+			}
+			
+			levelPacks.Sort(new saltr_unity_sdk.SLTLevelPack.SortByIndex());
+			return levelPacks;
+		}
 
         private static SLTLevel createLevel(string levelType, string id, int index, int localIndex, int packIndex, string url, Dictionary<string, object> properties, string version)
         {
@@ -112,116 +215,6 @@ namespace saltr_unity_sdk
                     break;
             }
             return null;
-        }
-
-
-
-        public static List<SLTLevelPack> decodeLevels(Dictionary<string, object> rootNod)
-        {
-            if (rootNod == null)
-                return new List<SLTLevelPack>();
-            string levelType = SLTLevel.LEVEL_TYPE_MATCHING;
-
-            List<string> keys = new List<string>();
-            foreach (var item in rootNod.Keys)
-            {
-                UnityEngine.Debug.Log(item);
-                keys.Add(item);
-            }
-
-            if (rootNod.ContainsKey("levelType"))
-            {
-                levelType = rootNod["levelType"].ToString();
-            }
-
-
-
-            List<SLTLevelPack> levelPacks = new List<SLTLevelPack>();
-
-            Dictionary<string, object> rootDictionary = rootNod;  // rootNod["responseData"].toDictionaryOrNull();
-            if (rootDictionary == null)
-                return null;
-
-            if (rootDictionary.ContainsKey("levelPacks"))
-            {
-                IEnumerable<object> levelPackDictionaryList = (IEnumerable<object>)rootDictionary["levelPacks"];
-
-                foreach (var LevelPackDictionaryObj in levelPackDictionaryList)
-                {
-                    Dictionary<string, object> levelPackDictionary = (Dictionary<string, object>)LevelPackDictionaryObj;
-
-                    string tokken = "";
-                    if (levelPackDictionary.ContainsKey("token"))
-                        tokken = (string)levelPackDictionary["token"];
-
-
-                    int index = 0;
-                    if (levelPackDictionary.ContainsKey("index"))
-                        index = levelPackDictionary["index"].toIntegerOrZero();
-
-                    List<SLTLevel> levelStructureList = new List<SLTLevel>();
-
-                    IEnumerable<object> leveldictionaryList = null;
-                    if (levelPackDictionary.ContainsKey("levels"))
-                        leveldictionaryList = (IEnumerable<object>)levelPackDictionary["levels"];
-
-
-                    object prop = null;
-
-
-                    foreach (var levelobj in leveldictionaryList)
-                    {
-                        Dictionary<string, object> levelDict = (Dictionary<string, object>)levelobj;
-
-                        int id = 0;
-                        if (levelDict.ContainsKey("id"))
-                            id = levelDict["id"].toIntegerOrZero();
-
-                        int ind = 0;
-                        if (levelDict.ContainsKey("index"))
-                            ind = levelDict["index"].toIntegerOrZero();
-
-
-                        string url = "";
-                        if (levelDict.ContainsKey("url"))
-                            url = levelDict["url"].ToString();
-
-                        int version = 0;
-                        if (levelDict.ContainsKey("version"))
-                            version = levelDict["version"].toIntegerOrZero();
-
-                        int packIndex = index;
-                        // if (levelDict.ContainsKey("index"))
-                        //   packIndex = Int32.Parse(levelDict["index"].ToString());
-
-                        if (levelDict.ContainsKey("properties"))
-                            prop = levelDict["properties"];
-
-
-                        int localIndex = 0;
-                        if (levelDict.ContainsKey("localIndex"))
-                            localIndex = Int32.Parse(levelDict["localIndex"].ToString());
-                        else
-                        {
-                            if (levelDict.ContainsKey("index"))
-                                localIndex = Int32.Parse(levelDict["index"].ToString());
-                        }
-
-
-                        levelStructureList.Add(createLevel(levelType, id.ToString(), index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
-                    }
-
-                    levelStructureList.Sort(new SLTLevel.SortById());
-
-                    levelStructureList.Sort(new saltr_unity_sdk.SLTLevel.SortById());
-                    SLTLevelPack levelPack = new SLTLevelPack(tokken, index, levelStructureList);
-                    levelPacks.Add(levelPack);
-
-                }
-            }
-
-            levelPacks.Sort(new saltr_unity_sdk.SLTLevelPack.SortByIndex());
-            return levelPacks;
         }
     }
 }

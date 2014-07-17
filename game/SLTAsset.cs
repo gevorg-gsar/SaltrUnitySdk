@@ -11,22 +11,6 @@ namespace saltr_unity_sdk
         private object _properties;
         private Dictionary<string, object> _stateMap;
 
-        public Dictionary<string, object> stateMap
-        {
-            get { return _stateMap; }
-            set { _stateMap = value; }
-        }
-
-        public string token
-        {
-            get { return _token; }
-        }
-
-        public object properties
-        {
-            get { return _properties; }
-        }
-
         public SLTAsset(string token, object properties, Dictionary<string,object> StateMap)
         {
             _token = token;
@@ -39,21 +23,30 @@ namespace saltr_unity_sdk
             return "[Asset] type: " + _token + ", " + " keys: " + _properties;
         }
 
-	public List<SLTAssetState> getInstanceStates(IEnumerable<object> stateIds)
-	{
-		List<SLTAssetState> states = new List<SLTAssetState>(); 
-		foreach(object stateId in stateIds)
+		public string token
 		{
-
-			SLTAssetState state = _stateMap[stateId.ToString()] as SLTAssetState;
-
-			if(state != null)
-			{
-               
-				states.Add(state);
-			}
+			get { return _token; }
 		}
-		return states;
-	}
+		
+		public object properties
+		{
+			get { return _properties; }
+		}
+
+		public List<SLTAssetState> getInstanceStates(IEnumerable<object> stateIds)
+		{
+			List<SLTAssetState> states = new List<SLTAssetState>(); 
+			foreach(object stateId in stateIds)
+			{
+
+				SLTAssetState state = _stateMap[stateId.ToString()] as SLTAssetState;
+
+				if(state != null)
+				{
+					states.Add(state);
+				}
+			}
+			return states;
+		}
     }
 }

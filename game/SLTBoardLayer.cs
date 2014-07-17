@@ -10,22 +10,22 @@ namespace saltr_unity_sdk
         private string _layerId;
         private int _layerIndex;
 
-        public string layerId
-        {
-            get { return _layerId; }
-        }
-
-        public int layerIndex
-        {
-            get { return _layerIndex; }
-        }
-
-
         public SLTBoardLayer(string LayerId, int LayerIndex)
         {
             _layerId = LayerId;
             _layerIndex = LayerIndex;
         }
+
+		
+		public string layerId
+		{
+			get { return _layerId; }
+		}
+		
+		public int layerIndex
+		{
+			get { return _layerIndex; }
+		}
 
 		public virtual void regenerate()
 		{
