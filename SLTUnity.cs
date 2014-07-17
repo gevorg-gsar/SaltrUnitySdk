@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using saltr_unity_sdk;
 using System;
@@ -447,7 +447,7 @@ public class SLTUnity
 
     private void loadLevelContentFromSaltr( SLTLevel sltLevel)
     {
-		string dataUrl = sltLevel.contentDataUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
+		string dataUrl = sltLevel.contentUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
         SLTResourceTicket ticket = getTicket(dataUrl , null, _requestIdleTimeout);
         
 		Action<SLTResource> loadFromSaltrSuccessCallback = delegate(SLTResource res)

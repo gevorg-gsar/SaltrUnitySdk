@@ -9,24 +9,9 @@ namespace saltr_unity_sdk
     public class SLTLevelPack
     {
         private string _token;
-
-        public string token
-        {
-            get { return _token; }
-        }
-
         private List<SLTLevel> _levels;
-
-        public List<SLTLevel> levels
-        {
-            get { return _levels; }
-        }
-
         private int _index;
-        public int index
-        {
-            get { return _index; }
-        }
+        
 
         public SLTLevelPack(string token, int index, List<SLTLevel> levels)
         {
@@ -34,6 +19,21 @@ namespace saltr_unity_sdk
             _index = index;
             _levels = levels;
         }
+
+		public string token
+		{
+			get { return _token; }
+		}
+
+		public List<SLTLevel> levels
+		{
+			get { return _levels; }
+		}
+
+		public int index
+		{
+			get { return _index; }
+		}
 
         public override string ToString()
         {

@@ -7,8 +7,8 @@ namespace saltr_unity_sdk
 {
     public class SLTExperiment
     {
-        public static readonly string SPLIT_TEST_TYPE_FEATURE = "FEATURE";
-        public static readonly string SPLIT_TEST_TYPE_LEVEL_PACK = "LEVEL_PACK";
+        public const string SPLIT_TEST_TYPE_FEATURE = "FEATURE";
+        public const string SPLIT_TEST_TYPE_LEVEL_PACK = "LEVEL_PACK";
 
         private string _partition;
 
@@ -35,6 +35,7 @@ namespace saltr_unity_sdk
         {
             get { return _customEvents; }
         }
+
         public SLTExperiment(string token, string partition, string type, IEnumerable<object> customEvents)
         {
             _token = token;
