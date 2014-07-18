@@ -36,6 +36,7 @@ public class SaltrWrapper : MonoBehaviour {
 
 	void Awake()
 	{
+		gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
 		_saltr = new SLTUnity(clientKey, deviceId, useCache);
 		_saltr.socialId = socialId;
 		_saltr.devMode = devMode;

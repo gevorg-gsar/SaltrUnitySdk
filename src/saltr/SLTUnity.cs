@@ -13,6 +13,7 @@ public class SLTUnity
 {
     public const string API_VERSION = "1.0.1";
 
+	public const string SALTR_GAME_OBJECT_NAME = "Saltr";
 
     protected string _socialId;
     private string _deviceId;
@@ -56,10 +57,10 @@ public class SLTUnity
 
     public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
     {
-		if(GameObject.Find("saltr") == null)
+		if(GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
 		{	
 			GameObject saltr = new GameObject();
-        	saltr.name = "saltr";
+			saltr.name = SALTR_GAME_OBJECT_NAME;
         	saltr.AddComponent<GETPOSTWrapper>();
 		}
 

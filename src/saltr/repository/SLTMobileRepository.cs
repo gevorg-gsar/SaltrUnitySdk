@@ -38,8 +38,6 @@ namespace Assets
         {
             //string file = _applicationDirectory + "/" + fileName;
             // return getIntenrnal(new FileInfo(file));
-
-            Debug.Log(fileName);
             return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
         }
 

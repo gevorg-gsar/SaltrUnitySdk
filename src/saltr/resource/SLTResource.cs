@@ -81,7 +81,7 @@ namespace Assets
         public void load()
         {
             _fails++;
-            GameObject go = GameObject.Find("saltr");
+            GameObject go = GameObject.Find(SLTUnity.SALTR_GAME_OBJECT_NAME);
             GETPOSTWrapper wrapper = (GETPOSTWrapper)go.GetComponent(typeof(GETPOSTWrapper));
             if (ticket.method == "post")
                 //post
