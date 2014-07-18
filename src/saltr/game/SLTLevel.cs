@@ -50,12 +50,6 @@ namespace saltr_unity_sdk
             get { return _properties; }
         }
 
-        public virtual Dictionary<string, object> boards
-        {
-            get { return _boards; }
-        }
-
-
         public bool contentReady
         {
             get { return _contentReady; }
