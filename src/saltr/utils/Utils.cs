@@ -16,7 +16,7 @@ namespace saltr_unity_sdk
                 Regex rgx = new Regex("{" + i + "}");
               format = rgx.Replace(format, args[i]);
             }
-			Debug.Log(format);        
+			//Debug.Log(format);        
 			return format;
         }
     }

@@ -52,12 +52,12 @@ namespace saltr_unity_sdk
 
         public SLTAssetInstance getAssetInstanceByLayerId(string layerId)
         {
-            return _instancesByLayerId[layerId] as SLTAssetInstance;
+            return _instancesByLayerId.getValue(layerId) as SLTAssetInstance;
         }
 
         public SLTAssetInstance getAssetInstanceByLayerIndex(int layerIndex)
         {
-            return _instancesByLayerIndex[layerIndex.ToString()] as SLTAssetInstance;
+            return _instancesByLayerIndex.getValue(layerIndex.ToString()) as SLTAssetInstance;
         }
 
         public void setAssetInstance(string layerId, int layerIndex, SLTAssetInstance assetInstance)

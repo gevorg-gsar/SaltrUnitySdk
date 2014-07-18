@@ -18,7 +18,7 @@ public class GETPOSTWrapper : MonoBehaviour
 
 	void Awake()
 	{
-		DontDestroyOnLoad (this);
+		DontDestroyOnLoad (gameObject);
 	}
 
     void Start() { }
@@ -50,7 +50,7 @@ public class GETPOSTWrapper : MonoBehaviour
 
                 if (WWW.error == null)
                 {
-                    Debug.Log("Download is finished!" + WWW.text);
+                    //Debug.Log("Download is finished!" + WWW.text);
                     _resource.data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
                     isDownloading = false;
                     WWW.Dispose();
@@ -88,7 +88,6 @@ public class GETPOSTWrapper : MonoBehaviour
         else
             this.dropTimeout = 3;
 
-        Debug.Log("URL " + url);
         StartDownloading(url);
     }
 

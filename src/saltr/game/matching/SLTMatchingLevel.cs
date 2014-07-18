@@ -12,7 +12,7 @@ namespace saltr_unity_sdk
         {
         }
 
-        SLTMatchingBoard getBoard(string id)
+        public SLTMatchingBoard getBoard(string id)
         {
             return _boards[id] as SLTMatchingBoard;
         }

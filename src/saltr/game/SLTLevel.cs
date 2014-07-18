@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using System;
 
 
 namespace saltr_unity_sdk
@@ -50,12 +49,6 @@ namespace saltr_unity_sdk
         {
             get { return _properties; }
         }
-
-        public virtual Dictionary<string, object> boards
-        {
-            get { return _boards; }
-        }
-
 
         public bool contentReady
         {
