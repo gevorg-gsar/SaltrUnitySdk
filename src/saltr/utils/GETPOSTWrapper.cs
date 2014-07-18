@@ -18,7 +18,7 @@ public class GETPOSTWrapper : MonoBehaviour
 
 	void Awake()
 	{
-		DontDestroyOnLoad (this);
+		DontDestroyOnLoad (gameObject);
 	}
 
     void Start() { }

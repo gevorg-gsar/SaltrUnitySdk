@@ -56,9 +56,12 @@ public class SLTUnity
 
     public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
     {
-        GameObject saltr = new GameObject();
-        saltr.name = "saltr";
-        saltr.AddComponent<GETPOSTWrapper>();
+		if(GameObject.Find("saltr") == null)
+		{	
+			GameObject saltr = new GameObject();
+        	saltr.name = "saltr";
+        	saltr.AddComponent<GETPOSTWrapper>();
+		}
 
         _clientKey = clientKey;
 		_deviceId = DeviceId;
