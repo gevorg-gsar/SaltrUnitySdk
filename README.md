@@ -60,9 +60,10 @@ The SDK has the following directory structure:
 - src/saltr/game/cavas2d - classes related to 2D games;
 - src/saltr/game/matching - classes related to matching or board based games;
 - src/saltr/game/repository - local data repository classes (implementation widely varies through platforms);
-- src/saltr/game/status - status classes representing warnings and error statuses withing library code
+- src/saltr/game/status - status classes representing warnings and error statuses withing library code;
 - src/saltr/game/utils - helper or utility classes;
 
+--
 
 4. DOCUMENTATION
 ================
