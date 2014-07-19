@@ -63,7 +63,8 @@ The SDK has the following directory structure:
 - saltr.game.status - status classes representing warnings and error statuses withing library code;
 - saltr.game.utils - helper or utility classes;
 
---
+New packages supporting new gameplays and genres will be be added to saltr.game package.
+
 
 4. DOCUMENTATION
 ================
