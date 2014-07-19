@@ -53,15 +53,15 @@ Note: All classes in the package start with "SLT" prefix.
 
 The SDK has the following directory structure:
 
-- assets - contains the SALTR prefab and the wrapper script
-- src - root of the library;
-- src/saltr - main package of library;
-- src/saltr/game - package contains game related classes;
-- src/saltr/game/cavas2d - classes related to 2D games;
-- src/saltr/game/matching - classes related to matching or board based games;
-- src/saltr/game/repository - local data repository classes (implementation widely varies through platforms);
-- src/saltr/game/status - status classes representing warnings and error statuses withing library code;
-- src/saltr/game/utils - helper or utility classes;
+- /assets - folder contains the SALTR prefab and the wrapper script
+- /src - root folder of the library;
+- saltr - main package of library;
+- saltr.game - package contains game related classes;
+- saltr.game.cavas2d - classes related to 2D games;
+- saltr.game.matching - classes related to matching or board based games;
+- saltr.game.repository - local data repository classes (implementation widely varies through platforms);
+- saltr.game.status - status classes representing warnings and error statuses withing library code;
+- saltr.game.utils - helper or utility classes;
 
 --
 
