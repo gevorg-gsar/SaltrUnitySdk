@@ -63,6 +63,8 @@ The SDK has the following directory structure:
 - src/saltr/game/status - status classes representing warnings and error statuses withing library code;
 - src/saltr/game/utils - helper or utility classes;
 
+--
+
 4. DOCUMENTATION
 ================
 
