@@ -25,7 +25,7 @@ CONTENTS
 
 SALTR Unity SDK is a library of classes which help to develop mobile games that are to be integrated with SALTR platform.
 
-SDK performs all necessary and possible action with SALTR REST API to connect, update, set and download data related to game's features or levels.
+This SDK performs all necessary and possible action with SALTR REST API to connect, update, set and download data related to game's features or levels.
 
 All data received from SALTR REST API is parsed and represented through set of instances of classes, each carrying specific objects and their properties.
 
