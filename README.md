@@ -40,6 +40,13 @@ This and other actions will be described in the sections below.
 To use the SDK you need to download/checkout SDK repository and then import files to your
 project.
 
+To checkout Git repository:
+```
+$ cd your_repo_root/repo_name
+$ git fetch origin
+$ git checkout master
+```
+
 The entry point is the SLTUnity class, which you can create and initialize in code. Or you can darg and drop the SALTR prefab on your main scene and access its instance through SaltrWrapper component.
 
 Note: All classes in the package start with "SLT" prefix.
