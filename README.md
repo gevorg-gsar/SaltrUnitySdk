@@ -42,9 +42,7 @@ project.
 
 To checkout Git repository:
 ```
-$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout master
+$ git clone https://github.com/plexonic/saltr-unity-sdk.git
 ```
 
 The entry point is the SLTUnity class, which you can create and initialize in code. Or you can darg and drop the SALTR prefab on your main scene and access its instance through SaltrWrapper component.
