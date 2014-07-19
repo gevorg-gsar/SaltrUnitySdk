@@ -37,10 +37,10 @@ This and other actions will be described in the sections below.
 2. USAGE
 ========
 
-To use the SDK you need to download/checkout SDK repository and then import files to your
+To use the SDK you need to download/clone SDK repository and then import files to your
 project.
 
-To checkout Git repository:
+To clone Git repository via command line:
 ```
 $ git clone https://github.com/plexonic/saltr-unity-sdk.git
 ```
