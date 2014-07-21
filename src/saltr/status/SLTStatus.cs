@@ -37,6 +37,7 @@ namespace saltr_unity_sdk
         {
             _statusCode = code;
             _statusMessage = message;
+			UnityEngine.Debug.Log(message);
         }
 
     }

@@ -108,7 +108,7 @@ namespace saltr_unity_sdk
 
                     chunkAssetRules.Add(new SLTChunkAssetRule(assetId, distribytionType, distributionVale, states));
                 }
-                layer.addChunk(new SLTChunk(layer, chunkCells, chunkAssetRules, assetMap));
+                layer.addChunk(new SLTChunk(layer.token, layer.index, chunkCells, chunkAssetRules, assetMap));
             }
         }
 
@@ -161,7 +161,7 @@ namespace saltr_unity_sdk
                 {
                     IEnumerable<object> position = (IEnumerable<object>)cellPositions.ElementAt(j);
                     SLTCell cell = cells.retrieve(position.ElementAt(0).toIntegerOrZero(), position.ElementAt(1).toIntegerOrZero());
-                    cell.setAssetInstance(layer.layerId, layer.layerIndex, new SLTAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties));
+                    cell.setAssetInstance(layer.token, layer.index, new SLTAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties));
                 }
             }
         }

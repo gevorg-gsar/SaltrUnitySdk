@@ -11,10 +11,9 @@ using System.Linq;
 //TODO:: @daal add some flushCache method.
 public class SLTUnity
 {
+    public const string CLIENT = "Unity"; 
     public const string API_VERSION = "1.0.1";
-
 	public const string SALTR_GAME_OBJECT_NAME = "Saltr";
-
     protected string _socialId;
     private string _deviceId;
     protected bool _conected;
@@ -323,6 +322,7 @@ public class SLTUnity
 		SLTRequestArguments args = new SLTRequestArguments();
 		args.apiVersion = API_VERSION;
 		args.clientKey = _clientKey;
+        args.CLIENT = CLIENT;
 
         if (_deviceId != null)
             args.deviceId = _deviceId;
@@ -393,8 +393,10 @@ public class SLTUnity
 		SLTRequestArguments args = new SLTRequestArguments()
 		{
 			apiVersion = API_VERSION,
-			clientKey = _clientKey
+			clientKey = _clientKey,
+            CLIENT = CLIENT
 		};
+
 		
 		if (_deviceId != null)
 		{
@@ -629,7 +631,7 @@ public class SLTUnity
 		SLTRequestArguments args = new SLTRequestArguments();
 		args.apiVersion = API_VERSION;
 		args.clientKey = _clientKey;
-
+        args.CLIENT = CLIENT;
 
         if (_deviceId != null)
             args.deviceId = _deviceId;
