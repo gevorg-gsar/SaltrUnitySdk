@@ -7,15 +7,19 @@ namespace saltr_unity_sdk
 {
     public class SLTChunk
     {
-        private SLTBoardLayer _layer;
+        private string _layerToken;
+        private int _layerIndex;
+         
+
         private List<SLTChunkAssetRule> _chunkAssetRules;
         private List<SLTCell> _chunkCells;
         private List<SLTCell> _availableCells;
         private Dictionary<string, object> _assetMap;
 
-        public SLTChunk(SLTBoardLayer layer, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, Dictionary<string,object> assetMap)
+        public SLTChunk(string layerToken, int layerIndex, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, Dictionary<string,object> assetMap)
         {
-            _layer = layer;
+            _layerIndex = layerIndex;
+            _layerToken = layerToken;
             _chunkCells = chunkCells;
 			_chunkAssetRules = chunkAssetInfos;
 			_assetMap = assetMap;
@@ -27,7 +31,7 @@ namespace saltr_unity_sdk
 		{
 			foreach(SLTCell cell in _chunkCells)
 			{
-				cell.removeAssetInctance(_layer.layerId, _layer.layerIndex);
+				cell.removeAssetInctance(_layerToken, _layerIndex);
 			}
 		}
 
@@ -220,7 +224,7 @@ namespace saltr_unity_sdk
                 if(_availableCells.Any())
                 randCell = _availableCells[randCellIndex];
 
-				randCell.setAssetInstance(_layer.layerId, _layer.layerIndex, new SLTAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties));
+				randCell.setAssetInstance( _layerToken , _layerIndex, new SLTAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties));
 
                 if(_availableCells.Any())
                 _availableCells.RemoveAt(randCellIndex);

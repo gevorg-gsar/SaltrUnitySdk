@@ -7,6 +7,7 @@ namespace Assets
 {
    public class SLTRequestArguments
     {
+       public string CLIENT { get; set; }
         public string deviceId { get; set; }
 
         public string socialId { get; set; }

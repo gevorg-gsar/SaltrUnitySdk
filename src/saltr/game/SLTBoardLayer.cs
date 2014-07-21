@@ -7,29 +7,29 @@ namespace saltr_unity_sdk
 {
     public class SLTBoardLayer
     {
-        private string _layerId;
-        private int _layerIndex;
+        private string _token;
+        private int _index;
 
         public SLTBoardLayer(string LayerId, int LayerIndex)
         {
-            _layerId = LayerId;
-            _layerIndex = LayerIndex;
+            _token = LayerId;
+            _index = LayerIndex;
         }
 
-		
-		public string layerId
-		{
-			get { return _layerId; }
-		}
-		
-		public int layerIndex
-		{
-			get { return _layerIndex; }
-		}
 
-		public virtual void regenerate()
-		{
-			//override
-		}
+        public string token
+        {
+            get { return _token; }
+        }
+
+        public int index
+        {
+            get { return _index; }
+        }
+
+        public virtual void regenerate()
+        {
+            //override
+        }
     }
 }
