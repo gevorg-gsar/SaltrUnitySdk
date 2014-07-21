@@ -113,7 +113,7 @@ namespace saltr_unity_sdk
 			Dictionary<string, object> rootDictionary = rootNod;  // rootNod["responseData"].toDictionaryOrNull();
 			if (rootDictionary == null)
 				return null;
-			
+			int index = -1;
 			if (rootDictionary.ContainsKey("levelPacks"))
 			{
 				IEnumerable<object> levelPackDictionaryList = (IEnumerable<object>)rootDictionary["levelPacks"];
@@ -127,9 +127,9 @@ namespace saltr_unity_sdk
 						tokken = (string)levelPackDictionary["token"];
 					
 					
-					int index = 0;
+					int packIndex = 0;
 					if (levelPackDictionary.ContainsKey("index"))
-						index = levelPackDictionary["index"].toIntegerOrZero();
+						packIndex = levelPackDictionary["index"].toIntegerOrZero();
 					
 					List<SLTLevel> levelStructureList = new List<SLTLevel>();
 					
@@ -143,6 +143,7 @@ namespace saltr_unity_sdk
 					
 					foreach (var levelobj in leveldictionaryList)
 					{
+						++index;
 						Dictionary<string, object> levelDict = (Dictionary<string, object>)levelobj;
 						
 						int id = 0;
@@ -162,7 +163,7 @@ namespace saltr_unity_sdk
 						if (levelDict.ContainsKey("version"))
 							version = levelDict["version"].toIntegerOrZero();
 						
-						int packIndex = index;
+
 						// if (levelDict.ContainsKey("index"))
 						//   packIndex = Int32.Parse(levelDict["index"].ToString());
 						
@@ -179,35 +180,21 @@ namespace saltr_unity_sdk
 								localIndex = Int32.Parse(levelDict["index"].ToString());
 						}
 						
-						
-						levelStructureList.Add(createLevel(levelType, id.ToString(), index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
+						//TODO @GSAR: later, leave localIndex only!w
+						levelStructureList.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
 					}
 
-					// TODO: figure out why 2 sort calls are required here, weird, but one doesn't seem to work O_o (gyln)
+					//TODO @GSAR: remove this sort when SALTR confirms correct ordering
 					levelStructureList.Sort(new SLTLevel.SortByIndex());
-					levelStructureList.Sort(new SLTLevel.SortByIndex());
-					SLTLevelPack levelPack = new SLTLevelPack(tokken, index, levelStructureList);
+					//levelStructureList.Sort(new SLTLevel.SortByIndex());
+					SLTLevelPack levelPack = new SLTLevelPack(tokken, packIndex, levelStructureList);
 					levelPacks.Add(levelPack);
 					
 				}
 			}
-			
+			//TODO @GSAR: remove this sort when SALTR confirms correct ordering
 			levelPacks.Sort(new saltr_unity_sdk.SLTLevelPack.SortByIndex());
 			return levelPacks;
 		}
-
-        private static SLTLevel createLevel(string levelType, string id, int index, int localIndex, int packIndex, string url, Dictionary<string, object> properties, string version)
-        {
-            switch (levelType)
-            {
-                case SLTLevel.LEVEL_TYPE_MATCHING:
-                    return new SLTMatchingLevel(id, index, localIndex, packIndex, url, properties, version);
-                    break;
-                case SLTLevel.LEVEL_TYPE_2DCANVAS:
-                    return new SLT2DLevel(id, index, localIndex, packIndex, url, properties, version);
-                    break;
-            }
-            return null;
-        }
     }
 }

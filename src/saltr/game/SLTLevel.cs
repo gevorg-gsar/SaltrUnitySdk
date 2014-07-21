@@ -7,24 +7,40 @@ using UnityEngine;
 
 namespace saltr_unity_sdk
 {
-    public abstract class SLTLevel
+    public class SLTLevel
 	{
 		protected Dictionary<string, object> _boards;
 
 		private string _id;
-		private string _contentUrl;
+		private string _levelType;
 		private int _index;
-		private object _properties;
-		private bool _contentReady;
-		private string _version;
-		private int _packIndex;
 		private int _localIndex;
+		private int _packIndex;
+		private string _contentUrl;
+		private object _properties;
+		private string _version;
+
+		private bool _contentReady;
 		Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
         public  const string LEVEL_TYPE_NONE = "noLevels";
         public  const string LEVEL_TYPE_MATCHING = "matching";
         public  const string LEVEL_TYPE_2DCANVAS = "canvas2D";
-		
+
+		public static SLTLevelParser getParser(string levelType)
+		{
+			switch(levelType)
+			{
+			case LEVEL_TYPE_MATCHING:
+				return SLTMatchingLevelParser.getInstance();
+				break;
+			case LEVEL_TYPE_2DCANVAS:
+				return SLT2DLevelParser.getInstance();
+				break;
+			}
+			return null;
+		}
+
         public int packIndex
         {
             get { return _packIndex; }
@@ -61,11 +77,12 @@ namespace saltr_unity_sdk
             get { return _version; }
         }
 
-        public SLTLevel(string id, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
+        public SLTLevel(string id, string levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
         {
             _localIndex = localIndex;
             _packIndex = packIndex;
             _id = id;
+			_levelType = levelType;
             _index = index;
             _contentUrl = contentUrl;
             _contentReady = false;
@@ -73,7 +90,7 @@ namespace saltr_unity_sdk
             _version = version;
         }
 
-        SLTBoard getBoard(string id)
+        public SLTBoard getBoard(string id)
         {
             return _boards[id] as SLTBoard;
         }
@@ -97,31 +114,41 @@ namespace saltr_unity_sdk
             {
                 Debug.Log("[SALTR: ERROR] Level content's 'boards' node can not be found.");
             }
+			
+			_properties = rootNode["properties"];
 
-            SLTLevelParser parser = getParser();
+            SLTLevelParser parser = getParser(_levelType);
+			if(parser != null)
+			{
+	            try
+	            {
+	                _assetMap = parser.parseLevelAssets(rootNode);
+	            }
+	            catch (Exception e)
+	            {
+	                Debug.Log("[SALTR: ERROR] Level content asset parsing failed." + e.Message);
+	            }
 
-            _properties = rootNode["properties"];
+	            try
+	            {
+	                _boards = parser.parseLevelContent(boardsNode, _assetMap);
+	            }
+	            catch (Exception e)
+	            {
+	                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
+	            }
 
-            try
-            {
-                _assetMap = parser.parseLevelAssets(rootNode);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[SALTR: ERROR] Level content asset parsing failed." + e.Message);
-            }
-
-            try
-            {
-                _boards = parser.parseLevelContent(boardsNode, _assetMap);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
-            }
-
-            regenerateAllBoards();
-            _contentReady = true;
+				if(_boards != null)
+				{
+					regenerateAllBoards();
+	            	_contentReady = true;
+				}
+			}
+			else 
+			{
+				// no parser was found for current level type
+				new SLTStatusLevelsParserMissing();
+			}
 
         }
 
@@ -145,8 +172,6 @@ namespace saltr_unity_sdk
                 (_boards[key] as SLTBoard).regenerate();
             }
         }
-		
-        protected abstract SLTLevelParser getParser();
 
 		public class SortByIndex : IComparer<SLTLevel>
 		{
