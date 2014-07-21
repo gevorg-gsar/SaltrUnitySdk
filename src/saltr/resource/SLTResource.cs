@@ -8,9 +8,9 @@ using System.Timers;
 using UnityEngine;
 using System.Threading;
 using System.ComponentModel;
-using saltr_unity_sdk;
+using saltr.utils;
 
-namespace Assets
+namespace saltr.resource
 {
     public class SLTResource : MonoBehaviour
     {

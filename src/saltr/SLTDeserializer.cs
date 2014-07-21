@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using saltr.game;
+using saltr.utils;
 
-namespace saltr_unity_sdk
+namespace saltr
 {
     public class SLTDeserializer
     {
@@ -193,7 +195,7 @@ namespace saltr_unity_sdk
 				}
 			}
 			//TODO @GSAR: remove this sort when SALTR confirms correct ordering
-			levelPacks.Sort(new saltr_unity_sdk.SLTLevelPack.SortByIndex());
+			levelPacks.Sort(new SLTLevelPack.SortByIndex());
 			return levelPacks;
 		}
     }

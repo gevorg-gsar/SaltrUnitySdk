@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using saltr.utils;
 
-namespace saltr_unity_sdk
+namespace saltr.game.matching
 {
 
     public class SLTMatchingLevelParser : SLTLevelParser

@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using saltr_unity_sdk;
 using System.IO;
 using UnityEngine;
-namespace Assets
+namespace saltr.repository
 {
   public  class SLTDummyRepository : ISLTRepository
     {

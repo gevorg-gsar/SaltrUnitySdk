@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-namespace saltr_unity_sdk
+namespace saltr.game.canvas2d
 {
     public class SLT2DAssetInstance : SLTAssetInstance
     {

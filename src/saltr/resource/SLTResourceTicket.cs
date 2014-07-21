@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Assets
+namespace saltr.resource
 {
     public class SLTResourceTicket : MonoBehaviour
     {

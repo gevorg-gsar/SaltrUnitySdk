@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace saltr_unity_sdk
+namespace saltr.game.canvas2d
 {
 	public class SLT2DBoardLayer : SLTBoardLayer {
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using saltr_unity_sdk;
+using saltr;
 
 public class SaltrWrapper : MonoBehaviour {
 
