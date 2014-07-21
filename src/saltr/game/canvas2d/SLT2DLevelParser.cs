@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using saltr.utils;
 
-namespace saltr_unity_sdk
+namespace saltr.game.canvas2d
 {
     public class SLT2DLevelParser : SLTLevelParser
     {

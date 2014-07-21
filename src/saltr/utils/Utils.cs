@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-namespace saltr_unity_sdk
+namespace saltr.utils
 {
     public static class Utils
     {

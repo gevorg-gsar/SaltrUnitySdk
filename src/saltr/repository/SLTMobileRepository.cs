@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using saltr_unity_sdk;
 using UnityEngine;
 
-namespace Assets
+namespace saltr.repository
 {
     public class SLTMobileRepository : ISLTRepository
     {

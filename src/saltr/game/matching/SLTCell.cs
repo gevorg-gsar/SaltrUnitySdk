@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using saltr.utils;
 
-namespace saltr_unity_sdk
+namespace saltr.game.matching
 {
     public class SLTCell
     {

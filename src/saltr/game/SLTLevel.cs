@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using saltr.game.matching;
+using saltr.game.canvas2d;
+using saltr.utils;
+using saltr.status;
 
-
-namespace saltr_unity_sdk
+namespace saltr.game
 {
     public class SLTLevel
 	{
