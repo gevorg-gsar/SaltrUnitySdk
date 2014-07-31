@@ -6,7 +6,7 @@ using saltr;
 public class SaltrWrapper : MonoBehaviour {
 
 	public string clientKey;
-	public string deviceId;
+	public string deviceId = "";
 	public string socialId;
 	public bool devMode = false;
 	public bool useCache = true;
@@ -37,7 +37,7 @@ public class SaltrWrapper : MonoBehaviour {
 	void Awake()
 	{
 		gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
-		_saltr = new SLTUnity(clientKey, deviceId, useCache);
+		_saltr = new SLTUnity(clientKey, deviceId != "" ? deviceId : SystemInfo.deviceUniqueIdentifier, useCache);
 		_saltr.socialId = socialId;
 		_saltr.devMode = devMode;
 		_saltr.useNoLevels = useNoLevels;
