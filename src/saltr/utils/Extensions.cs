@@ -34,6 +34,16 @@ namespace saltr.utils
                 return null;
         }
 
+		public static Type getValue<Type>(this Dictionary<string, object> dictionary, string key) where Type : class
+		{
+			if (dictionary.ContainsKey(key))
+			{
+				return dictionary[key] as Type;
+			}
+			else
+				return null;
+		}
+
         public static Dictionary<string, string> toDictionaryStringOrNull(this object obj)
         {
             Dictionary<string, string> dictionaryToReturn = new Dictionary<string, string>();

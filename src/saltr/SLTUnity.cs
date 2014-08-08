@@ -261,7 +261,7 @@ namespace saltr
 
 	        if (_started == false)
 	        {
-	            _developerFeatures["token"] = new SLTFeature(token, properties, required);
+	            _developerFeatures[token] = new SLTFeature(token, properties, required);
 	        }
 	        else
 	        {
