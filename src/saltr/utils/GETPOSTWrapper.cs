@@ -10,7 +10,7 @@ namespace saltr.utils
 	public class GETPOSTWrapper : MonoBehaviour
 	{
 	    private float elapsedTime = 0.0f;
-	    private bool isDownloading = false;
+		private bool isDownloading = false;
 	    private WWW WWW = null;
 	    private int dropTimeout;
 	    private SLTResource _resource;
@@ -77,7 +77,15 @@ namespace saltr.utils
 	    {
 	        if (isDownloading)
 	        {
-	            Debug.Log("Force Returned from GET");
+				foreach(GETPOSTWrapper GPWrap in gameObject.GetComponents<GETPOSTWrapper>())
+				{
+					if(!GPWrap.busy)
+					{
+						GPWrap.GET(url,appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
+						return;
+					}
+				}
+				gameObject.AddComponent<GETPOSTWrapper>().GET(url,appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
 	            return;
 	        }
 	        this._appDataLoadFailHandler = appDataLoadFailHandler;
@@ -143,5 +151,10 @@ namespace saltr.utils
 	        isDownloading = true;
 	        WWW = new WWW(url);
 	    }
+
+		public bool busy
+		{
+			get {return isDownloading;}
+		}
 	}
 }
