@@ -297,7 +297,7 @@ namespace saltr
 	            {
 	                _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
 	                _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
-	                _saltrUserId = cachedData.toDictionaryOrNull()["saltrUserId"].ToString();
+	                _saltrUserId = cachedData.toDictionaryOrNull().getValue<string>("saltrUserId");
 	            }
 	        }
 	        _started = true;
