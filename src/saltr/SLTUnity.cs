@@ -224,10 +224,12 @@ namespace saltr
 			else
 				if (_developerFeatures.ContainsKey(token))
 			{
-				return _developerFeatures[token].toDictionaryOrNull();
+				SLTFeature devFeature = _developerFeatures[token] as SLTFeature;
+				if(devFeature != null )
+					return devFeature.properties.toDictionaryOrNull();
 			}
-			
-			else return null;
+
+			return null;
 		}
 
 	    public void importLevels(string path = null)
@@ -528,6 +530,7 @@ namespace saltr
 			{
 				IEnumerable<object> res = (IEnumerable<object>)data["response"];
 				response = res.FirstOrDefault().toDictionaryOrNull();
+				success = (bool) response["success"];
 			}
 			else
 			{
@@ -601,7 +604,7 @@ namespace saltr
 					}
 				}
 
-	            _saltrUserId = response["saltrUserId"].ToString();
+	            _saltrUserId = response.getValue<string>("saltrUserId");
 	            _conected = true;
 	            _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", response);
 

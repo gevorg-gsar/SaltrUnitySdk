@@ -58,20 +58,17 @@ namespace saltr
             return experiments;
         }
 		
-        public static Dictionary<string, object> decodeFeatures(Dictionary<string, object> rootNod)
+        public static Dictionary<string, object> decodeFeatures(Dictionary<string, object> rootNode)
         {
-            if (rootNod == null)
+            if (rootNode == null)
                 return new Dictionary<string, object>();
             Dictionary<string, object> features = new Dictionary<string, object>();
 
-            Dictionary<string, object> rootDictionary = rootNod;;
 
-            if (rootDictionary == null)
-                return null;
 
-            if (rootDictionary.ContainsKey("features"))
+			if (rootNode.ContainsKey("features"))
             {
-                IEnumerable<object> featureDictionaryList = (IEnumerable<object>)rootDictionary["features"];
+				IEnumerable<object> featureDictionaryList = (IEnumerable<object>)rootNode["features"];
 
                 foreach (var featureDictionary in featureDictionaryList)
                 {
@@ -84,7 +81,8 @@ namespace saltr
                     //TODO @GSAR: remove "data" check later when API versioning is done.
                     if (featureNod.ContainsKey("data"))
                         properties = (Dictionary<string, object>)featureNod["data"];
-
+					else if (featureNod.ContainsKey("properties"))
+						properties = (Dictionary<string, object>)featureNod["properties"];
 
                     bool required = false;
                     if (featureNod.ContainsKey("required"))
