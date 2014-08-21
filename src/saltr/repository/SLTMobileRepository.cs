@@ -37,7 +37,8 @@ namespace saltr.repository
         {
             //string file = _applicationDirectory + "/" + fileName;
             // return getIntenrnal(new FileInfo(file));
-            return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
+			TextAsset file = Resources.Load<TextAsset>(fileName);
+			return file != null ? MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
         }
 
         public object getObjectFromCache(string fileName)
