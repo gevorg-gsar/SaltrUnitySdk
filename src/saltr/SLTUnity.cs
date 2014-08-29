@@ -530,7 +530,7 @@ namespace saltr
             {
                 IEnumerable<object> res = (IEnumerable<object>)data["response"];
                 response = res.FirstOrDefault().toDictionaryOrNull();
-                success = response["success"].ToString() == "true";
+				success = (bool)response["success"]; //.ToString().ToLower() == "true";
             }
             else
             {
@@ -622,7 +622,7 @@ namespace saltr
 
                 }
                 else
-                    _connectFailCallback(new SLTStatus(int.Parse(response["errorCode"].ToString()), response["errorMessage"].ToString()));
+                    _connectFailCallback(new SLTStatus(response.getValue<string>("errorCode").toIntegerOrZero(), response.getValue<string>("errorMessage")));
             }
             resource.dispose();
         }
