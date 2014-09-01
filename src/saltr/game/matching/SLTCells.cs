@@ -51,7 +51,7 @@ namespace saltr.game.matching
             _rawData = new SLTCell[_width * _height];
         }
 
-        public void insert(int row, int col, SLTCell cell)
+		public void insert(int col, int row, SLTCell cell)
         {
             if (_rawData.Count() <= row * _width + col)
                 Array.Resize(ref this._rawData, row * _width + col + 1);
@@ -59,7 +59,7 @@ namespace saltr.game.matching
             _rawData[(row * _width) + col] = cell;
         }
 
-        public SLTCell retrieve(int row, int col)
+		public SLTCell retrieve(int col, int row)
         {
 			if (_rawData.Count() <= row * _width + col)
 				Array.Resize(ref this._rawData, row * _width + col + 1);
