@@ -11,54 +11,54 @@ using saltr.status;
 namespace saltr.game
 {
     public class SLTLevel
-	{
-		protected Dictionary<string, object> _boards;
+    {
+        protected Dictionary<string, object> _boards;
 
-		private string _id;
-		private string _levelType;
-		private int _index;
-		private int _localIndex;
-		private int _packIndex;
-		private string _contentUrl;
-		private object _properties;
-		private string _version;
+        private string _id;
+        private string _levelType;
+        private int _index;
+        private int _localIndex;
+        private int _packIndex;
+        private string _contentUrl;
+        private object _properties;
+        private string _version;
 
-		private bool _contentReady;
-		Dictionary<string, object> _assetMap = new Dictionary<string, object>();
+        private bool _contentReady;
+        Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
-        public  const string LEVEL_TYPE_NONE = "noLevels";
-        public  const string LEVEL_TYPE_MATCHING = "matching";
-        public  const string LEVEL_TYPE_2DCANVAS = "canvas2D";
+        public const string LEVEL_TYPE_NONE = "noLevels";
+        public const string LEVEL_TYPE_MATCHING = "matching";
+        public const string LEVEL_TYPE_2DCANVAS = "canvas2D";
 
-		public static SLTLevelParser getParser(string levelType)
-		{
-			switch(levelType)
-			{
-			case LEVEL_TYPE_MATCHING:
-				return SLTMatchingLevelParser.getInstance();
-				break;
-			case LEVEL_TYPE_2DCANVAS:
-				return SLT2DLevelParser.getInstance();
-				break;
-			}
-			return null;
-		}
+        public static SLTLevelParser getParser(string levelType)
+        {
+            switch (levelType)
+            {
+                case LEVEL_TYPE_MATCHING:
+                    return SLTMatchingLevelParser.getInstance();
+                    break;
+                case LEVEL_TYPE_2DCANVAS:
+                    return SLT2DLevelParser.getInstance();
+                    break;
+            }
+            return null;
+        }
 
         public int packIndex
         {
             get { return _packIndex; }
         }
-		
+
         public int localIndex
         {
             get { return _localIndex; }
         }
-		
+
         public string contentUrl
         {
             get { return _contentUrl; }
         }
-		
+
         public int index
         {
             get { return _index; }
@@ -85,7 +85,7 @@ namespace saltr.game
             _localIndex = localIndex;
             _packIndex = packIndex;
             _id = id;
-			_levelType = levelType;
+            _levelType = levelType;
             _index = index;
             _contentUrl = contentUrl;
             _contentReady = false;
@@ -95,18 +95,19 @@ namespace saltr.game
 
         public SLTBoard getBoard(string id)
         {
-            return _boards[id] as SLTBoard;
+            return _boards.getValue<SLTBoard>(id);
         }
 
         public void updateContent(Dictionary<string, object> rootNode)
         {
             Dictionary<string, object> boardsNode = new Dictionary<string, object>();
 
-			List<string> kieys = new List<string>();
-			foreach (var item in rootNode.Keys) {
-				kieys.Add(item);
-	
-			}
+            List<string> kieys = new List<string>();
+            foreach (var item in rootNode.Keys)
+            {
+                kieys.Add(item);
+
+            }
 
             if (rootNode.ContainsKey("boards"))
             {
@@ -117,41 +118,41 @@ namespace saltr.game
             {
                 Debug.Log("[SALTR: ERROR] Level content's 'boards' node can not be found.");
             }
-			
-			_properties = rootNode["properties"];
+
+            _properties = rootNode["properties"];
 
             SLTLevelParser parser = getParser(_levelType);
-			if(parser != null)
-			{
-	            try
-	            {
-	                _assetMap = parser.parseLevelAssets(rootNode);
-	            }
-	            catch (Exception e)
-	            {
-	                Debug.Log("[SALTR: ERROR] Level content asset parsing failed." + e.Message);
-	            }
+            if (parser != null)
+            {
+                try
+                {
+                    _assetMap = parser.parseLevelAssets(rootNode);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("[SALTR: ERROR] Level content asset parsing failed." + e.Message);
+                }
 
-	            try
-	            {
-	                _boards = parser.parseLevelContent(boardsNode, _assetMap);
-	            }
-	            catch (Exception e)
-	            {
-	                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
-	            }
+                try
+                {
+                    _boards = parser.parseLevelContent(boardsNode, _assetMap);
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
+                }
 
-				if(_boards != null)
-				{
-					regenerateAllBoards();
-	            	_contentReady = true;
-				}
-			}
-			else 
-			{
-				// no parser was found for current level type
-				new SLTStatusLevelsParserMissing();
-			}
+                if (_boards != null)
+                {
+                    regenerateAllBoards();
+                    _contentReady = true;
+                }
+            }
+            else
+            {
+                // no parser was found for current level type
+                new SLTStatusLevelsParserMissing();
+            }
 
         }
 
@@ -176,32 +177,32 @@ namespace saltr.game
             }
         }
 
-		public class SortByIndex : IComparer<SLTLevel>
-		{
-			public int Compare(SLTLevel x, SLTLevel y)
-			{
-				if (x == null && y != null)
-					return -1;
-				
-				if (x != null && y == null)
-					return 1;
-				
-				if (x == null && y == null)
-					return 1;
-				
-				
-				if (x.index > y.index)
-					return 1;
-				
-				if (x.index < y.index)
-					return -1;
+        public class SortByIndex : IComparer<SLTLevel>
+        {
+            public int Compare(SLTLevel x, SLTLevel y)
+            {
+                if (x == null && y != null)
+                    return -1;
 
-				if (x.index == y.index)
-					return 0;
+                if (x != null && y == null)
+                    return 1;
 
-				return 1;
-			}
-		}
+                if (x == null && y == null)
+                    return 1;
+
+
+                if (x.index > y.index)
+                    return 1;
+
+                if (x.index < y.index)
+                    return -1;
+
+                if (x.index == y.index)
+                    return 0;
+
+                return 1;
+            }
+        }
 
     }
 }
