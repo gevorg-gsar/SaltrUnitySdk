@@ -56,7 +56,7 @@ namespace saltr.game.matching
             for (int b = 0; b < blockedCells.Count(); b++)
             {
                 IEnumerable<object> blokedCell = (IEnumerable<object>)blockedCells.ElementAt(b);
-                var cell3 = cells.retrieve(blockedCells.ElementAt(0).toIntegerOrZero(), blockedCells.ElementAt(1).toIntegerOrZero());
+				var cell3 = cells.retrieve(blokedCell.ElementAt(0).toIntegerOrZero(), blokedCell.ElementAt(1).toIntegerOrZero());
                 if (cell3 != null)
                 {
                     cell3.isBlocked = true;
