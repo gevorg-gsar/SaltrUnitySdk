@@ -139,8 +139,9 @@ namespace saltr.game.matching
 
         private SLTMatchingBoardLayer parseLayer(Dictionary<string, object> layerNode, int layerIndex, SLTCells cells, Dictionary<string, object> assetMap)
         {
-            string layerId = layerNode["layerId"].ToString();
-            SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer(layerId, layerIndex);
+			//temporarily checking for 2 names until "layerId" is removed!
+			string token = (layerNode.ContainsKey("token")) ? layerNode.getValue<string>("token") : layerNode.getValue<string>("layerId");
+            SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer(token, layerIndex);
 
             parseFixedAssets(layer, (IEnumerable<object>)layerNode["fixedAssets"], cells, assetMap);
             parseLayerChunks(layer, (IEnumerable<object>)layerNode["chunks"], cells, assetMap);
