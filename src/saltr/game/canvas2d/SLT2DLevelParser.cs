@@ -37,9 +37,9 @@ namespace saltr.game.canvas2d
         private SLT2DBoard parseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
-            if (boardNode.ContainsKey("properties") && boardNode["properties"].toDictionaryOrNull().ContainsKey("board"))
+            if (boardNode.ContainsKey("properties"))
             {
-                boardProperties = boardNode["properties"].toDictionaryOrNull()["board"].toDictionaryOrNull();
+                boardProperties = boardNode["properties"].toDictionaryOrNull();
             }
 
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();

@@ -28,7 +28,7 @@ namespace saltr.game.matching
             Dictionary<string, object> boardNodeDict = boardNode.toDictionaryOrNull();
 
             IEnumerable<object> blockedCells = boardNodeDict.ContainsKey("blockedCells") ? (IEnumerable<object>)boardNodeDict["blockedCells"] : new List<object>();
-            IEnumerable<object> cellProperties = boardNodeDict.ContainsKey("properties") && boardNodeDict["properties"].toDictionaryOrNull().ContainsKey("cell") ? (IEnumerable<object>)boardNodeDict["properties"].toDictionaryOrNull()["cell"] : new List<object>();
+			IEnumerable<object> cellProperties = boardNodeDict.ContainsKey("cellProperties")? (IEnumerable<object>)boardNodeDict["cellProperties"] : new List<object>();
             int cols = cells.width;
             int rows = cells.height;
 
@@ -117,9 +117,9 @@ namespace saltr.game.matching
         private SLTMatchingBoard parseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
-            if (boardNode.ContainsKey("properties") && boardNode["properties"].toDictionaryOrNull().ContainsKey("board"))
+            if (boardNode.ContainsKey("properties"))
             {
-                boardProperties = boardNode["properties"].toDictionaryOrNull()["board"].toDictionaryOrNull();
+                boardProperties = boardNode["properties"].toDictionaryOrNull();
             }
 
             SLTCells cells = new SLTCells(boardNode["cols"].toIntegerOrZero(), boardNode["rows"].toIntegerOrZero());
