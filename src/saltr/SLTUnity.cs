@@ -22,7 +22,6 @@ namespace saltr
         private string _deviceId;
         protected bool _conected;
         protected string _clientKey;
-        protected string _saltrUserId;
         protected bool _isLoading;
 
         private ISLTRepository _repository;
@@ -71,7 +70,6 @@ namespace saltr
             _deviceId = DeviceId;
             _isLoading = false;
             _conected = false;
-            _saltrUserId = null;
             _useNoLevels = false;
             _useNoFeatures = false;
             _levelType = null;
@@ -296,7 +294,6 @@ namespace saltr
                 {
                     _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
                     _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
-                    _saltrUserId = cachedData.toDictionaryOrNull().getValue<string>("saltrUserId");
                 }
             }
             _started = true;
@@ -337,11 +334,6 @@ namespace saltr
             if (_socialId != null)
             {
                 args.socialId = _socialId;
-            }
-
-            if (_saltrUserId != null)
-            {
-                args.saltrUserId = _saltrUserId;
             }
 
             if (basicProperties != null)
@@ -388,7 +380,7 @@ namespace saltr
 
         public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
         {
-            if (basicProperties == null && customProperties == null || _saltrUserId == null)
+            if (basicProperties == null && customProperties == null)
                 return;
 
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
@@ -402,7 +394,6 @@ namespace saltr
                 CLIENT = CLIENT
             };
 
-
             if (_deviceId != null)
             {
                 args.deviceId = _deviceId;
@@ -410,13 +401,8 @@ namespace saltr
             else
 				throw new Exception("Field 'deviceId' is a required.");
 
-//            if (_socialId != null)
-//                args.socialId = _socialId;
-
-            if (_saltrUserId != null)
-                args.saltrUserId = _saltrUserId;
-			else 
-				throw new Exception("Field saltrUserId is required.");
+            if (_socialId != null)
+                args.socialId = _socialId;
 
             if (basicProperties != null)
                 args.basicProperties = basicProperties;
@@ -600,7 +586,6 @@ namespace saltr
                     }
                 }
 
-                _saltrUserId = response.getValue<string>("saltrUserId");
                 _conected = true;
                 _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", response);
 
@@ -651,11 +636,6 @@ namespace saltr
             if (_socialId != null)
             {
                 args.socialId = _socialId;
-            }
-
-            if (_saltrUserId != null)
-            {
-                args.saltrUserId = _saltrUserId;
             }
 
             List<object> featureList = new List<object>();
