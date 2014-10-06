@@ -22,7 +22,6 @@ namespace saltr
         private string _deviceId;
         protected bool _conected;
         protected string _clientKey;
-        protected string _saltrUserId;
         protected bool _isLoading;
 
         private ISLTRepository _repository;
@@ -71,7 +70,6 @@ namespace saltr
             _deviceId = DeviceId;
             _isLoading = false;
             _conected = false;
-            _saltrUserId = null;
             _useNoLevels = false;
             _useNoFeatures = false;
             _levelType = null;
@@ -216,7 +214,6 @@ namespace saltr
 
         public Dictionary<string, object> getFeatureProperties(string token)
         {
-            Debug.Log(_developerFeatures[_developerFeatures.Keys.ElementAt(0)]);
             if (_activeFeatures.ContainsKey(token))
             {
                 return (_activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
@@ -247,7 +244,7 @@ namespace saltr
             }
             else
             {
-                Debug.Log("Method 'importLevels()' should be called before 'start()' only.");
+                throw new Exception("Method 'importLevels()' should be called before 'start()' only.");
             }
         }
 
@@ -267,20 +264,20 @@ namespace saltr
             }
             else
             {
-                Debug.Log("Method 'defineFeature()' should be called before 'start()' only.");
+                throw new Exception("Method 'defineFeature()' should be called before 'start()' only.");
             }
         }
 
         public void start()
         {
             if (_deviceId == null)
-                Debug.Log("deviceId field is required and can't be null.");
+                throw new Exception("deviceId field is required and can't be null.");
 
             if (_developerFeatures.Count == 0 && !_useNoFeatures)
-                Debug.Log("Features should be defined.");
+				throw new Exception("Features should be defined.");
 
             if (_levelPacks.Count == 0 && !_useNoLevels)
-                Debug.Log("Levels should be imported.");
+				throw new Exception("Levels should be imported.");
 
 
             object cachedData = _repository.getObjectFromCache(SLTConfig.APP_DATA_URL_CACHE);
@@ -297,7 +294,6 @@ namespace saltr
                 {
                     _activeFeatures = SLTDeserializer.decodeFeatures(cachedData.toDictionaryOrNull());
                     _experiments = SLTDeserializer.decodeExperiments(cachedData.toDictionaryOrNull());
-                    _saltrUserId = cachedData.toDictionaryOrNull().getValue<string>("saltrUserId");
                 }
             }
             _started = true;
@@ -333,16 +329,11 @@ namespace saltr
             if (_deviceId != null)
                 args.deviceId = _deviceId;
             else
-                Debug.Log("Field 'deviceId' is required.");
+                throw new Exception("Field 'deviceId' is required.");
 
             if (_socialId != null)
             {
                 args.socialId = _socialId;
-            }
-
-            if (_saltrUserId != null)
-            {
-                args.saltrUserId = _saltrUserId;
             }
 
             if (basicProperties != null)
@@ -389,7 +380,7 @@ namespace saltr
 
         public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
         {
-            if (basicProperties == null && customProperties == null || _saltrUserId == null)
+            if (basicProperties == null && customProperties == null)
                 return;
 
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
@@ -403,19 +394,15 @@ namespace saltr
                 CLIENT = CLIENT
             };
 
-
             if (_deviceId != null)
             {
                 args.deviceId = _deviceId;
             }
             else
-                Debug.Log("DeviceId is required");
+				throw new Exception("Field 'deviceId' is a required.");
 
             if (_socialId != null)
                 args.socialId = _socialId;
-
-            if (_saltrUserId != null)
-                args.saltrUserId = _saltrUserId;
 
             if (basicProperties != null)
                 args.basicProperties = basicProperties;
@@ -568,11 +555,6 @@ namespace saltr
                 try
                 {
                     _experiments = SLTDeserializer.decodeExperiments(response);
-
-                    foreach (var item in _experiments)
-                    {
-                        Debug.Log("E -" + item.token);
-                    }
                 }
                 catch
                 {
@@ -604,7 +586,6 @@ namespace saltr
                     }
                 }
 
-                _saltrUserId = response.getValue<string>("saltrUserId");
                 _conected = true;
                 _repository.cacheObject(SLTConfig.APP_DATA_URL_CACHE, "0", response);
 
@@ -650,16 +631,11 @@ namespace saltr
             if (_deviceId != null)
                 args.deviceId = _deviceId;
             else
-                Debug.Log("Field 'deviceId' is required.");
+                throw new Exception("Field 'deviceId' is required.");
 
             if (_socialId != null)
             {
                 args.socialId = _socialId;
-            }
-
-            if (_saltrUserId != null)
-            {
-                args.saltrUserId = _saltrUserId;
             }
 
             List<object> featureList = new List<object>();

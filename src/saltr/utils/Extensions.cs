@@ -81,25 +81,28 @@ namespace saltr.utils
         }
 
 
-
+		public static int toIntegerOr(this object obj, int value)
+		{
+			int x = value;
+			string str = "";
+			
+			try
+			{
+				str = obj.ToString();
+				
+				x = Int32.Parse(str);
+				return x;
+			}
+			
+			catch
+			{
+				return x;
+			}
+		}
 
         public static int toIntegerOrZero(this object obj)
         {
-            int x = 0;
-            string str = "";
-
-            try
-            {
-                str = obj.ToString();
-
-                x = Int32.Parse(str);
-                return x;
-            }
-
-            catch
-            {
-                return x;
-            }
+			return obj.toIntegerOr(0);
         }
 
     }
