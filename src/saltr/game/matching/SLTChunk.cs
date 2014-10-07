@@ -74,7 +74,7 @@ namespace saltr.game.matching
                         ratioChunkAssetRules.Add(assetRule);
                         break;
                     case "random":
-                        ratioChunkAssetRules.Add(assetRule);
+                        randomChunkAssetRules.Add(assetRule);
                         break;
                 }
             }
