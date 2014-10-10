@@ -10,6 +10,9 @@ using saltr.status;
 
 namespace saltr.game
 {
+	/// <summary>
+	/// Represents a level - a uniquely identifiable collection of boards and user defined properties.
+	/// </summary>
     public class SLTLevel
     {
         protected Dictionary<string, object> _boards;
@@ -26,9 +29,18 @@ namespace saltr.game
         private bool _contentReady;
         Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
+		/// <summary>
+		/// Used for parsing data retrieved from saltr.
+		/// </summary>
         public const string LEVEL_TYPE_NONE = "noLevels";
-        public const string LEVEL_TYPE_MATCHING = "matching";
-        public const string LEVEL_TYPE_2DCANVAS = "canvas2D";
+        /// <summary>
+        /// A level with "matching" boards and assets.
+        /// </summary>
+		public const string LEVEL_TYPE_MATCHING = "matching";
+        /// <summary>
+        /// A level with 2D boards and assets.
+        /// </summary>
+		public const string LEVEL_TYPE_2DCANVAS = "canvas2D";
 
         public static SLTLevelParser getParser(string levelType)
         {
@@ -44,37 +56,58 @@ namespace saltr.game
             return null;
         }
 
+		/// <summary>
+		/// Gets the index of the pack the level is in.
+		/// </summary>
         public int packIndex
         {
             get { return _packIndex; }
         }
 
+		/// <summary>
+		/// Gets the index of the level within its pack.
+		/// </summary>
         public int localIndex
         {
             get { return _localIndex; }
         }
 
+		/// <summary>
+		/// Gets the URL, used to retrieve contents of the level from Saltr.
+		/// </summary>
         public string contentUrl
         {
             get { return _contentUrl; }
         }
 
+		/// <summary>
+		/// Gets the index of the level in all levels.
+		/// </summary>
         public int index
         {
             get { return _index; }
         }
 
+		/// <summary>
+		/// Gets the properties of the level.
+		/// </summary>
         public object properties
         {
             get { return _properties; }
         }
 
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="saltr.game.SLTLevel"/> content is ready to be read.
+		/// </summary>
+		/// <value><c>true</c> if content is ready; otherwise, <c>false</c>.</value>
         public bool contentReady
         {
             get { return _contentReady; }
         }
 
-
+		/// <summary>
+		/// Gets the version.
+		/// </summary>
         public string version
         {
             get { return _version; }
@@ -93,6 +126,11 @@ namespace saltr.game
             _version = version;
         }
 
+		/// <summary>
+		/// Gets a board by id.
+		/// </summary>
+		/// <returns>The board specified by the id.</returns>
+		/// <param name="id">Board identifier.</param>
         public SLTBoard getBoard(string id)
         {
             return _boards.getValue<SLTBoard>(id);
@@ -102,10 +140,10 @@ namespace saltr.game
         {
             Dictionary<string, object> boardsNode = new Dictionary<string, object>();
 
-            List<string> kieys = new List<string>();
+            List<string> keys = new List<string>();
             foreach (var item in rootNode.Keys)
             {
-                kieys.Add(item);
+                keys.Add(item);
 
             }
 
@@ -156,6 +194,10 @@ namespace saltr.game
 
         }
 
+		/// <summary>
+		/// Regenerates contents of the board specified by boardId. 
+		/// </summary>
+		/// <param name="boardId">Board identifier.</param>
         public void regenerateBoard(string boardId)
         {
             if (_boards != null && _boards[boardId] != null)
@@ -166,6 +208,9 @@ namespace saltr.game
             }
         }
 
+		/// <summary>
+		/// Regenerates contents of all boards.
+		/// </summary>
         public void regenerateAllBoards()
         {
             foreach (var key in _boards.Keys)

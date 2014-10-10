@@ -5,10 +5,12 @@ using System.Text;
 
 namespace saltr
 {
+	/// <summary>
+	/// Internal configuration of SDK.
+	/// </summary>
     public class SLTConfig
     {
-
-
+		
         public static readonly string ACTION_GET_APP_DATA = "getAppData";
         public static readonly string ACTION_ADD_PROPERTIES = "addProperties";
         public static readonly string ACTION_DEV_SYNC_FEATURES = "syncFeatures";
@@ -21,6 +23,9 @@ namespace saltr
 
         //used to
         public static readonly string APP_DATA_URL_CACHE = "app_data_cache.json";
+		/// <summary>
+		/// Default path to the local level files.
+		/// </summary>
         public static readonly string LOCAL_LEVELPACK_PACKAGE_URL = "saltr/level_packs";
         public static readonly string LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE = "saltr/pack_{0}/level_{1}";
         public static readonly string LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE = "pack_{0}_level_{1}.json";

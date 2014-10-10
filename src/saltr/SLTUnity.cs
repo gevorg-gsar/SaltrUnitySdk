@@ -13,11 +13,24 @@ using saltr.status;
 namespace saltr
 {
     //TODO:: @daal add some flushCache method.
+	/// <summary>
+	/// The entry point to SDK, and the main class, used to send and receive data from Saltr.
+	/// </summary>
     public class SLTUnity
     {
+		/// <summary>
+		/// Type of client SDK, used to communicate with Saltr.
+		/// </summary>
         public const string CLIENT = "Unity";
-        public const string API_VERSION = "1.0.1"; //"0.9.0";
+        /// <summary>
+		/// The API version used to communicate with Saltr.
+		/// </summary>
+		public const string API_VERSION = "1.0.1"; //"0.9.0";
+		/// <summary>
+		/// The name of the Saltr GameObject, through which you can access SLTUnity instance.
+		/// </summary>
         public const string SALTR_GAME_OBJECT_NAME = "Saltr";
+
         protected string _socialId;
         private string _deviceId;
         protected bool _conected;
@@ -57,6 +70,12 @@ namespace saltr
             return ticket;
         }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="saltr.SLTUnity"/> class.
+		/// </summary>
+		/// <param name="clientKey">Client key.</param>
+		/// <param name="DeviceId">Device identifier.</param>
+		/// <param name="useCache">If set to <c>true</c> use cache.</param>
         public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
         {
             if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
@@ -89,43 +108,67 @@ namespace saltr
                 _repository = new SLTDummyRepository();
         }
 
+		/// <summary>
+		/// Sets the repository used by this instance. An appropriate repository is allready set by a constructor,
+		/// so you will need this only if you want to implement and use your own custom repository (<see cref="saltr.repository.ISLTRepository"/>).
+		/// </summary>
         public ISLTRepository repository
         {
             set { _repository = value; }
         }
 
+		/// <summary>
+		/// Sets a value indicating whether the application does not use features.
+		/// </summary>
+		/// <value><c>true</c> if features are not used; otherwise, <c>false</c>.</value>
         public bool useNoFeatures
         {
             set { _useNoFeatures = value; }
         }
 
+		/// <summary>
+		/// Sets a value indicating whether the application does not use levels.
+		/// </summary>
+		/// <value><c>true</c> if levels are not used; otherwise, <c>false</c>.</value>
         public bool useNoLevels
         {
             set { _useNoLevels = value; }
         }
 
+		/// <summary>
+		/// Sets a value indicating weather this <see cref="saltr.SLTUnity"/> should operate in dev(developer) mode.
+		/// In this mode developer defined features will be synced with Saltr on next connect() call.
+		/// </summary>
+		/// <value><c>true</c> in dev mode; otherwise, <c>false</c>.</value>
         public bool devMode
         {
             set { _devMode = value; }
         }
 
+		/// <summary>
+		/// Sets the request idle timeout. If a URL request takes more than timeout to complete, it would be canceled.
+		/// </summary>
+		/// <value>The request idle timeout in milliseonds.</value>
         public int requestIdleTimeout
         {
             set { _requestIdleTimeout = value; }
         }
 
+		/// <summary>
+		/// Gets the level packs.
+		/// </summary>
         public List<SLTLevelPack> levelPacks
         {
             get { return _levelPacks; }
         }
 
+		/// <summary>
+		/// Gets a list all levels.
+		/// </summary>
         public List<SLTLevel> allLevels
         {
             get
             {
-
-
-                // levelPacks = levelPacks.OrderByDescending(l => l.index).ToList();
                 List<SLTLevel> allLevels = new List<SLTLevel>();
                 for (int i = 0; i < _levelPacks.Count; i++)
                 {
@@ -139,6 +182,9 @@ namespace saltr
             }
         }
 
+		/// <summary>
+		/// Gets the count of all levels.
+		/// </summary>
         public uint allLevelsCount
         {
             get
@@ -152,16 +198,26 @@ namespace saltr
             }
         }
 
+		/// <summary>
+		/// Gets the experiments.
+		/// </summary>
         protected List<SLTExperiment> experiments
         {
             get { return _experiments; }
         }
 
+		/// <summary>
+		/// Sets the social identifier of the user.
+		/// </summary>
         public string socialId
         {
             set { _socialId = value; }
         }
 
+		/// <summary>
+		/// Gets a level by its global index in all levels.
+		/// </summary>
+		/// <param name="index">Index in all levels.</param>
         public SLTLevel getLevelByGlobalIndex(int index)
         {
             int levelSum = 0;
@@ -181,6 +237,10 @@ namespace saltr
             return null;
         }
 
+		/// <summary>
+		/// Gets the level pack that contains the level with given global index in all levels.
+		/// </summary>
+		/// <param name="index">Index of the level in all levels.</param>
         public SLTLevelPack getPackByLevelGlobalIndex(int index)
         {
             int levelSum = 0;
@@ -200,6 +260,9 @@ namespace saltr
             return null;
         }
 
+		/// <summary>
+		/// Gets a list of tokens(unique identifiers) of all features, active in Saltr.
+		/// </summary>
         public List<string> getActiveFeatureTokens()
         {
             List<string> tokens = new List<string>();
@@ -212,6 +275,12 @@ namespace saltr
             return tokens;
         }
 
+		/// <summary>
+		/// Gets the properties of the feature specified by the token. 
+		/// If a feature is set to be required and is not active in, or cannot be retrieved from, Saltr, 
+		/// the properties will be retrieved from default developer defined features.
+		/// </summary>
+		/// <param name="token">The feature token.</param>
         public Dictionary<string, object> getFeatureProperties(string token)
         {
             if (_activeFeatures.ContainsKey(token))
@@ -229,6 +298,14 @@ namespace saltr
             return null;
         }
 
+		/// <summary>
+		/// Imports the level data from local files, that can be downloaded from Saltr. 
+		/// If your application is using levels, this must be called before calling start().
+		/// </summary>
+		/// <param name="path">
+		/// The path to level packs in Resources folder. 
+		/// If not specified the <see cref="saltr.SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL"/> will be used.
+		/// </param>
         public void importLevels(string path = null)
         {
             if (_useNoLevels)
@@ -377,7 +454,7 @@ namespace saltr
                 }
             }
         }
-
+		
         public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
         {
             if (basicProperties == null && customProperties == null)
@@ -498,7 +575,6 @@ namespace saltr
             return contentData;
         }
 
-        // complete
         private void appDataLoadSuccessCallback(SLTResource resource)
         {
             Dictionary<string, object> data = resource.data;

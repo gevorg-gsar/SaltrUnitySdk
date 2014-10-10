@@ -1,33 +1,43 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 namespace saltr.game.canvas2d
 {
+	/// <summary>
+	/// Represents an inctance of a 2D asset on board
+	/// </summary>
     public class SLT2DAssetInstance : SLTAssetInstance
     {
         private float _x;
 
+		/// <summary>
+		/// Gets the X coordinate.
+		/// </summary>
         public float x
         {
             get { return _x; }
-            private set { _x = value; }
         }
 
         private float _y;
 
+		/// <summary>
+		/// Gets the Y coordinate.
+		/// </summary>
         public float y
         {
             get { return _y; }
-            private set { _y = value; }
         }
 
         private float _rotation;
+
+		/// <summary>
+		/// Gets the rotation.
+		/// </summary>
         public float rotation
         {
             get { return _rotation; }
-            private set { _rotation = value; }
         }
 
 
@@ -40,6 +50,11 @@ namespace saltr.game.canvas2d
            
         }
 
-        public Vector3 position { get { return new Vector2(_x, _y); } set { _x = value.x; _y = value.y; } }
+		/// <summary>
+		/// Gets the position as a Unity standard vector, for convenience.
+		/// </summary>
+        public Vector2 position { 
+			get { return new Vector2(_x, _y); } 
+		}
     }
 }

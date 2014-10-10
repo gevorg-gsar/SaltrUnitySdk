@@ -6,7 +6,10 @@ using System.Text;
 
 namespace saltr.game
 {
-   public class SLTBoard
+	/// <summary>
+	/// Represents any kind of a board. 
+	/// </summary>
+   	public class SLTBoard
     {
         private Dictionary<string, object> _properties;
         private List<SLTBoardLayer> _layers;
@@ -18,17 +21,26 @@ namespace saltr.game
 
         }
 
-		protected Dictionary<string, object> properties
+		/// <summary>
+		/// Gets the properties associated with the board.
+		/// </summary>
+		public Dictionary<string, object> properties
 		{
 			get { return _properties; }
 		}
 
+		/// <summary>
+		/// Gets the layers of the board.
+		/// </summary>
 		internal List<SLTBoardLayer> layers
 		{
 			get { return _layers; }
 		}
 
-        public void regenerate()
+		/// <summary>
+		/// Regenerates contents of all layers.
+		/// </summary>
+		public void regenerate()
         {
             for (int i = 0; i < _layers.Count; i++)
             {

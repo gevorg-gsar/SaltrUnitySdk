@@ -5,6 +5,9 @@ using System.Text;
 
 namespace saltr.game.matching
 {
+	/// <summary>
+	/// Represents a layer of a matching board.
+	/// </summary>
 	public class SLTMatchingBoardLayer : SLTBoardLayer
 	{
 		private List<SLTChunk> _chunks;
@@ -14,6 +17,9 @@ namespace saltr.game.matching
 			_chunks = new List<SLTChunk>();
 		}
 
+		/// <summary>
+		/// Regenerates contents of all the chunks within the layer.
+		/// </summary>
 		public override void regenerate ()
 		{
 			foreach(SLTChunk chunk in _chunks)
@@ -22,6 +28,9 @@ namespace saltr.game.matching
 			}
 		}
 
+		/// <summary>
+		/// Adds a chunk to the layer.
+		/// </summary>
 		public void addChunk(SLTChunk chunk)
 		{
 			_chunks.Add(chunk);

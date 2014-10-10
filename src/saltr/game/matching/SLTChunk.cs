@@ -5,6 +5,9 @@ using System.Text;
 
 namespace saltr.game.matching
 {
+	/// <summary>
+	/// Represents a chunk, a cllection of cells on matching board that is populated with assets according to certain rules.
+	/// </summary>
     public class SLTChunk
     {
         private string _layerToken;

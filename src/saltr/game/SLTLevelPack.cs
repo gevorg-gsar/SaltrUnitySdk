@@ -6,6 +6,9 @@ using System.Text;
 
 namespace saltr.game
 {
+	/// <summary>
+	/// Represents a level pack - a uniquely identifiable collection of levels.
+	/// </summary>
     public class SLTLevelPack
     {
         private string _token;
@@ -20,16 +23,25 @@ namespace saltr.game
             _levels = levels;
         }
 
+		/// <summary>
+		/// Gets the token, a unique identifier for the pack.
+		/// </summary>
 		public string token
 		{
 			get { return _token; }
 		}
 
+		/// <summary>
+		/// Gets the list of levels of the pack.
+		/// </summary>
 		public List<SLTLevel> levels
 		{
 			get { return _levels; }
 		}
 
+		/// <summary>
+		/// Gets the index of the pack.
+		/// </summary>
 		public int index
 		{
 			get { return _index; }
