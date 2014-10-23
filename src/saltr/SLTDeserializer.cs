@@ -58,11 +58,11 @@ namespace saltr
             return experiments;
         }
 		
-        public static Dictionary<string, object> decodeFeatures(Dictionary<string, object> rootNode)
+        public static Dictionary<string, SLTFeature> decodeFeatures(Dictionary<string, object> rootNode)
         {
             if (rootNode == null)
-                return new Dictionary<string, object>();
-            Dictionary<string, object> features = new Dictionary<string, object>();
+				return new Dictionary<string, SLTFeature>();
+			Dictionary<string, SLTFeature> features = new Dictionary<string, SLTFeature>();
 
 
 

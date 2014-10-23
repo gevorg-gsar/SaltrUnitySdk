@@ -39,8 +39,8 @@ namespace saltr
 
         private ISLTRepository _repository;
 
-		private Dictionary<string, object> _activeFeatures;
-		private Dictionary<string, object> _developerFeatures;
+        protected Dictionary<string, SLTFeature> _activeFeatures;
+        protected Dictionary<string, SLTFeature> _developerFeatures;
 
         private List<SLTExperiment> _experiments = new List<SLTExperiment>();
         private List<SLTLevelPack> _levelPacks = new List<SLTLevelPack>();
@@ -97,8 +97,8 @@ namespace saltr
             _started = false;
             _requestIdleTimeout = 0;
 
-            _activeFeatures = new Dictionary<string, object>();
-            _developerFeatures = new Dictionary<string, object>();
+            _activeFeatures = new Dictionary<string, SLTFeature>();
+			_developerFeatures = new Dictionary<string, SLTFeature>();
             _experiments = new List<SLTExperiment>();
             _levelPacks = new List<SLTLevelPack>();
 
@@ -266,9 +266,8 @@ namespace saltr
         public List<string> getActiveFeatureTokens()
         {
             List<string> tokens = new List<string>();
-            foreach (object item in _activeFeatures.Values)
+			foreach (SLTFeature feature in _activeFeatures.Values)
             {
-                SLTFeature feature = item as SLTFeature;
                 if (feature != null && feature.token != null)
                     tokens.Add(feature.token);
             }
@@ -285,13 +284,13 @@ namespace saltr
         {
             if (_activeFeatures.ContainsKey(token))
             {
-                return (_activeFeatures[token] as SLTFeature).properties.toDictionaryOrNull();
+                return (_activeFeatures[token]).properties.toDictionaryOrNull();
             }
             else
                 if (_developerFeatures.ContainsKey(token))
                 {
-                    SLTFeature devFeature = _developerFeatures[token] as SLTFeature;
-                    if (devFeature != null)
+                    SLTFeature devFeature = _developerFeatures[token];
+					if (devFeature != null && devFeature.required)
                         return devFeature.properties.toDictionaryOrNull();
                 }
 
@@ -325,14 +324,10 @@ namespace saltr
             }
         }
 
-        /// <summary>
-        /// Defines a feature.
-		/// If your application is using features, at least one must be defined before calling start().
-        /// </summary>
-        /// <param name="token">Feature token.</param>
-        /// <param name="properties">Feature properties.</param>
-        /// <param name="required">Specifies weather the feature is required or not.</param>
-        public void defineFeature(string token, object properties, bool required = false) // TODO @gyln: use string->object dicitionary for properties
+        /**
+         * If you want to have a feature synced with SALTR you should call define before getAppData call.
+         */
+        public void defineFeature(string token, Dictionary<string,object> properties, bool required = false)
         {
             if (_useNoFeatures)
             {
@@ -549,11 +544,14 @@ namespace saltr
             return _repository.getObjectFromCache(url);
 		}
 
+
         private string getCachedLevelVersion(SLTLevel sltLevel)
         {
             string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
             return _repository.getObjectVersion(cachedFileName);
         }
+
+
 
         private object loadLevelContentInternally(SLTLevel sltLevel)
         {
@@ -604,7 +602,7 @@ namespace saltr
                     _levelType = response["levelType"].ToString();
                 }
 
-                Dictionary<string, object> saltrFeatures = new Dictionary<string, object>();
+				Dictionary<string, SLTFeature> saltrFeatures = new Dictionary<string, SLTFeature>();
                 try
                 {
                     saltrFeatures = SLTDeserializer.decodeFeatures(response);
@@ -703,10 +701,9 @@ namespace saltr
             }
 
             List<object> featureList = new List<object>();
-            foreach (string i in _developerFeatures.Keys)
+			foreach (SLTFeature feature in _developerFeatures.Values)
             {
-                SLTFeature SLTFeature = _developerFeatures[i] as SLTFeature;
-                featureList.Add(new { token = SLTFeature.token, value = LitJson.JsonMapper.ToJson(SLTFeature.properties) });
+				featureList.Add(new { token = feature.token, value = LitJson.JsonMapper.ToJson(feature.properties) });
             }
 
             args.developerFeatures = featureList;
@@ -717,6 +714,7 @@ namespace saltr
             SLTResource resource = new SLTResource("syncFeatures", ticket, syncSuccessHandler, syncFailHandler);
             resource.load();
         }
+
 
         protected void syncSuccessHandler(SLTResource SLTResource)
         {
@@ -782,6 +780,7 @@ namespace saltr
             string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
             _repository.cacheObject(cachedFileName, sltLevel.version.ToString(), content);
         }
+
         
     }
 }

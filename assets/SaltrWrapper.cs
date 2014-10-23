@@ -48,7 +48,7 @@ public class SaltrWrapper : MonoBehaviour {
 
 		foreach(featureEntry feateure in defaultFeatures)
 		{
-			Dictionary<string,string> properties = new Dictionary<string, string>();
+			Dictionary<string,object> properties = new Dictionary<string, object>();
 			foreach(propertyEntry property in feateure.properties)
 				properties[property.key] = property.value;
 			_saltr.defineFeature(feateure.token, properties, feateure.required);
