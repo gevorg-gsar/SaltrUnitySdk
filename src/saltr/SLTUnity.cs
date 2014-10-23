@@ -222,7 +222,7 @@ namespace saltr
                 if (_developerFeatures.ContainsKey(token))
                 {
                     SLTFeature devFeature = _developerFeatures[token] as SLTFeature;
-                    if (devFeature != null)
+					if (devFeature != null && devFeature.required)
                         return devFeature.properties.toDictionaryOrNull();
                 }
 
