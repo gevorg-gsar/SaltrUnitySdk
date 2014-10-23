@@ -10,7 +10,7 @@ namespace saltr.game.canvas2d
 	/// </summary>
     public class SLT2DAssetState : SLTAssetState
     {
-		// TODO: I think one also needs the width and the height of the asset state from Saltr to be able to properly utilize this information, since those might not correspond to the actual in-game asset sizes. Alternative pivot coordinates can be represented with ratios from 0 to 1 instead of pixels. (gyln) 
+		// TODO @gyln: I think one also needs the width and the height of the asset state from Saltr to be able to properly utilize this information, since those might not correspond to the actual in-game asset sizes. Alternative pivot coordinates can be represented with ratios from 0 to 1 instead of pixels. 
 		private float _pivotX;
 		private float _pivotY;
 

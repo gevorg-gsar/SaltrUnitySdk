@@ -25,7 +25,7 @@ namespace saltr
 		/// <summary>
 		/// Gets the user defined properties.
 		/// </summary>
-		public object properties //TODO: return a string->object dictionary? (gyln)
+		public object properties //TODO @gyln: return a string->object dictionary? (gyln)
 		{
 			get { return _properties; }
 		}

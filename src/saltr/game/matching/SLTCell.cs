@@ -51,7 +51,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets or sets the properties of the cell.
 		/// </summary>
-		public object properties // TODO: return a string->object dictionary? (gyln)
+		public object properties // TODO @gyln: return a string->object dictionary?
 		{
 			get { return _properties; }
 			set { _properties = value; }
