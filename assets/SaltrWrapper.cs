@@ -5,7 +5,6 @@ using saltr;
 
 public class SaltrWrapper : MonoBehaviour
 {
-
     public string clientKey;
     public string deviceId = "";
     public string socialId;
@@ -35,6 +34,19 @@ public class SaltrWrapper : MonoBehaviour
 
     private SLTUnity _saltr;
 
+    #region Properties
+    public int AllLevelsCount
+    {
+        get { return (int)_saltr.allLevelsCount; }
+    }
+
+    public SLTUnity saltr
+    {
+        get { return _saltr; }
+    }
+    #endregion
+
+
     //public virtual void Awake(){}
     protected void Awake()
     {
@@ -58,10 +70,5 @@ public class SaltrWrapper : MonoBehaviour
 
         if (autoStart)
             _saltr.start();
-    }
-
-    public SLTUnity saltr
-    {
-        get { return _saltr; }
     }
 }
