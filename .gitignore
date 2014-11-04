@@ -26,3 +26,7 @@ saltr-unity-sdk.userprefs
 saltr-unity-sdk-csharp.sln
 saltr-unity-sdk-csharp.v12.suo
 Assembly-CSharp.csproj
+/LICENSE.md.meta
+/README.md.meta
+/assets.meta
+/src.meta
