@@ -300,10 +300,17 @@ namespace saltr
 
         public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
         {
+            if (!_started)
+			{
+				throw new Exception("Method 'connect()' should be called after 'start()' only.");
+			}
 
-            if (_isLoading || !_started)
-                return;
-
+			if(_isLoading)
+			{
+				failCallback(new SLTStatusAppDataConcurrentLoadRefused());
+				return;
+			}
+			
             _connectFailCallback = failCallback;
             _connectSuccessCallback = successCallback;
 

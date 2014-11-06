@@ -16,6 +16,9 @@ namespace saltr.status
 
 		public const int CLIENT_APP_DATA_LOAD_FAIL = 2040;
 		public const int CLIENT_LEVEL_CONTENT_LOAD_FAIL = 2041;
+		public const int CLIENT_APP_DATA_CONCURRENT_LOAD_REFUSED = 2042;
+
+
 		public const int CLIENT_FEATURES_PARSE_ERROR = 2050;
 		public const int CLIENT_EXPERIMENTS_PARSE_ERROR = 2051;
 		public const int CLIENT_LEVELS_PARSE_ERROR = 2052;
