@@ -60,15 +60,20 @@ public class SaltrWrapper : MonoBehaviour
         _saltr.requestIdleTimeout = requestIdleTimeout;
         _saltr.importLevels(localLevelPackage);
 
-        foreach (featureEntry feateure in defaultFeatures)
-        {
-            Dictionary<string, object> properties = new Dictionary<string, object>();
-            foreach (propertyEntry property in feateure.properties)
-                properties[property.key] = property.value;
-            _saltr.defineFeature(feateure.token, properties, feateure.required);
-        }
+		defineFeatures();
 
         if (autoStart)
             _saltr.start();
     }
+
+	virtual protected void defineFeatures()
+	{
+		foreach (featureEntry feateure in defaultFeatures)
+		{
+			Dictionary<string, object> properties = new Dictionary<string, object>();
+			foreach (propertyEntry property in feateure.properties)
+				properties[property.key] = property.value;
+			_saltr.defineFeature(feateure.token, properties, feateure.required);
+		}
+	}
 }
