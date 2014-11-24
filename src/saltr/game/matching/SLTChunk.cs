@@ -254,10 +254,14 @@ namespace saltr.game.matching
             }
         }
 
-
-        private static float randomWithin(float min, float max, bool isFloat = false)
+        private static float randomWithin(float min, float max, bool isFloat)
         {
             return isFloat ? new Random().Next(0, (int)(1 + (max - min))) + min : (int)(new Random().Next(0, (int)(1 + max - min))) + min;
         }
+
+		private static float randomWithin(float min, float max)
+		{
+			return randomWithin(min,max,false);
+		}
     }
 }

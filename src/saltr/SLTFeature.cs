@@ -27,12 +27,27 @@ namespace saltr
             get { return _required; }
         }
 
-        public SLTFeature(string token, object Properties = null, bool Required = false)
+		void Init(string token, object Properties, bool Required)
+		{
+			_token = token;
+			_properties = Properties;
+			_required = Required;
+		}
+
+        public SLTFeature(string token, object Properties, bool Required)
         {
-            _token = token;
-            _properties = Properties;
-            _required = Required;
+			Init(token, Properties, Required);
         }
+
+		public SLTFeature(string token, object Properties)
+		{
+			Init(token, Properties, false);
+		}
+
+		public SLTFeature(string token)
+		{
+			Init(token, null, false);
+		}
 
         public override string ToString()
         {

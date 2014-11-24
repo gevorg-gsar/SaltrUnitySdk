@@ -57,37 +57,47 @@ namespace saltr
             return ticket;
         }
 
-        public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
-        {
-            if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
-            {
-                GameObject saltr = new GameObject();
-                saltr.name = SALTR_GAME_OBJECT_NAME;
-                saltr.AddComponent<GETPOSTWrapper>();
-            }
-
-            _clientKey = clientKey;
-            _deviceId = DeviceId;
-            _isLoading = false;
-            _conected = false;
-            _useNoLevels = false;
-            _useNoFeatures = false;
-            _levelType = null;
-
-            _devMode = false;
-            _started = false;
-            _requestIdleTimeout = 0;
-
-            _activeFeatures = new Dictionary<string, SLTFeature>();
+		void init(string clientKey, string DeviceId, bool useCache)
+		{
+			if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
+			{
+				GameObject saltr = new GameObject();
+				saltr.name = SALTR_GAME_OBJECT_NAME;
+				saltr.AddComponent<GETPOSTWrapper>();
+			}
+			
+			_clientKey = clientKey;
+			_deviceId = DeviceId;
+			_isLoading = false;
+			_conected = false;
+			_useNoLevels = false;
+			_useNoFeatures = false;
+			_levelType = null;
+			
+			_devMode = false;
+			_started = false;
+			_requestIdleTimeout = 0;
+			
+			_activeFeatures = new Dictionary<string, SLTFeature>();
 			_developerFeatures = new Dictionary<string, SLTFeature>();
-            _experiments = new List<SLTExperiment>();
-            _levelPacks = new List<SLTLevelPack>();
+			_experiments = new List<SLTExperiment>();
+			_levelPacks = new List<SLTLevelPack>();
+			
+			if (useCache)
+				_repository = new SLTMobileRepository();
+			else
+				_repository = new SLTDummyRepository();
+		}
 
-            if (useCache)
-                _repository = new SLTMobileRepository();
-            else
-                _repository = new SLTDummyRepository();
+        public SLTUnity(string clientKey, string DeviceId, bool useCache)
+        {
+			init(clientKey, DeviceId, useCache);
         }
+
+		public SLTUnity(string clientKey, string DeviceId)
+		{
+			init(clientKey, DeviceId, true);
+		}
 
         public ISLTRepository repository
         {
@@ -228,7 +238,7 @@ namespace saltr
             return null;
         }
 
-        public void importLevels(string path = null)
+        public void importLevels(string path)
         {
             if (_useNoLevels)
             {
@@ -247,10 +257,15 @@ namespace saltr
             }
         }
 
+		public void importLevels()
+		{
+			importLevels (null);
+		}
+
         /**
          * If you want to have a feature synced with SALTR you should call define before getAppData call.
          */
-        public void defineFeature(string token, Dictionary<string,object> properties, bool required = false)
+        public void defineFeature(string token, Dictionary<string,object> properties, bool required)
         {
             if (_useNoFeatures)
             {
@@ -266,6 +281,11 @@ namespace saltr
                 throw new Exception("Method 'defineFeature()' should be called before 'start()' only.");
             }
         }
+
+		public void defineFeature(string token, Dictionary<string,object> properties)
+		{
+			defineFeature(token, properties, false);
+		}
 
         public void start()
         {
@@ -298,7 +318,7 @@ namespace saltr
             _started = true;
         }
 
-        public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
+        public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)
         {
             if (!_started)
 			{
@@ -319,8 +339,17 @@ namespace saltr
             resource.load();
         }
 
-        private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, Dictionary<string, object> basicProperties,
-            Dictionary<string, object> customProperties)
+		public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties)
+		{
+			connect(successCallback, failCallback, basicProperties, null);
+		}
+
+		public void connect(Action successCallback, Action<SLTStatus> failCallback)
+		{
+			connect(successCallback, failCallback, null);
+		}
+
+        private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
 
@@ -358,7 +387,7 @@ namespace saltr
             return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
         }
 
-        public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache = true)
+        public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache)
         {
             _levelContentLoadSuccessCalbck = loadSuccessCallback;
             _levelContentLoadFailCallback = loadFailCallback;
@@ -384,7 +413,12 @@ namespace saltr
             }
         }
 
-        public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)
+		public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback)
+		{
+			loadLevelContent(SLTLevel, loadSuccessCallback, loadFailCallback, true);
+		}
+
+        public void addProperties(Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)
         {
             if (basicProperties == null && customProperties == null)
                 return;
@@ -436,6 +470,16 @@ namespace saltr
             resource.load();
         }
 
+		public void addProperties(Dictionary<string, object> basicProperties)
+		{
+			addProperties(basicProperties, null);
+		}
+
+		public void addProperties()
+		{
+			addProperties(null);
+		}
+
         private object loadLevelContentFromDisk(SLTLevel sltLevel)
         {
             string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
@@ -448,8 +492,7 @@ namespace saltr
             string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
             return _repository.getObjectFromCache(url);
         }
-
-
+		
         private void loadLevelContentFromSaltr(SLTLevel sltLevel)
         {
             string dataUrl = sltLevel.contentUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
