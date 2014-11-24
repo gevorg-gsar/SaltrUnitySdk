@@ -7,27 +7,25 @@ namespace saltr.resource
 {
    public class SLTRequestArguments
     {
-       public string CLIENT { get; set; }
-        public string deviceId { get; set; }
+       public string CLIENT;
+       public string deviceId;
 
-        public string socialId { get; set; }
+       public string socialId;
 
-        public string socialNetwork { get; set; }
+       public string socialNetwork;
 
-        public string clientKey { get; set; }
+       public string clientKey;
 
-        public string appVersion { get; set; }
+       public string appVersion;
 
-        public List<object> developerFeatures { get; set; }
+       public List<object> developerFeatures;
 
-        public string apiVersion { get; set; }
+       public string apiVersion;
 
-        public string saltrUserId { get; set; }
+       public string saltrUserId;
 
-        public Dictionary<string,object> basicProperties { get; set; }
-
-        public Dictionary<string, object> customProperties { get; set; }
-
+       public Dictionary<string, object> basicProperties;
+       public Dictionary<string, object> customProperties;
 
     }
 }
