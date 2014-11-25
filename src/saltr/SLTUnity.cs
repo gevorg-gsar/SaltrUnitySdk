@@ -498,6 +498,7 @@ namespace saltr
             string dataUrl = sltLevel.contentUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
             SLTResourceTicket ticket = getTicket(dataUrl, null, _requestIdleTimeout);
 
+			// some ugly stuff here came from AS3... you don't do like this in normal languages
             Action<SLTResource> loadFromSaltrSuccessCallback = delegate(SLTResource res)
             {
                 object contentData = res.data;
@@ -505,20 +506,24 @@ namespace saltr
                     cacheLevelContent(sltLevel, contentData);
                 else
                     contentData = loadLevelContentInternally(sltLevel);
+
                 if (contentData != null)
                     levelContentLoadSuccessHandler(sltLevel, contentData);
                 else
                     levelContentLoadFailHandler();
                 res.dispose();
-
             };
 
             Action<SLTResource> loadFromSaltrFailCallback = delegate(SLTResource SLTResource)
             {
                 object contentData = loadLevelContentInternally(sltLevel);
-                levelContentLoadSuccessHandler(sltLevel, contentData);
-                SLTResource.dispose();
-            };
+				if (contentData != null)
+				levelContentLoadSuccessHandler(sltLevel, contentData);
+				else
+				levelContentLoadFailHandler();
+				SLTResource.dispose();
+			};
+
 
             SLTResource resource = new SLTResource("saltr", ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
             resource.load();
