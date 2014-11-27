@@ -18,12 +18,12 @@ namespace saltr.game
 
         }
 
-		protected Dictionary<string, object> properties
+		public Dictionary<string, object> properties
 		{
 			get { return _properties; }
 		}
 
-		internal List<SLTBoardLayer> layers
+		public List<SLTBoardLayer> layers
 		{
 			get { return _layers; }
 		}

@@ -46,7 +46,7 @@ namespace saltr
 
 		SaltrWrapper _wrapper;
 
-        private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars, int timeout = 0)
+        private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars, int timeout)
         {
             SLTResourceTicket ticket = new SLTResourceTicket(url, urlVars);
             //ticket.method = "post"; // to implement
@@ -57,6 +57,11 @@ namespace saltr
 
             return ticket;
         }
+
+		private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars)
+		{
+			return getTicket(url, urlVars, 0);
+		}
 
 		void init(string clientKey, string DeviceId, bool useCache)
 		{

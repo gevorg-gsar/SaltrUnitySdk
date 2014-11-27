@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B6E1A3F6-869B-4659-828D-6FDFC8667287}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>saltrunitysdk</RootNamespace>
+    <AssemblyName>saltr-unity-sdk</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Win|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>UnityProj\Assets\ExternalLibs\Saltr\dll</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="&quot;${ProjectDir}\build_utils\remove_UnityEngine.bat&quot;" workingdir="${TargetDir}" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Mac|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>UnityProj\Assets\ExternalLibs\Saltr\dll</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="&quot;${ProjectDir}\build_utils\remove_UnityEngine.command&quot;" workingdir="${TargetDir}" />
+      </CustomCommands>
+    </CustomCommands>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Package_Win|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>UnityProj\Assets\ExternalLibs\Saltr\dll</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="&quot;${ProjectDir}\build_utils\remove_UnityEngine.bat&quot;" workingdir="${TargetDir}" pauseExternalConsole="True" />
+        <Command type="AfterBuild" command="build_utils\create_unitypackage.bat &quot;${ProjectDir}\UnityProj&quot; &quot;${ProjectDir}\out\saltr-unity-sdk.unitypackage&quot;" workingdir="${ProjectDir}" externalConsole="True" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Package_Mac|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>UnityProj\Assets\ExternalLibs\Saltr\dll</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="&quot;${ProjectDir}\build_utils\remove_UnityEngine.command&quot;" workingdir="${TargetDir}" />
+        <Command type="AfterBuild" command="build_utils\create_unitypackage.command &quot;${ProjectDir}\UnityProj&quot; &quot;${ProjectDir}\out\saltr-unity-sdk.unitypackage&quot;" workingdir="${ProjectDir}" externalConsole="True" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>C:\Program Files %28x86%29\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="LitJSON">
+      <HintPath>src\saltr\utils\json-dll\LitJSON.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="src\saltr\SLTBasicProperties.cs" />
+    <Compile Include="src\saltr\SLTConfig.cs" />
+    <Compile Include="src\saltr\SLTDeserializer.cs" />
+    <Compile Include="src\saltr\SLTExperiment.cs" />
+    <Compile Include="src\saltr\SLTFeature.cs" />
+    <Compile Include="src\saltr\SLTUnity.cs" />
+    <Compile Include="src\saltr\game\SLTAsset.cs" />
+    <Compile Include="src\saltr\game\SLTAssetInstance.cs" />
+    <Compile Include="src\saltr\game\SLTAssetState.cs" />
+    <Compile Include="src\saltr\game\SLTBoard.cs" />
+    <Compile Include="src\saltr\game\SLTBoardLayer.cs" />
+    <Compile Include="src\saltr\game\SLTLevel.cs" />
+    <Compile Include="src\saltr\game\SLTLevelPack.cs" />
+    <Compile Include="src\saltr\game\SLTLevelParser.cs" />
+    <Compile Include="src\saltr\game\canvas2d\SLT2DAssetInstance.cs" />
+    <Compile Include="src\saltr\game\canvas2d\SLT2DAssetState.cs" />
+    <Compile Include="src\saltr\game\canvas2d\SLT2DBoard.cs" />
+    <Compile Include="src\saltr\game\canvas2d\SLT2DBoardLayer.cs" />
+    <Compile Include="src\saltr\game\canvas2d\SLT2DLevelParser.cs" />
+    <Compile Include="src\saltr\game\matching\SLTCell.cs" />
+    <Compile Include="src\saltr\game\matching\SLTCells.cs" />
+    <Compile Include="src\saltr\game\matching\SLTCellsIterator.cs" />
+    <Compile Include="src\saltr\game\matching\SLTChunk.cs" />
+    <Compile Include="src\saltr\game\matching\SLTChunkAssetRule.cs" />
+    <Compile Include="src\saltr\game\matching\SLTCompositeAsset.cs" />
+    <Compile Include="src\saltr\game\matching\SLTCompositeInstance.cs" />
+    <Compile Include="src\saltr\game\matching\SLTMatchingBoard.cs" />
+    <Compile Include="src\saltr\game\matching\SLTMatchingBoardLayer.cs" />
+    <Compile Include="src\saltr\game\matching\SLTMatchingLevelParser.cs" />
+    <Compile Include="src\saltr\repository\ISLTRepository.cs" />
+    <Compile Include="src\saltr\repository\SLTDummyRepository.cs" />
+    <Compile Include="src\saltr\repository\SLTMobileRepository.cs" />
+    <Compile Include="src\saltr\resource\SLTResource.cs" />
+    <Compile Include="src\saltr\resource\SLTResourceTicket.cs" />
+    <Compile Include="src\saltr\resource\SLTRrquestArguments.cs" />
+    <Compile Include="src\saltr\status\SLTStatus.cs" />
+    <Compile Include="src\saltr\status\SLTStatusAppDataConcurrentLoadRefused.cs" />
+    <Compile Include="src\saltr\status\SLTStatusAppDataLoadFail.cs" />
+    <Compile Include="src\saltr\status\SLTStatusExperimentsParseError.cs" />
+    <Compile Include="src\saltr\status\SLTStatusFeaturesParseError.cs" />
+    <Compile Include="src\saltr\status\SLTStatusLevelContentLoadFail.cs" />
+    <Compile Include="src\saltr\status\SLTStatusLevelParserMissing.cs" />
+    <Compile Include="src\saltr\status\SLTStatusLevelsParseError.cs" />
+    <Compile Include="src\saltr\utils\Extensions.cs" />
+    <Compile Include="src\saltr\utils\GETPOSTWrapper.cs" />
+    <Compile Include="src\saltr\utils\HTTPStatus.cs" />
+    <Compile Include="src\saltr\utils\MiniJSON.cs" />
+    <Compile Include="src\saltr\utils\Utils.cs" />
+    <Compile Include="src\saltr\utils\SaltrWrapper.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\saltr.meta" />
+    <None Include="src\saltr\game.meta" />
+    <None Include="src\saltr\repository.meta" />
+    <None Include="src\saltr\resource.meta" />
+    <None Include="src\saltr\SLTBasicProperties.cs.meta" />
+    <None Include="src\saltr\SLTConfig.cs.meta" />
+    <None Include="src\saltr\SLTDeserializer.cs.meta" />
+    <None Include="src\saltr\SLTExperiment.cs.meta" />
+    <None Include="src\saltr\SLTFeature.cs.meta" />
+    <None Include="src\saltr\SLTUnity.cs.meta" />
+    <None Include="src\saltr\status.meta" />
+    <None Include="src\saltr\utils.meta" />
+    <None Include="src\saltr\game\canvas2d.meta" />
+    <None Include="src\saltr\game\matching.meta" />
+    <None Include="src\saltr\game\SLTAsset.cs.meta" />
+    <None Include="src\saltr\game\SLTAssetInstance.cs.meta" />
+    <None Include="src\saltr\game\SLTAssetState.cs.meta" />
+    <None Include="src\saltr\game\SLTBoard.cs.meta" />
+    <None Include="src\saltr\game\SLTBoardLayer.cs.meta" />
+    <None Include="src\saltr\game\SLTLevel.cs.meta" />
+    <None Include="src\saltr\game\SLTLevelPack.cs.meta" />
+    <None Include="src\saltr\game\SLTLevelParser.cs.meta" />
+    <None Include="src\saltr\game\canvas2d\SLT2DAssetInstance.cs.meta" />
+    <None Include="src\saltr\game\canvas2d\SLT2DAssetState.cs.meta" />
+    <None Include="src\saltr\game\canvas2d\SLT2DBoard.cs.meta" />
+    <None Include="src\saltr\game\canvas2d\SLT2DBoardLayer.cs.meta" />
+    <None Include="src\saltr\game\canvas2d\SLT2DLevelParser.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTCell.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTCells.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTCellsIterator.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTChunk.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTChunkAssetRule.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTCompositeAsset.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTCompositeInstance.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTMatchingBoard.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTMatchingBoardLayer.cs.meta" />
+    <None Include="src\saltr\game\matching\SLTMatchingLevelParser.cs.meta" />
+    <None Include="src\saltr\repository\ISLTRepository.cs.meta" />
+    <None Include="src\saltr\repository\SLTDummyRepository.cs.meta" />
+    <None Include="src\saltr\repository\SLTMobileRepository.cs.meta" />
+    <None Include="src\saltr\resource\SLTResource.cs.meta" />
+    <None Include="src\saltr\resource\SLTResourceTicket.cs.meta" />
+    <None Include="src\saltr\resource\SLTRrquestArguments.cs.meta" />
+    <None Include="src\saltr\status\SLTStatus.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusAppDataConcurrentLoadRefused.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusAppDataLoadFail.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusExperimentsParseError.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusFeaturesParseError.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusLevelContentLoadFail.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusLevelParserMissing.cs.meta" />
+    <None Include="src\saltr\status\SLTStatusLevelsParseError.cs.meta" />
+    <None Include="src\saltr\utils\Extensions.cs.meta" />
+    <None Include="src\saltr\utils\GETPOSTWrapper.cs.meta" />
+    <None Include="src\saltr\utils\HTTPStatus.cs.meta" />
+    <None Include="src\saltr\utils\json-dll.meta" />
+    <None Include="src\saltr\utils\MiniJSON.cs.meta" />
+    <None Include="src\saltr\utils\Utils.cs.meta" />
+    <None Include="src\saltr\utils\json-dll\LitJSON.dll" />
+    <None Include="src\saltr\utils\json-dll\LitJSON.dll.meta" />
+    <None Include="src\saltr\utils\SaltrWrapper.cs.meta" />
+  </ItemGroup>
+</Project>
