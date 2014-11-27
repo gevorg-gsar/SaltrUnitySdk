@@ -44,6 +44,7 @@ namespace saltr
         private bool _useNoFeatures;
         private string _levelType;
 
+		SaltrWrapper _wrapper;
 
         private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars, int timeout = 0)
         {
@@ -59,11 +60,17 @@ namespace saltr
 
 		void init(string clientKey, string DeviceId, bool useCache)
 		{
-			if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
+			GameObject saltr = GameObject.Find(SALTR_GAME_OBJECT_NAME);
+			if (saltr == null)
 			{
-				GameObject saltr = new GameObject();
+				saltr = new GameObject();
 				saltr.name = SALTR_GAME_OBJECT_NAME;
 				saltr.AddComponent<GETPOSTWrapper>();
+				_wrapper = saltr.AddComponent<SaltrWrapper>();
+			}
+			else 
+			{
+				_wrapper = saltr.GetComponent<SaltrWrapper>();
 			}
 			
 			_clientKey = clientKey;
@@ -551,8 +558,7 @@ namespace saltr
                 contentData = loadLevelContentFromDisk(sltLevel);
             return contentData;
         }
-
-        // complete
+		
         private void appDataLoadSuccessCallback(SLTResource resource)
         {
             Dictionary<string, object> data = resource.data;
@@ -587,7 +593,7 @@ namespace saltr
             if (success)
             {
                 if (_devMode)
-                    syncDeveloperFeatures();
+                    syncData();
 
                 if (response.ContainsKey("levelType"))
                 {
@@ -671,19 +677,24 @@ namespace saltr
             _levelPacks.Clear();
         }
 
-        private void syncDeveloperFeatures()
+        private void syncData()
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_FEATURES; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_FEATURES;
+            urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_DATA; //TODO @GSAR: remove later
+            urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_DATA;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.apiVersion = API_VERSION;
             args.clientKey = _clientKey;
-            args.CLIENT = CLIENT;
+			args.devMode = _devMode;
+			urlVars["devMode"] = _devMode.ToString();
+			args.CLIENT = CLIENT;
 
             if (_deviceId != null)
+			{
                 args.deviceId = _deviceId;
+				urlVars["deviceId"] = _deviceId;
+			}
             else
                 throw new Exception("Field 'deviceId' is required.");
 
@@ -711,7 +722,20 @@ namespace saltr
 
         protected void syncSuccessHandler(SLTResource SLTResource)
         {
-            Debug.Log("[Saltr] Dev feature Sync is complete.");
+			object data = SLTResource.data;
+
+			if(data == null)
+			{
+				Debug.Log("[Saltr] Dev feature Sync's response.jsonData is null.");
+				return;
+			}
+
+			IEnumerable<object> response = (IEnumerable<object>)data.toDictionaryOrNull().getValue("response");
+			if(response != null && response.Count() > 0 && response.ElementAt(0).toDictionaryOrNull().getValue("registrationRequired")!=null)
+			{
+				_wrapper.showDeviceRegistationDialog(addDeviceToSALTR);
+			}
+			Debug.Log("[Saltr] Dev feature Sync is complete.");
         }
 
         protected void syncFailHandler(SLTResource SLTResource)
@@ -719,6 +743,113 @@ namespace saltr
             Debug.Log("[Saltr] Dev feature Sync has failed.");
         }
 
+		void addDeviceToSALTR(string deviceName, string email)
+		{
+			Dictionary<string, string> urlVars = new Dictionary<string, string>();
+			urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_DATA;
+			urlVars["clientKey"] = _clientKey;
+		
+			SLTRequestArguments args = new SLTRequestArguments();
+			args.devMode = _devMode;
+			args.apiVersion = API_VERSION;
+
+			if(_deviceId != null)
+			{
+				args.id =_deviceId;
+			}
+			else
+			{
+				throw new Exception("Field 'deviceId' is required");
+			}
+
+			//set device type
+			string platform;
+			string type = SystemInfo.deviceModel.ToLower();
+			Debug.Log("[SLTUnity] Device model: " + type);
+			if(type.IndexOf("ipad") != -1)
+			{
+				type = SLTConfig.DEVICE_TYPE_IPAD;
+				platform = SLTConfig.DEVICE_PLATFORM_IOS;
+			}
+			else if(type.IndexOf("iphone") != -1)
+			{
+				type = SLTConfig.DEVICE_TYPE_IPHONE;
+				platform = SLTConfig.DEVICE_PLATFORM_IOS;
+			}
+			else if(type.IndexOf("ipod") != -1)
+			{
+				type = SLTConfig.DEVICE_TYPE_IPOD;
+				platform = SLTConfig.DEVICE_PLATFORM_IOS;
+			}
+			else if(type.IndexOf("android") != -1)
+			{
+				type = SLTConfig.DEVICE_TYPE_ANDROID;
+				platform = SLTConfig.DEVICE_PLATFORM_ANDROID;
+			}
+			else 
+			{
+				Debug.Log ("Could not determine device type, Defaulting to android" );
+				type = SLTConfig.DEVICE_TYPE_ANDROID;
+				platform = SLTConfig.DEVICE_PLATFORM_ANDROID;
+			}
+			args.type = type;
+			args.platform = platform;
+
+			if(deviceName != null && deviceName != "")
+			{
+				args.name = deviceName;
+			}
+			else
+			{
+				throw new Exception("Device name is required.");
+			}
+
+			if(email != null && email != "")
+			{
+				args.email = email;
+			}
+			else
+			{
+				throw new Exception("Email is required.");
+			}
+
+			urlVars["args"] = LitJson.JsonMapper.ToJson(args);
+			
+			SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars);
+			SLTResource resource = new SLTResource("addDevice", ticket, addDeviceSuccessHandler, addDeviceFailHandler);
+			resource.load();
+		}
+
+		void addDeviceSuccessHandler (SLTResource resource)
+		{
+			Debug.Log("[Saltr] Dev adding new device is complete.");
+			Dictionary<string, object> data = resource.data.toDictionaryOrNull();
+			bool success = false;
+			Dictionary<string, object> response;
+			if(data.ContainsKey("response"))
+			{
+				response = ((IEnumerable<object>) (data["response"])).ElementAt(0).toDictionaryOrNull();
+				success = (bool)response.getValue("success");
+				if(success)
+				{
+					_wrapper.setStatus("Success");
+				}
+				else
+				{
+					_wrapper.setStatus(response.getValue("error").toDictionaryOrNull().getValue<string>("message"));
+				}
+			}
+			else
+			{
+				addDeviceFailHandler (resource);
+			}
+		}
+
+		void addDeviceFailHandler (SLTResource resource)
+		{
+			Debug.Log("[Saltr] Dev adding new device has failed.");
+			_wrapper.setStatus("Faild");
+		}
 
         private void appDataLoadFailCallback(SLTResource resource)
         {

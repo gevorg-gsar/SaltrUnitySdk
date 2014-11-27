@@ -51,6 +51,7 @@ MonoBehaviour:
   localLevelPackage: saltr/level_packs
   defaultFeatures: []
   autoStart: 1
+  _GUI_Skin: {fileID: 11400000, guid: 14df081efe3fe2f478f45166ac93ab85, type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

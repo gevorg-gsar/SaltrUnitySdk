@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using saltr;
+using saltr.status;
+using saltr.utils;
 
 public class SaltrWrapper : MonoBehaviour
 {
@@ -75,5 +78,89 @@ public class SaltrWrapper : MonoBehaviour
 				properties[property.key] = property.value;
 			_saltr.defineFeature(feateure.token, properties, feateure.required);
 		}
+	}
+
+	//TODO @gyln: move everything below to a separate script?
+	[SerializeField]
+	GUISkin _GUI_Skin;
+
+	int _mainAreaWidth = 250;
+	int _mainAreaHeight = 250;
+
+	string _deviceName = "";
+	string _email = "";
+	string _status = "idle";
+
+	bool _loading = false; 
+	bool _showDeviceRegistationDialog = false;
+
+	Action<string,string> _deviceRegistationDialogCallback;
+
+	void OnGUI()
+	{
+		if(_showDeviceRegistationDialog)
+		{
+			GUI.skin = _GUI_Skin;
+			GUILayout.BeginArea(new Rect((Screen.width - _mainAreaWidth)/2, (Screen.height - _mainAreaHeight)/2, _mainAreaWidth, _mainAreaHeight));
+
+			GUILayout.BeginVertical("box");
+				GUILayout.Label("Register device with SALTR");
+
+				GUILayout.BeginHorizontal();
+					GUILayout.Label("Email");
+					_email = GUILayout.TextField(_email, 256,  GUILayout.Width(150));
+				GUILayout.EndHorizontal();
+
+				GUILayout.BeginHorizontal();
+					GUILayout.Label("Device name");
+					_deviceName = GUILayout.TextField(_deviceName, 256,  GUILayout.Width(150));
+				GUILayout.EndHorizontal();
+
+				GUILayout.BeginHorizontal();
+					if(GUILayout.Button("Register") && !_loading)
+					{
+						if(Utils.validEmail(_email))
+						{
+							_deviceRegistationDialogCallback(_deviceName, _email);
+							_status = "Loading...";
+							_loading = true;
+						}
+						else
+						{
+							_status = "Invalid email!";
+						}
+					}
+					if(GUILayout.Button("Close") && !_loading)
+					{
+						hideDeviceRegistationDialog();
+					}
+				GUILayout.EndHorizontal();
+
+				GUILayout.Label("Status:  " + _status);
+			GUILayout.EndVertical();
+
+			GUILayout.EndArea();
+
+			GUI.skin = null;
+		}
+
+	}
+
+	public void showDeviceRegistationDialog(Action<string,string> callback)
+	{
+		_showDeviceRegistationDialog = true;
+		_deviceRegistationDialogCallback = callback;
+	}
+
+	public void hideDeviceRegistationDialog()
+	{
+		_showDeviceRegistationDialog = false;
+		_loading = false;
+	}
+
+	public void setStatus(string status)
+	{
+		_status = status;
+		_loading = false;
 	}
 }

@@ -19,5 +19,21 @@ namespace saltr.utils
 			//Debug.Log(format);        
 			return format;
         }
+
+//		public static function checkEmailValidation(email:String):Boolean {
+//			var emailExpression:RegExp = /([a-z0-9._-]+?)@([a-z0-9.-]+)\.([a-z]{2,4})/;
+//			return emailExpression.test(email);
+//		}
+
+		public static bool validEmail(string email)
+		{
+			string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" 
+				+ @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" 
+					+ @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
+			
+			Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
+			return regex.IsMatch(email);
+		}
+
     }
 }
