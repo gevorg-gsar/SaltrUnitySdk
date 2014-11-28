@@ -69,8 +69,8 @@
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="&quot;${ProjectDir}/build_utils/remove_UnityEngine.command&quot;" workingdir="${TargetDir}" />
-        <Command type="AfterBuild" command="${ProjectDir}/build_utils/create_unitypackage.command &quot;${ProjectDir}/UnityProj&quot; &quot;${ProjectDir}/out/saltr-unity-sdk.unitypackage&quot;" workingdir="${ProjectDir}" pauseExternalConsole="True" />
+        <Command type="AfterBuild" command="&quot;${ProjectDir}/build_utils/remove_UnityEngine.command&quot;" workingdir="${TargetDir}" externalConsole="True" />
+        <Command type="AfterBuild" command="${ProjectDir}/build_utils/create_unitypackage.command &quot;${ProjectDir}/UnityProj&quot; &quot;${ProjectDir}/out/saltr-unity-sdk.unitypackage&quot;" workingdir="${ProjectDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
     <ConsolePause>False</ConsolePause>
