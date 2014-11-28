@@ -52,7 +52,7 @@ namespace saltr
             //ticket.method = "post"; // to implement
             if (timeout > 0)
             {
-                ticket.idleTimeout = timeout;
+                ticket.dropTimeout = timeout;
             }
 
             return ticket;
