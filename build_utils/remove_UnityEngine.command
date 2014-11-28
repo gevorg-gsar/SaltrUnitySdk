@@ -1,1 +1,1 @@
-rm –Rf UnityEngine.dll
+rm -Rf UnityEngine.dll
