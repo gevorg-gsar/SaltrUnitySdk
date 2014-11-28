@@ -104,7 +104,7 @@ public class SaltrWrapper : MonoBehaviour
 			GUILayout.BeginArea(new Rect((Screen.width - _mainAreaWidth)/2, (Screen.height - _mainAreaHeight)/2, _mainAreaWidth, _mainAreaHeight));
 
 			GUILayout.BeginVertical("box");
-				GUILayout.Label("Register device with SALTR");
+				GUILayout.Label("Register Device with SALTR");
 
 				GUILayout.BeginHorizontal();
 					GUILayout.Label("Email");
@@ -112,11 +112,15 @@ public class SaltrWrapper : MonoBehaviour
 				GUILayout.EndHorizontal();
 
 				GUILayout.BeginHorizontal();
-					GUILayout.Label("Device name");
+					GUILayout.Label("Device Name");
 					_deviceName = GUILayout.TextField(_deviceName, 256,  GUILayout.Width(150));
 				GUILayout.EndHorizontal();
 
 				GUILayout.BeginHorizontal();
+					if(GUILayout.Button("Close") && !_loading)
+					{
+						hideDeviceRegistationDialog();
+					}
 					if(GUILayout.Button("Register") && !_loading)
 					{
 						if(Utils.validEmail(_email))
@@ -130,13 +134,10 @@ public class SaltrWrapper : MonoBehaviour
 							_status = "Invalid email!";
 						}
 					}
-					if(GUILayout.Button("Close") && !_loading)
-					{
-						hideDeviceRegistationDialog();
-					}
 				GUILayout.EndHorizontal();
 
-				GUILayout.Label("Status:  " + _status);
+				if(_status != "idle") 
+					GUILayout.Label("Status:  " + _status);
 			GUILayout.EndVertical();
 
 			GUILayout.EndArea();
