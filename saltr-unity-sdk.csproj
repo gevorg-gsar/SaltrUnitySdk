@@ -78,10 +78,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
-      <HintPath>C:\Program Files %28x86%29\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>dll\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="LitJSON">
-      <HintPath>src\saltr\utils\json-dll\LitJSON.dll</HintPath>
+      <HintPath>dll\LitJSON.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
