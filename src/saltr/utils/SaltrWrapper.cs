@@ -85,7 +85,7 @@ public class SaltrWrapper : MonoBehaviour
 	GUISkin _GUI_Skin;
 
 	int _mainAreaWidth = 250;
-	int _mainAreaHeight = 250;
+	int _mainAreaHeight = 150;
 
 	string _deviceName = "";
 	string _email = "";
@@ -101,6 +101,10 @@ public class SaltrWrapper : MonoBehaviour
 		if(_showDeviceRegistationDialog)
 		{
 			GUI.skin = _GUI_Skin;
+			Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   " + Screen.height);
+
+			GUIUtility.ScaleAroundPivot(Vector2.one * (Screen.height/786f), new Vector2(Screen.width / 2, Screen.height / 2));
+
 			GUILayout.BeginArea(new Rect((Screen.width - _mainAreaWidth)/2, (Screen.height - _mainAreaHeight)/2, _mainAreaWidth, _mainAreaHeight));
 
 			GUILayout.BeginVertical("box");
