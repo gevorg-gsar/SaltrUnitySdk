@@ -82,10 +82,12 @@ public class SaltrWrapper : MonoBehaviour
 
 	//TODO @gyln: move everything below to a separate script?
 	[SerializeField]
-	GUISkin _GUI_Skin;
+	GUISkin _GUI_Skin = null;
 
 	int _mainAreaWidth = 250;
 	int _mainAreaHeight = 150;
+
+	string _defaultEmail = "example@mail.com";
 
 	string _deviceName = "";
 	string _email = "";
@@ -101,9 +103,8 @@ public class SaltrWrapper : MonoBehaviour
 		if(_showDeviceRegistationDialog)
 		{
 			GUI.skin = _GUI_Skin;
-			Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   " + Screen.height);
 
-			GUIUtility.ScaleAroundPivot(Vector2.one * (Screen.height/786f), new Vector2(Screen.width / 2, Screen.height / 2));
+			GUIUtility.ScaleAroundPivot(Vector2.one * (Screen.height/512f), new Vector2(Screen.width / 2, Screen.height / 2));
 
 			GUILayout.BeginArea(new Rect((Screen.width - _mainAreaWidth)/2, (Screen.height - _mainAreaHeight)/2, _mainAreaWidth, _mainAreaHeight));
 
@@ -111,21 +112,25 @@ public class SaltrWrapper : MonoBehaviour
 				GUILayout.Label("Register Device with SALTR");
 
 				GUILayout.BeginHorizontal();
-					GUILayout.Label("Email");
-					_email = GUILayout.TextField(_email, 256,  GUILayout.Width(150));
+//					GUILayout.Label("Email");
+					GUI.SetNextControlName ("email_field");
+					_email = GUILayout.TextField(_email, 256, GUILayout.Width(242));
 				GUILayout.EndHorizontal();
 
-				GUILayout.BeginHorizontal();
-					GUILayout.Label("Device Name");
-					_deviceName = GUILayout.TextField(_deviceName, 256,  GUILayout.Width(150));
-				GUILayout.EndHorizontal();
+//				GUILayout.BeginHorizontal();
+//					GUILayout.Label("Device Name");
+//					_deviceName = GUILayout.TextField(_deviceName, 256,  GUILayout.Width(150));
+//				GUILayout.EndHorizontal();
+
+				if(_status != "idle") 
+					GUILayout.Label("Status:  " + _status);
 
 				GUILayout.BeginHorizontal();
 					if(GUILayout.Button("Close") && !_loading)
 					{
 						hideDeviceRegistationDialog();
 					}
-					if(GUILayout.Button("Register") && !_loading)
+					if(GUILayout.Button("Submit") && !_loading)
 					{
 						if(Utils.validEmail(_email))
 						{
@@ -140,11 +145,21 @@ public class SaltrWrapper : MonoBehaviour
 					}
 				GUILayout.EndHorizontal();
 
-				if(_status != "idle") 
-					GUILayout.Label("Status:  " + _status);
 			GUILayout.EndVertical();
 
 			GUILayout.EndArea();
+
+			if (UnityEngine.Event.current.type == EventType.Repaint)
+			{
+				if (GUI.GetNameOfFocusedControl () == "email_field")
+				{
+					if (_email == _defaultEmail) _email = "";
+				}
+				else
+				{
+					if (_email == "") _email = _defaultEmail;
+				}
+			}
 
 			GUI.skin = null;
 		}

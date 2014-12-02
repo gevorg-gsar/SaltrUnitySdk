@@ -770,7 +770,6 @@ namespace saltr
 			//set device type
 			string platform;
 			string type = SystemInfo.deviceModel.ToLower();
-			Debug.Log("[SLTUnity] Device model: " + type);
 			if(type.IndexOf("ipad") != -1)
 			{
 				type = SLTConfig.DEVICE_TYPE_IPAD;

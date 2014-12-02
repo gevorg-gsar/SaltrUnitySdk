@@ -8,13 +8,9 @@ namespace saltr.repository
 {
   public  class SLTDummyRepository : ISLTRepository
     {
-        private DirectoryInfo _applicationDirectory;
-        private FileStream _fileStream;
 
         public SLTDummyRepository()
         {
-            _applicationDirectory = new DirectoryInfo(Application.dataPath);
-            _fileStream = null;
         }
 
         public void cacheObject(string name, string version, object Object)
