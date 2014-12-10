@@ -751,7 +751,7 @@ namespace saltr
 		void addDeviceToSALTR(string deviceName, string email)
 		{
 			Dictionary<string, string> urlVars = new Dictionary<string, string>();
-			urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_DATA;
+			urlVars["action"] = SLTConfig.ACTION_DEV_REGISTER_DEVICE;
 			urlVars["clientKey"] = _clientKey;
 		
 			SLTRequestArguments args = new SLTRequestArguments();
@@ -767,46 +767,26 @@ namespace saltr
 				throw new Exception("Field 'deviceId' is required");
 			}
 
-			//set device type
-			string platform;
-			string type = SystemInfo.deviceModel.ToLower();
-			if(type.IndexOf("ipad") != -1)
-			{
-				type = SLTConfig.DEVICE_TYPE_IPAD;
-				platform = SLTConfig.DEVICE_PLATFORM_IOS;
-			}
-			else if(type.IndexOf("iphone") != -1)
-			{
-				type = SLTConfig.DEVICE_TYPE_IPHONE;
-				platform = SLTConfig.DEVICE_PLATFORM_IOS;
-			}
-			else if(type.IndexOf("ipod") != -1)
-			{
-				type = SLTConfig.DEVICE_TYPE_IPOD;
-				platform = SLTConfig.DEVICE_PLATFORM_IOS;
-			}
-			else if(type.IndexOf("android") != -1)
-			{
-				type = SLTConfig.DEVICE_TYPE_ANDROID;
-				platform = SLTConfig.DEVICE_PLATFORM_ANDROID;
-			}
-			else 
-			{
-				Debug.Log ("Could not determine device type, Defaulting to android" );
-				type = SLTConfig.DEVICE_TYPE_ANDROID;
-				platform = SLTConfig.DEVICE_PLATFORM_ANDROID;
-			}
-			args.type = type;
-			args.platform = platform;
+			string model = "unknown";
+			string os = "unknown";
+#if UNITY_IPHONE
+			model = Utils.getHumanReadableDeviceModel(SystemInfo.deviceModel); 
+			os = SystemInfo.operatingSystem.Replace("Phone ", "");
+#elif UNITY_ANDROID
+			model = SystemInfo.deviceModel;
+			int iVersionNumber = 0;
+			string androidVersion = SystemInfo.operatingSystem;
+			int sdkPos = androidVersion.IndexOf("API-");
+			iVersionNumber = int.Parse(androidVersion.Substring(sdkPos+4,2).ToString());
+			os = "Android " + iVersionNumber;
+#else
+			model = SystemInfo.deviceModel;
+			os = SystemInfo.operatingSystem;
+#endif
 
-			if(deviceName != null && deviceName != "")
-			{
-				args.name = deviceName;
-			}
-			else
-			{
-				throw new Exception("Device name is required.");
-			}
+
+			args.model = model;
+			args.os = os;
 
 			if(email != null && email != "")
 			{

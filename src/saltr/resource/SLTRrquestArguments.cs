@@ -35,9 +35,9 @@ namespace saltr.resource
 
 		public string type;
 
-		public string platform;
+		public string model;
 
-		public string name;
+		public string os;
 
 		public string email;
   	}

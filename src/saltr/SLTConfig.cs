@@ -12,7 +12,7 @@ namespace saltr
         public static readonly string ACTION_GET_APP_DATA = "getAppData";
         public static readonly string ACTION_ADD_PROPERTIES = "addProperties";
 		public static readonly string ACTION_DEV_SYNC_DATA = "sync";
-		public static readonly string ACTION_DEV_REGISTER_IDENTITY = "registerIdentity";
+		public static readonly string ACTION_DEV_REGISTER_DEVICE = "registerDevice";
         
 
         public static readonly string SALTR_API_URL = "https://api.saltr.com/call";

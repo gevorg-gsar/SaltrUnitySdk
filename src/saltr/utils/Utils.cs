@@ -35,9 +35,9 @@ namespace saltr.utils
 			return regex.IsMatch(email);
 		}
 
-		public static string getHumanReadableDeviceName(string deviceName)
+		public static string getHumanReadableDeviceModel(string deviceModel)
 		{
-			switch(deviceName)
+			switch(deviceModel)
 			{
 			case "iPod1,1":
 				return "iPod Touch";
@@ -92,7 +92,8 @@ namespace saltr.utils
 			case "iPhone7,2":
 				return "iPhone 6";
 			default:
-				return deviceName;
+				return "unknown(" + deviceModel + ")";
+			}
 		}
     }
 }
