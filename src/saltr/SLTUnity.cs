@@ -70,49 +70,58 @@ namespace saltr
             return ticket;
         }
 
+		void init(string clientKey, string DeviceId, bool useCache)
+		{
+			if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
+			{
+				GameObject saltr = new GameObject();
+				saltr.name = SALTR_GAME_OBJECT_NAME;
+				saltr.AddComponent<GETPOSTWrapper>();
+			}
+			
+			_clientKey = clientKey;
+			_deviceId = DeviceId;
+			_isLoading = false;
+			_conected = false;
+			_useNoLevels = false;
+			_useNoFeatures = false;
+			_levelType = null;
+			
+			_devMode = false;
+			_started = false;
+			_requestIdleTimeout = 0;
+			
+			_activeFeatures = new Dictionary<string, SLTFeature>();
+			_developerFeatures = new Dictionary<string, SLTFeature>();
+			_experiments = new List<SLTExperiment>();
+			_levelPacks = new List<SLTLevelPack>();
+			
+			if (useCache)
+				_repository = new SLTMobileRepository();
+			else
+				_repository = new SLTDummyRepository();
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="saltr.SLTUnity"/> class.
 		/// </summary>
 		/// <param name="clientKey">Client key.</param>
 		/// <param name="DeviceId">Device identifier.</param>
 		/// <param name="useCache">If set to <c>true</c> use cache.</param>
-        public SLTUnity(string clientKey, string DeviceId, bool useCache = true)
+        public SLTUnity(string clientKey, string DeviceId, bool useCache)
         {
-            if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
-            {
-                GameObject saltr = new GameObject();
-                saltr.name = SALTR_GAME_OBJECT_NAME;
-                saltr.AddComponent<GETPOSTWrapper>();
-            }
-
-            _clientKey = clientKey;
-            _deviceId = DeviceId;
-            _isLoading = false;
-            _conected = false;
-            _useNoLevels = false;
-            _useNoFeatures = false;
-            _levelType = null;
-
-            _devMode = false;
-            _started = false;
-            _requestIdleTimeout = 0;
-
-            _activeFeatures = new Dictionary<string, SLTFeature>();
-			_developerFeatures = new Dictionary<string, SLTFeature>();
-            _experiments = new List<SLTExperiment>();
-            _levelPacks = new List<SLTLevelPack>();
-
-            if (useCache)
-                _repository = new SLTMobileRepository();
-            else
-                _repository = new SLTDummyRepository();
+			init(clientKey, DeviceId, useCache);
         }
+
+		public SLTUnity(string clientKey, string DeviceId)
+		{
+			init(clientKey, DeviceId, true);
+		}
 
 		/// <summary>
 		/// Sets the repository used by this instance. An appropriate repository is already set by a constructor,
 		/// so you will need this only if you want to implement and use your own custom repository (<see cref="saltr.repository.ISLTRepository"/>).
-		/// </summary>
-        public ISLTRepository repository
+		/// </summary>        public ISLTRepository repository
         {
             set { _repository = value; }
         }
@@ -305,7 +314,7 @@ namespace saltr
 		/// The path to level packs in Resources folder. 
 		/// If not specified the <see cref="saltr.SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL"/> will be used.
 		/// </param>
-        public void importLevels(string path = null)
+        public void importLevels(string path)
         {
             if (_useNoLevels)
             {
@@ -324,10 +333,15 @@ namespace saltr
             }
         }
 
+		public void importLevels()
+		{
+			importLevels (null);
+		}
+
         /**
          * If you want to have a feature synced with SALTR you should call define before getAppData call.
          */
-        public void defineFeature(string token, Dictionary<string,object> properties, bool required = false)
+        public void defineFeature(string token, Dictionary<string,object> properties, bool required)
         {
             if (_useNoFeatures)
             {
@@ -343,6 +357,11 @@ namespace saltr
                 throw new Exception("Method 'defineFeature()' should be called before 'start()' only.");
             }
         }
+
+		public void defineFeature(string token, Dictionary<string,object> properties)
+		{
+			defineFeature(token, properties, false);
+		}
 
 		/// <summary>
 		/// Checks if everything is initialized properly and starts the instance.
@@ -387,12 +406,19 @@ namespace saltr
 		/// <param name="failCallback">Fail callback, receives <see cref="saltr.status.SLTStatus"/> object as the first parameter</param>
 		/// <param name="basicProperties">Basic properties.</param>
 		/// <param name="customProperties">Custom properties.</param>
-        public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null) // TODO @gyln:  shouldn't basicProperties be of a type BasicProperties 
+        public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)// TODO @gyln:  shouldn't basicProperties be of a type BasicProperties 
         {
+            if (!_started)
+			{
+				throw new Exception("Method 'connect()' should be called after 'start()' only.");
+			}
 
-            if (_isLoading || !_started)
-                return;
-
+			if(_isLoading)
+			{
+				failCallback(new SLTStatusAppDataConcurrentLoadRefused());
+				return;
+			}
+			
             _connectFailCallback = failCallback;
             _connectSuccessCallback = successCallback;
 
@@ -401,8 +427,17 @@ namespace saltr
             resource.load();
         }
 
-        private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, Dictionary<string, object> basicProperties,
-            Dictionary<string, object> customProperties)
+		public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties)
+		{
+			connect(successCallback, failCallback, basicProperties, null);
+		}
+
+		public void connect(Action successCallback, Action<SLTStatus> failCallback)
+		{
+			connect(successCallback, failCallback, null);
+		}
+
+        private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
 
@@ -448,7 +483,7 @@ namespace saltr
 		/// <param name="loadSuccessCallback">Load success callback.</param>
 		/// <param name="loadFailCallback">Load fail callback.</param>
 		/// <param name="useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established.</param>
-        public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache = true)
+        public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache)
         {
             _levelContentLoadSuccessCalbck = loadSuccessCallback;
             _levelContentLoadFailCallback = loadFailCallback;
@@ -474,12 +509,17 @@ namespace saltr
             }
         }
 
+		public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback)
+		{
+			loadLevelContent(SLTLevel, loadSuccessCallback, loadFailCallback, true);
+		}
+
 		/// <summary>
 		/// Adds the properties.
 		/// </summary>
 		/// <param name="basicProperties">Basic properties.</param>
 		/// <param name="customProperties">Custom properties.</param>
-		public void addProperties(Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null)  // TODO @gyln:  shouldn't basicProperties be of a type BasicProperties 
+        public void addProperties(Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties) // TODO @gyln:  shouldn't basicProperties be of a type BasicProperties
         {
             if (basicProperties == null && customProperties == null)
                 return;
@@ -531,6 +571,16 @@ namespace saltr
             resource.load();
         }
 
+		public void addProperties(Dictionary<string, object> basicProperties)
+		{
+			addProperties(basicProperties, null);
+		}
+
+		public void addProperties()
+		{
+			addProperties(null);
+		}
+
         private object loadLevelContentFromDisk(SLTLevel sltLevel)
         {
             string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
@@ -543,8 +593,7 @@ namespace saltr
             string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
             return _repository.getObjectFromCache(url);
 		}
-
-
+		
         private string getCachedLevelVersion(SLTLevel sltLevel)
         {
             string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());

@@ -59,25 +59,29 @@ namespace saltr.utils
                 return null;
             }
         }
-
+		
+		public static float toFloatOr(this object obj, float value)
+		{
+			float x = value;
+			string str = "";
+			
+			try
+			{
+				str = obj.ToString();
+				
+				x = float.Parse(str);
+				return x;
+			}
+			
+			catch
+			{
+				return x;
+			}
+		}
 
         public static float toFloatOrZero(this object obj)
         {
-            float x = 0;
-            string str = "";
-
-            try
-            {
-                str = obj.ToString();
-
-                x = float.Parse(str);
-                return x;
-            }
-
-            catch
-            {
-                return x;
-            }
+			return obj.toFloatOr(0);
         }
 
 
