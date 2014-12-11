@@ -5,8 +5,12 @@ using System.Text;
 
 namespace saltr.status
 {
+	/// <summary>
+	/// Represents a status of various operations carried out by the SDK.
+	/// </summary>
     public class SLTStatus
     {
+		// TODO @gyln: use an enum?
         public const int AUTHORIZATION_ERROR = 1001;
 		public const int VALIDATION_ERROR = 1002;
 		public const int API_ERROR = 1003;
@@ -22,12 +26,18 @@ namespace saltr.status
 
         private int _statusCode;
 
+		/// <summary>
+		/// Gets and integer status code.
+		/// </summary>
         public int statusCode
         {
             get { return _statusCode; }
         }
         private string _statusMessage;
 
+		/// <summary>
+		/// Gets a human-readable status message.
+		/// </summary>
         public string statusMessage
         {
             get { return _statusMessage; }

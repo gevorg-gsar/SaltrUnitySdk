@@ -384,7 +384,7 @@ namespace saltr
 		/// After connecting successfully you can load level content from server with <see cref="saltr.SLTUnity.loadLevelContent"/> 
 		/// </summary>
 		/// <param name="successCallback">Success callback.</param>
-		/// <param name="failCallback">Fail callback.</param>
+		/// <param name="failCallback">Fail callback, receives <see cref="saltr.status.SLTStatus"/> object as the first parameter</param>
 		/// <param name="basicProperties">Basic properties.</param>
 		/// <param name="customProperties">Custom properties.</param>
         public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties = null, Dictionary<string, object> customProperties = null) // TODO @gyln:  shouldn't basicProperties be of a type BasicProperties 
