@@ -35,7 +35,7 @@ namespace saltr.resource
 
 		public string type;
 
-		public string model;
+		public string source;
 
 		public string os;
 

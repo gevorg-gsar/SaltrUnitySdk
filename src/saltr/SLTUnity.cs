@@ -39,6 +39,8 @@ namespace saltr
 
         private int _requestIdleTimeout;
         private bool _devMode;
+		private bool _autoSyncEnabled;
+		private bool _isDataSynced;
         private bool _started;
         private bool _useNoLevels;
         private bool _useNoFeatures;
@@ -87,6 +89,8 @@ namespace saltr
 			_levelType = null;
 			
 			_devMode = false;
+			_autoSyncEnabled = true;
+			_isDataSynced = false;
 			_started = false;
 			_requestIdleTimeout = 0;
 			
@@ -131,7 +135,12 @@ namespace saltr
             set { _devMode = value; }
         }
 
-        public int requestIdleTimeout
+		public bool autoSyncEnabled
+		{
+			set { _autoSyncEnabled = value; }
+		}
+		
+		public int requestIdleTimeout
         {
             set { _requestIdleTimeout = value; }
         }
@@ -597,8 +606,11 @@ namespace saltr
 
             if (success)
             {
-                if (_devMode)
-                    syncData();
+				if (_autoSyncEnabled && !_isDataSynced)
+				{
+					syncData();
+					_isDataSynced = true;
+				}
 
                 if (response.ContainsKey("levelType"))
                 {
@@ -682,8 +694,13 @@ namespace saltr
             _levelPacks.Clear();
         }
 
-        private void syncData()
+        public void syncData()
         {
+			if(!_devMode)
+			{
+				return;
+			}
+
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
             urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_DATA; //TODO @GSAR: remove later
             urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_DATA;
@@ -748,7 +765,7 @@ namespace saltr
             Debug.Log("[Saltr] Dev feature Sync has failed.");
         }
 
-		void addDeviceToSALTR(string deviceName, string email)
+		void addDeviceToSALTR(string email)
 		{
 			Dictionary<string, string> urlVars = new Dictionary<string, string>();
 			urlVars["action"] = SLTConfig.ACTION_DEV_REGISTER_DEVICE;
@@ -767,8 +784,8 @@ namespace saltr
 				throw new Exception("Field 'deviceId' is required");
 			}
 
-			string model = "unknown";
-			string os = "unknown";
+			string model = "Unknown";
+			string os = "Unknown";
 #if UNITY_IPHONE
 			model = Utils.getHumanReadableDeviceModel(SystemInfo.deviceModel); 
 			os = SystemInfo.operatingSystem.Replace("Phone ", "");
@@ -785,7 +802,7 @@ namespace saltr
 #endif
 
 
-			args.model = model;
+			args.source = model;
 			args.os = os;
 
 			if(email != null && email != "")

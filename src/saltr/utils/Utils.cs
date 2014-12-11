@@ -92,7 +92,7 @@ namespace saltr.utils
 			case "iPhone7,2":
 				return "iPhone 6";
 			default:
-				return "unknown(" + deviceModel + ")";
+				return "Unrecognised(" + deviceModel + ")";
 			}
 		}
     }

@@ -12,6 +12,7 @@ public class SaltrWrapper : MonoBehaviour
     public string deviceId = "";
     public string socialId;
     public bool devMode = false;
+	public bool autoSync = true;
     public bool useCache = true;
     public bool useNoLevels = false;
     public bool useNoFeatures = false;
@@ -58,6 +59,7 @@ public class SaltrWrapper : MonoBehaviour
         _saltr = new SLTUnity(clientKey, deviceId, useCache);
         _saltr.socialId = socialId;
         _saltr.devMode = devMode;
+		_saltr.autoSyncEnabled = autoSync;
         _saltr.useNoLevels = useNoLevels;
         _saltr.useNoFeatures = useNoFeatures;
         _saltr.requestIdleTimeout = requestIdleTimeout;
@@ -89,14 +91,14 @@ public class SaltrWrapper : MonoBehaviour
 
 	string _defaultEmail = "example@mail.com";
 
-	string _deviceName = "";
+//	string _deviceName = "";
 	string _email = "";
 	string _status = "idle";
 
 	bool _loading = false; 
 	bool _showDeviceRegistationDialog = false;
 
-	Action<string,string> _deviceRegistationDialogCallback;
+	Action<string> _deviceRegistationDialogCallback;
 
 	void OnGUI()
 	{
@@ -134,7 +136,7 @@ public class SaltrWrapper : MonoBehaviour
 					{
 						if(Utils.validEmail(_email))
 						{
-							_deviceRegistationDialogCallback(_deviceName, _email);
+							_deviceRegistationDialogCallback(_email);
 							_status = "Loading...";
 							_loading = true;
 						}
@@ -166,7 +168,7 @@ public class SaltrWrapper : MonoBehaviour
 
 	}
 
-	public void showDeviceRegistationDialog(Action<string,string> callback)
+	public void showDeviceRegistationDialog(Action<string> callback)
 	{
 		_showDeviceRegistationDialog = true;
 		_deviceRegistationDialogCallback = callback;
