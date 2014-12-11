@@ -12,7 +12,7 @@ using saltr.utils;
 
 namespace saltr.resource
 {
-    public class SLTResource : MonoBehaviour
+    public class SLTResource
     {
         private string _id;
 

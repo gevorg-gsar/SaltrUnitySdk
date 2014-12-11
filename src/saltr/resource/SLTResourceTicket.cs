@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace saltr.resource
 {
-    public class SLTResourceTicket : MonoBehaviour
+    public class SLTResourceTicket
     {
         private string _url;
         private Dictionary<string,string> _variables;

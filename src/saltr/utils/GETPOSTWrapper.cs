@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -119,7 +119,7 @@ namespace saltr.utils
 
 	      
 	            form.AddField("args", MiniJSON.Json.Serialize( post));
-	            form.AddField("cmd", SLTConfig.ACTION_DEV_SYNC_FEATURES);
+	            form.AddField("cmd", SLTConfig.ACTION_DEV_SYNC_DATA);
 
 
 	            //foreach (var item in post.Keys)

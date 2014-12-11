@@ -180,7 +180,7 @@ namespace saltr
 								localIndex = Int32.Parse(levelDict["index"].ToString());
 						}
 						
-						//TODO @GSAR: later, leave localIndex only!w
+						//TODO @GSAR: later, leave localIndex only!
 						levelStructureList.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
 					}
 

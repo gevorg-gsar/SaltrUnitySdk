@@ -48,10 +48,8 @@ namespace saltr.game
             {
                 case LEVEL_TYPE_MATCHING:
                     return SLTMatchingLevelParser.getInstance();
-                    break;
                 case LEVEL_TYPE_2DCANVAS:
                     return SLT2DLevelParser.getInstance();
-                    break;
             }
             return null;
         }

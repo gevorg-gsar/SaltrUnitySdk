@@ -5,27 +5,40 @@ using System.Text;
 
 namespace saltr.resource
 {
-   public class SLTRequestArguments
-    {
-       public string CLIENT;
-       public string deviceId;
+   	public class SLTRequestArguments
+ 	{
+       	public string CLIENT;
 
-       public string socialId;
+       	public string deviceId;
 
-       public string socialNetwork;
+      	public string socialId;
 
-       public string clientKey;
+       	public string socialNetwork;
 
-       public string appVersion;
+       	public string clientKey;
 
-       public List<object> developerFeatures;
+       	public string appVersion;
 
-       public string apiVersion;
+       	public List<object> developerFeatures;
 
-       public string saltrUserId;
+       	public string apiVersion;
 
-       public Dictionary<string, object> basicProperties;
-       public Dictionary<string, object> customProperties;
+       	public string saltrUserId;
 
-    }
+		public bool devMode;
+		
+		public Dictionary<string, object> basicProperties;
+		public Dictionary<string, object> customProperties;
+
+		// TODO @gyln: make a different class for these? can inherit from a base that will have the common fields
+		public string id; 
+
+		public string type;
+
+		public string source;
+
+		public string os;
+
+		public string email;
+  	}
 }

@@ -14,6 +14,7 @@ namespace saltr.status
         public const int AUTHORIZATION_ERROR = 1001;
 		public const int VALIDATION_ERROR = 1002;
 		public const int API_ERROR = 1003;
+		public const int PARSE_ERROR = 1004;
 
 		public const int GENERAL_ERROR_CODE = 2001;
 		public const int CLIENT_ERROR_CODE = 2002;

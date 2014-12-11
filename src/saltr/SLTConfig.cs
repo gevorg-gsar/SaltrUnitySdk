@@ -13,8 +13,8 @@ namespace saltr
 		
         public static readonly string ACTION_GET_APP_DATA = "getAppData";
         public static readonly string ACTION_ADD_PROPERTIES = "addProperties";
-        public static readonly string ACTION_DEV_SYNC_FEATURES = "syncFeatures";
-
+		public static readonly string ACTION_DEV_SYNC_DATA = "sync";
+		public static readonly string ACTION_DEV_REGISTER_DEVICE = "registerDevice";
         
 
         public static readonly string SALTR_API_URL = "https://api.saltr.com/call";
@@ -32,5 +32,12 @@ namespace saltr
 
         public static readonly string RESULT_SUCCEED = "SUCCEED";
         public static readonly string RESULT_ERROR = "ERROR";
+
+		public static readonly string DEVICE_TYPE_IPAD = "ipad";
+		public static readonly string DEVICE_TYPE_IPHONE = "iphone";
+		public static readonly string DEVICE_TYPE_IPOD = "ipod";
+		public static readonly string DEVICE_TYPE_ANDROID = "android";
+		public static readonly string DEVICE_PLATFORM_ANDROID = "android";
+		public static readonly string DEVICE_PLATFORM_IOS = "ios";
     }
 }

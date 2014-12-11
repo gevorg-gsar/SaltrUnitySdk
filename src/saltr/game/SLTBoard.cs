@@ -32,7 +32,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the layers of the board.
 		/// </summary>
-		internal List<SLTBoardLayer> layers
+		public List<SLTBoardLayer> layers
 		{
 			get { return _layers; }
 		}

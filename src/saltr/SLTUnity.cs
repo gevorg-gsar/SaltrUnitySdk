@@ -52,31 +52,45 @@ namespace saltr
 
         private int _requestIdleTimeout; // TODO @gyln: use this...
         private bool _devMode;
+		private bool _autoSyncEnabled;
+		private bool _isDataSynced;
         private bool _started;
         private bool _useNoLevels;
         private bool _useNoFeatures;
         private string _levelType;
 
+		SaltrWrapper _wrapper;
 
-        private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars, int timeout = 0)
+        private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars, int timeout)
         {
             SLTResourceTicket ticket = new SLTResourceTicket(url, urlVars);
             //ticket.method = "post"; // to implement
             if (timeout > 0)
             {
-                ticket.idleTimeout = timeout;
+                ticket.dropTimeout = timeout;
             }
 
             return ticket;
         }
 
+		private static SLTResourceTicket getTicket(string url, Dictionary<string, string> urlVars)
+		{
+			return getTicket(url, urlVars, 0);
+		}
+
 		void init(string clientKey, string DeviceId, bool useCache)
 		{
-			if (GameObject.Find(SALTR_GAME_OBJECT_NAME) == null)
+			GameObject saltr = GameObject.Find(SALTR_GAME_OBJECT_NAME);
+			if (saltr == null)
 			{
-				GameObject saltr = new GameObject();
+				saltr = new GameObject();
 				saltr.name = SALTR_GAME_OBJECT_NAME;
 				saltr.AddComponent<GETPOSTWrapper>();
+				_wrapper = saltr.AddComponent<SaltrWrapper>();
+			}
+			else 
+			{
+				_wrapper = saltr.GetComponent<SaltrWrapper>();
 			}
 			
 			_clientKey = clientKey;
@@ -88,6 +102,8 @@ namespace saltr
 			_levelType = null;
 			
 			_devMode = false;
+			_autoSyncEnabled = true;
+			_isDataSynced = false;
 			_started = false;
 			_requestIdleTimeout = 0;
 			
@@ -154,6 +170,11 @@ namespace saltr
             set { _devMode = value; }
         }
 
+		public bool autoSyncEnabled
+		{
+			set { _autoSyncEnabled = value; }
+		}
+		
 		/// <summary>
 		/// Sets the request idle timeout. If a URL request takes more than timeout to complete, it would be canceled.
 		/// </summary>
@@ -594,6 +615,43 @@ namespace saltr
             return _repository.getObjectFromCache(url);
 		}
 		
+        private void loadLevelContentFromSaltr(SLTLevel sltLevel)
+        {
+            string dataUrl = sltLevel.contentUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
+            SLTResourceTicket ticket = getTicket(dataUrl, null, _requestIdleTimeout);
+
+			// some ugly stuff here came from AS3... you don't do like this in normal languages
+            Action<SLTResource> loadFromSaltrSuccessCallback = delegate(SLTResource res)
+            {
+                object contentData = res.data;
+                if (contentData != null)
+                    cacheLevelContent(sltLevel, contentData);
+                else
+                    contentData = loadLevelContentInternally(sltLevel);
+
+                if (contentData != null)
+                    levelContentLoadSuccessHandler(sltLevel, contentData);
+                else
+                    levelContentLoadFailHandler();
+                res.dispose();
+            };
+
+            Action<SLTResource> loadFromSaltrFailCallback = delegate(SLTResource SLTResource)
+            {
+                object contentData = loadLevelContentInternally(sltLevel);
+				if (contentData != null)
+				levelContentLoadSuccessHandler(sltLevel, contentData);
+				else
+				levelContentLoadFailHandler();
+				SLTResource.dispose();
+			};
+
+
+            SLTResource resource = new SLTResource("saltr", ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
+            resource.load();
+        }
+
+
         private string getCachedLevelVersion(SLTLevel sltLevel)
         {
             string cachedFileName = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
@@ -601,6 +659,11 @@ namespace saltr
         }
 
 
+        private void levelContentLoadSuccessHandler(SLTLevel sltLevel, object content)
+        {
+            sltLevel.updateContent(content.toDictionaryOrNull());
+            _levelContentLoadSuccessCalbck();
+        }
 
         private object loadLevelContentInternally(SLTLevel sltLevel)
         {
@@ -643,8 +706,11 @@ namespace saltr
 
             if (success)
             {
-                if (_devMode)
-                    syncDeveloperFeatures();
+				if (_autoSyncEnabled && !_isDataSynced)
+				{
+					syncData();
+					_isDataSynced = true;
+				}
 
                 if (response.ContainsKey("levelType"))
                 {
@@ -728,19 +794,29 @@ namespace saltr
             _levelPacks.Clear();
         }
 
-        private void syncDeveloperFeatures()
+        public void syncData()
         {
+			if(!_devMode)
+			{
+				return;
+			}
+
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_FEATURES; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_FEATURES;
+            urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_DATA; //TODO @GSAR: remove later
+            urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_DATA;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.apiVersion = API_VERSION;
             args.clientKey = _clientKey;
-            args.CLIENT = CLIENT;
+			args.devMode = _devMode;
+			urlVars["devMode"] = _devMode.ToString();
+			args.CLIENT = CLIENT;
 
             if (_deviceId != null)
+			{
                 args.deviceId = _deviceId;
+				urlVars["deviceId"] = _deviceId;
+			}
             else
                 throw new Exception("Field 'deviceId' is required.");
 
@@ -767,7 +843,20 @@ namespace saltr
 
         protected void syncSuccessHandler(SLTResource SLTResource)
         {
-            Debug.Log("[Saltr] Dev feature Sync is complete.");
+			object data = SLTResource.data;
+
+			if(data == null)
+			{
+				Debug.Log("[Saltr] Dev feature Sync's response.jsonData is null.");
+				return;
+			}
+
+			IEnumerable<object> response = (IEnumerable<object>)data.toDictionaryOrNull().getValue("response");
+			if(response != null && response.Count() > 0 && response.ElementAt(0).toDictionaryOrNull().getValue("registrationRequired")!=null)
+			{
+				_wrapper.showDeviceRegistationDialog(addDeviceToSALTR);
+			}
+			Debug.Log("[Saltr] Dev feature Sync is complete.");
         }
 
         protected void syncFailHandler(SLTResource SLTResource)
@@ -775,46 +864,92 @@ namespace saltr
             Debug.Log("[Saltr] Dev feature Sync has failed.");
         }
 
-		protected void loadLevelContentFromSaltr(SLTLevel sltLevel)
+		void addDeviceToSALTR(string email)
 		{
-			string dataUrl = sltLevel.contentUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
-			SLTResourceTicket ticket = getTicket(dataUrl, null, _requestIdleTimeout);
-			
-			Action<SLTResource> loadFromSaltrSuccessCallback = delegate(SLTResource res)
+			Dictionary<string, string> urlVars = new Dictionary<string, string>();
+			urlVars["action"] = SLTConfig.ACTION_DEV_REGISTER_DEVICE;
+			urlVars["clientKey"] = _clientKey;
+		
+			SLTRequestArguments args = new SLTRequestArguments();
+			args.devMode = _devMode;
+			args.apiVersion = API_VERSION;
+
+
+			if(_deviceId != null)
 			{
-				object contentData = res.data;
-				if (contentData != null)
-				cacheLevelContent(sltLevel, contentData);
-				else
-				contentData = loadLevelContentInternally(sltLevel);
-				if (contentData != null)
-				levelContentLoadSuccessHandler(sltLevel, contentData);
-				else
-				levelContentLoadFailHandler();
-				res.dispose();
-				
-			};
-			
-			Action<SLTResource> loadFromSaltrFailCallback = delegate(SLTResource SLTResource)
+				args.id =_deviceId;
+			}
+			else
 			{
-				object contentData = loadLevelContentInternally(sltLevel);
-				levelContentLoadSuccessHandler(sltLevel, contentData);
-				SLTResource.dispose();
-			};
+				throw new Exception("Field 'deviceId' is required");
+			}
+
+			string model = "Unknown";
+			string os = "Unknown";
+#if UNITY_IPHONE
+			model = Utils.getHumanReadableDeviceModel(SystemInfo.deviceModel); 
+			os = SystemInfo.operatingSystem.Replace("Phone ", "");
+#elif UNITY_ANDROID
+			model = SystemInfo.deviceModel;
+			int iVersionNumber = 0;
+			string androidVersion = SystemInfo.operatingSystem;
+			int sdkPos = androidVersion.IndexOf("API-");
+			iVersionNumber = int.Parse(androidVersion.Substring(sdkPos+4,2).ToString());
+			os = "Android " + iVersionNumber;
+#else
+			model = SystemInfo.deviceModel;
+			os = SystemInfo.operatingSystem;
+#endif
+
+
+			args.source = model;
+			args.os = os;
+
+			if(email != null && email != "")
+			{
+				args.email = email;
+			}
+			else
+			{
+				throw new Exception("Email is required.");
+			}
+
+			urlVars["args"] = LitJson.JsonMapper.ToJson(args);
 			
-			SLTResource resource = new SLTResource("saltr", ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
+			SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars);
+			SLTResource resource = new SLTResource("addDevice", ticket, addDeviceSuccessHandler, addDeviceFailHandler);
 			resource.load();
 		}
 
-		protected void levelContentLoadFailHandler()
+		void addDeviceSuccessHandler (SLTResource resource)
 		{
-			_levelContentLoadFailCallback(new SLTStatusLevelContentLoadFail());
+			Debug.Log("[Saltr] Dev adding new device is complete.");
+			Dictionary<string, object> data = resource.data.toDictionaryOrNull();
+			bool success = false;
+			Dictionary<string, object> response;
+			if(data.ContainsKey("response"))
+			{
+				response = ((IEnumerable<object>) (data["response"])).ElementAt(0).toDictionaryOrNull();
+				success = (bool)response.getValue("success");
+				if(success)
+				{
+					_wrapper.setStatus("Success");
+				}
+				else
+				{
+					_wrapper.setStatus(response.getValue("error").toDictionaryOrNull().getValue<string>("message"));
+				}
+			}
+			else
+			{
+				addDeviceFailHandler (resource);
+			}
 		}
-				
-		protected void levelContentLoadSuccessHandler(SLTLevel sltLevel, object content)
+
+		void addDeviceFailHandler (SLTResource resource)
 		{
-			sltLevel.updateContent(content.toDictionaryOrNull());
-			_levelContentLoadSuccessCalbck();
+			Debug.Log("[Saltr] Dev adding new device has failed.");
+			_wrapper.setStatus("Faild");
 		}
 
         private void appDataLoadFailCallback(SLTResource resource)
@@ -830,6 +965,11 @@ namespace saltr
             _repository.cacheObject(cachedFileName, sltLevel.version.ToString(), content);
         }
 
+
+        protected void levelContentLoadFailHandler()
+        {
+            _levelContentLoadFailCallback(new SLTStatusLevelContentLoadFail());
+        }
         
     }
 }
