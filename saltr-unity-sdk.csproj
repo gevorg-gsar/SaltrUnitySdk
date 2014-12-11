@@ -135,6 +135,7 @@
     <Compile Include="src\saltr\utils\MiniJSON.cs" />
     <Compile Include="src\saltr\utils\Utils.cs" />
     <Compile Include="src\saltr\utils\SaltrWrapper.cs" />
+    <Compile Include="src\saltr\utils\InspectorDataTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

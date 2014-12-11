@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -18,20 +18,7 @@ public class SaltrWrapper : MonoBehaviour
     public int requestIdleTimeout = 0;
     public string localLevelPackage = SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL; // in Resources
 
-    [System.Serializable]
-    public class featureEntry
-    {
-        public string token;
-        public propertyEntry[] properties;
-        public bool required = false;
-    }
-    [System.Serializable]
-    public class propertyEntry
-    {
-        public string key;
-        public string value;
-    }
-    public featureEntry[] defaultFeatures;
+    public List<FeatureEntry> defaultFeatures;
     public bool autoStart = false;
 
 
@@ -48,10 +35,8 @@ public class SaltrWrapper : MonoBehaviour
         get { return _saltr; }
     }
     #endregion
-
-
-    //public virtual void Awake(){}
-    protected void Awake()
+    
+    protected virtual void Awake()
     {
         gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
         deviceId = deviceId != "" ? deviceId : SystemInfo.deviceUniqueIdentifier;
@@ -71,13 +56,30 @@ public class SaltrWrapper : MonoBehaviour
 
 	virtual protected void defineFeatures()
 	{
-		foreach (featureEntry feateure in defaultFeatures)
+		foreach (FeatureEntry feateure in defaultFeatures)
 		{
-			Dictionary<string, object> properties = new Dictionary<string, object>();
-			foreach (propertyEntry property in feateure.properties)
-				properties[property.key] = property.value;
-			_saltr.defineFeature(feateure.token, properties, feateure.required);
+			Dictionary<string, object> properties;
+			properties = FillPropertyDictionary(feateure.properties);
+			_saltr.defineFeature(feateure.token, properties, feateure.isRequired);
 		}
+	}
+
+	private Dictionary<string, object> FillPropertyDictionary (List<PropertyEntry> featureProperties)
+	{
+		Dictionary<string, object> syncProperties = new Dictionary<string, object>();
+
+		foreach (PropertyEntry property in featureProperties)
+		{
+			if(property.value.type == PropertyType.Group)
+			{
+                syncProperties[property.key] = FillPropertyDictionary(property.value.Group);
+			}
+			else
+			{
+				syncProperties[property.key] = property.value.Object;
+			}
+		}
+		return syncProperties;
 	}
 
 	//TODO @gyln: move everything below to a separate script?
@@ -152,7 +154,7 @@ public class SaltrWrapper : MonoBehaviour
 			if (UnityEngine.Event.current.type == EventType.Repaint)
 			{
 				if (GUI.GetNameOfFocusedControl () == "email_field")
-				{
+				{                    
 					if (_email == _defaultEmail) _email = "";
 				}
 				else
