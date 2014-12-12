@@ -365,9 +365,7 @@ namespace saltr
 			importLevels (null);
 		}
 
-        /**
-         * If you want to have a feature synced with SALTR you should call define before getAppData call.
-         */
+        // If you want to have a feature synced with SALTR you should call define before getAppData call.
 		/// <summary>
 		/// Defines a feature (<see cref="saltr.SLTFeature"/>).
 		/// </summary>
