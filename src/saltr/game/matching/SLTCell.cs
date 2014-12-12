@@ -14,7 +14,7 @@ namespace saltr.game.matching
 
         private int _col;
         private int _row;
-        private object _properties;		
+        private Dictionary<string, object> _properties;		
         private bool _isBlocked;
 
 		Dictionary<string, object> _instancesByLayerId;
@@ -51,7 +51,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets or sets the properties of the cell.
 		/// </summary>
-		public object properties // TODO @gyln: return a string->object dictionary?
+		public Dictionary<string,object> properties
 		{
 			get { return _properties; }
 			set { _properties = value; }

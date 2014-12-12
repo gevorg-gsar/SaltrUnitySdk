@@ -48,7 +48,7 @@ namespace saltr.game.matching
                 IEnumerable<object> coords = (IEnumerable<object>)property.toDictionaryOrNull()["coords"];
                 SLTCell cell2 = cells.retrieve(coords.ElementAt(0).toIntegerOrZero(), coords.ElementAt(1).toIntegerOrZero());
                 if (cell2 != null)
-                    cell2.properties = property.toDictionaryOrNull()["value"];
+                    cell2.properties = property.toDictionaryOrNull()["value"].toDictionaryOrNull();
             }
 
 

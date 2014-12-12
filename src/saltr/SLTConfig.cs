@@ -32,12 +32,5 @@ namespace saltr
 
         public static readonly string RESULT_SUCCEED = "SUCCEED";
         public static readonly string RESULT_ERROR = "ERROR";
-
-		public static readonly string DEVICE_TYPE_IPAD = "ipad";
-		public static readonly string DEVICE_TYPE_IPHONE = "iphone";
-		public static readonly string DEVICE_TYPE_IPOD = "ipod";
-		public static readonly string DEVICE_TYPE_ANDROID = "android";
-		public static readonly string DEVICE_PLATFORM_ANDROID = "android";
-		public static readonly string DEVICE_PLATFORM_IOS = "ios";
     }
 }

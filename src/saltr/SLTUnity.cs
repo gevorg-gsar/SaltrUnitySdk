@@ -48,7 +48,7 @@ namespace saltr
 		private Action _connectSuccessCallback;
 		private Action<SLTStatus> _connectFailCallback;
 		private Action _levelContentLoadSuccessCalbck;
-		private Action<SLTStatusLevelContentLoadFail> _levelContentLoadFailCallback;
+		private Action<SLTStatus> _levelContentLoadFailCallback;
 
         private int _requestIdleTimeout; // TODO @gyln: use this...
         private bool _devMode;
@@ -123,7 +123,7 @@ namespace saltr
 		/// </summary>
 		/// <param name="clientKey">Client key.</param>
 		/// <param name="DeviceId">Device identifier.</param>
-		/// <param name="useCache">If set to <c>true</c> use cache.</param>
+		/// <param name="useCache">If set to <c>true</c> use cache. If not specified defaults to <c>true</c></param>
         public SLTUnity(string clientKey, string DeviceId, bool useCache)
         {
 			init(clientKey, DeviceId, useCache);
@@ -137,7 +137,8 @@ namespace saltr
 		/// <summary>
 		/// Sets the repository used by this instance. An appropriate repository is already set by a constructor,
 		/// so you will need this only if you want to implement and use your own custom repository (<see cref="saltr.repository.ISLTRepository"/>).
-		/// </summary>        public ISLTRepository repository
+		/// </summary>        
+		public ISLTRepository repository
         {
             set { _repository = value; }
         }
@@ -162,14 +163,19 @@ namespace saltr
 
 		/// <summary>
 		/// Sets a value indicating weather this <see cref="saltr.SLTUnity"/> should operate in dev(developer) mode.
-		/// In this mode developer defined features will be synced with Saltr on next connect() call.
+		/// In this mode client data(e.g. developer defined features) can be synced with Saltr using sync() call.
 		/// </summary>
-		/// <value><c>true</c> in dev mode; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> to enable; <c>false</c> to disable.</value>
         public bool devMode
         {
             set { _devMode = value; }
         }
 
+		/// <summary>
+		/// Sets a value indicating whether client data should be automatically synced (see <see cref="saltr.SLTUnity.syncData()"/>)
+		/// after successfully connecting with Saltr. In this way data will be synced only once in the lifetime of this object.
+		/// </summary>
+		/// <value><c>true</c> to enable; <c>false</c> to disable. By default is set to <c>true</c></value>
 		public bool autoSyncEnabled
 		{
 			set { _autoSyncEnabled = value; }
@@ -362,6 +368,13 @@ namespace saltr
         /**
          * If you want to have a feature synced with SALTR you should call define before getAppData call.
          */
+		/// <summary>
+		/// Defines a feature (<see cref="saltr.SLTFeature"/>).
+		/// </summary>
+		/// <param name="token">Token - a unique identifier for the feature.</param>
+		/// <param name="properties">A dictionary of properties, that should be of "JSON friendly" datatypes 
+		/// (string, int, double, Dictionary, List, etc.). To represent color use standard HTML format: <c>"#RRGGBB"</c> </param>
+		/// <param name="required">If set to <c>true</c> feature is required(see <see cref="saltr.SLTUnity.getFeatureProperties"/>). <c>false</c> by default.</param>
         public void defineFeature(string token, Dictionary<string,object> properties, bool required)
         {
             if (_useNoFeatures)
@@ -424,9 +437,9 @@ namespace saltr
 		/// After connecting successfully you can load level content from server with <see cref="saltr.SLTUnity.loadLevelContent"/> 
 		/// </summary>
 		/// <param name="successCallback">Success callback.</param>
-		/// <param name="failCallback">Fail callback, receives <see cref="saltr.status.SLTStatus"/> object as the first parameter</param>
-		/// <param name="basicProperties">Basic properties.</param>
-		/// <param name="customProperties">Custom properties.</param>
+		/// <param name="failCallback">Fail callback, receives <see cref="saltr.status.SLTStatus"/> object as the first parameter.</param>
+		/// <param name="basicProperties">(Optional)Basic properties.</param>
+		/// <param name="customProperties">(Optional)Custom properties.</param>
         public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)// TODO @gyln:  shouldn't basicProperties be of a type BasicProperties 
         {
             if (!_started)
@@ -502,9 +515,9 @@ namespace saltr
 		/// </summary>
 		/// <param name="SLTLevel">The level, contents of which will be updated.</param>
 		/// <param name="loadSuccessCallback">Load success callback.</param>
-		/// <param name="loadFailCallback">Load fail callback.</param>
-		/// <param name="useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established.</param>
-        public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback, bool useCache)
+		/// <param name="loadFailCallback">Load fail callback, receives <see cref="saltr.status.SLTStatus"/> object as the first parameter.</param>
+		/// <param name="useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established. <c>true</c> by default. </param>
+        public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatus> loadFailCallback, bool useCache)
         {
             _levelContentLoadSuccessCalbck = loadSuccessCallback;
             _levelContentLoadFailCallback = loadFailCallback;
@@ -530,13 +543,13 @@ namespace saltr
             }
         }
 
-		public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatusLevelContentLoadFail> loadFailCallback)
+		public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatus> loadFailCallback)
 		{
 			loadLevelContent(SLTLevel, loadSuccessCallback, loadFailCallback, true);
 		}
 
 		/// <summary>
-		/// Adds the properties.
+		/// Adds properties.
 		/// </summary>
 		/// <param name="basicProperties">Basic properties.</param>
 		/// <param name="customProperties">Custom properties.</param>
@@ -794,6 +807,11 @@ namespace saltr
             _levelPacks.Clear();
         }
 
+		/// <summary>
+		/// Syncs the client data with Saltr. This inclides defined features. 
+		/// After sync, in case the device is not associated wiht any account in Saltr, a device registration dialog will appear,
+		/// where you can specify the email of the account you want to associate the devise with.
+		/// </summary>
         public void syncData()
         {
 			if(!_devMode)

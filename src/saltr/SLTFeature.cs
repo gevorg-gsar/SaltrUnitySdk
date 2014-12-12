@@ -6,12 +6,12 @@ using System.Text;
 namespace saltr
 {
 	/// <summary>
-	/// Represents an application feature.
+	/// Represents an application feature - a uniquely identifiable set of properties.
 	/// </summary>
     public class SLTFeature
     {
         private string _token;
-        private object _properties;
+        private Dictionary<string,object> _properties;
         private bool _required;
 		
 		/// <summary>
@@ -25,7 +25,7 @@ namespace saltr
 		/// <summary>
 		/// Gets the user defined properties.
 		/// </summary>
-		public object properties //TODO @gyln: return a string->object dictionary? (gyln)
+		public Dictionary<string,object> properties
 		{
 			get { return _properties; }
 		}
@@ -39,16 +39,19 @@ namespace saltr
             get { return _required; }
         }
 
-		void Init(string token, object Properties, bool Required)
+		void Init(string token, Dictionary<string,object> Properties, bool Required)
 		{
 			_token = token;
 			_properties = Properties;
 			_required = Required;
 		}
 
-        
+		public SLTFeature(string token, Dictionary<string,object> Properties, bool Required)
+		{
+			Init(token, Properties, Required);
+		}
 
-		public SLTFeature(string token, object Properties)
+		public SLTFeature(string token, Dictionary<string,object> Properties)
 		{
 			Init(token, Properties, false);
 		}
