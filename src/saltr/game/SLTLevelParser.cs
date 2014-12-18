@@ -8,7 +8,7 @@ using saltr.utils;
 namespace saltr.game
 {
 
-    public abstract class SLTLevelParser
+    internal abstract class SLTLevelParser
     {
 
 

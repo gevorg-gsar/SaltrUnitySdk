@@ -13,7 +13,7 @@ namespace saltr.game
         private string _token;
         private int _index;
 
-        public SLTBoardLayer(string LayerId, int LayerIndex)
+        internal SLTBoardLayer(string LayerId, int LayerIndex)
         {
             _token = LayerId;
             _index = LayerIndex;

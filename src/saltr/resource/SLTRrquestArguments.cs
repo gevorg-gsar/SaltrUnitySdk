@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr.resource
 {
-   	public class SLTRequestArguments
+   	internal class SLTRequestArguments
  	{
        	public string CLIENT;
 
@@ -13,27 +13,27 @@ namespace saltr.resource
 
       	public string socialId;
 
-       	public string socialNetwork;
+//       	public string socialNetwork;
 
        	public string clientKey;
 
-       	public string appVersion;
+//       	public string appVersion;
 
        	public List<object> developerFeatures;
 
        	public string apiVersion;
 
-       	public string saltrUserId;
+//       	public string saltrUserId;
 
 		public bool devMode;
 		
-		public Dictionary<string, object> basicProperties;
+		public SLTBasicProperties basicProperties;
 		public Dictionary<string, object> customProperties;
 
 		// TODO @gyln: make a different class for these? can inherit from a base that will have the common fields
 		public string id; 
 
-		public string type;
+//		public string type;
 
 		public string source;
 

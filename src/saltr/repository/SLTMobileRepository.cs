@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace saltr.repository
 {
-    public class SLTMobileRepository : ISLTRepository
+    internal class SLTMobileRepository : ISLTRepository
     {
         private DirectoryInfo _storageDirectory;
         private DirectoryInfo _applicationDirectory;

@@ -10,10 +10,10 @@ namespace saltr.game
 	/// </summary>
    public class SLTAssetState
    {
-		public string _token;
-		public Dictionary<string, object> _properties;
+		string _token;
+		Dictionary<string, object> _properties;
 
-     	public  SLTAssetState(string Token, Dictionary<string,object> Properties)
+     	internal SLTAssetState(string Token, Dictionary<string,object> Properties)
        	{
            _token = Token;
            _properties = Properties;

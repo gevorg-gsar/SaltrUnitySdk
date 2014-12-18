@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 namespace saltr.repository
 {
-  public  class SLTDummyRepository : ISLTRepository
+  internal class SLTDummyRepository : ISLTRepository
     {
 
         public SLTDummyRepository()

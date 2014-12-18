@@ -18,14 +18,8 @@ namespace saltr
 	/// </summary>
     public class SLTUnity // TODO @gyln: reorder memebrs as is in as3 sdk
     {
-		/// <summary>
-		/// Type of client SDK, used to communicate with Saltr.
-		/// </summary>
-        public const string CLIENT = "Unity";
-        /// <summary>
-		/// The API version used to communicate with Saltr.
-		/// </summary>
-		public const string API_VERSION = "1.0.1"; //"0.9.0";
+		internal const string CLIENT = "Unity";
+        internal const string API_VERSION = "1.0.0"; //"0.9.0";
 		/// <summary>
 		/// The name of the Saltr GameObject, through which you can access SLTUnity instance.
 		/// </summary>
@@ -39,22 +33,22 @@ namespace saltr
 
         private ISLTRepository _repository;
 
-        protected Dictionary<string, SLTFeature> _activeFeatures;
-        protected Dictionary<string, SLTFeature> _developerFeatures;
+        private Dictionary<string, SLTFeature> _activeFeatures;
+		private Dictionary<string, SLTFeature> _developerFeatures;
 
         private List<SLTExperiment> _experiments = new List<SLTExperiment>();
         private List<SLTLevelPack> _levelPacks = new List<SLTLevelPack>();
 
 		private Action _connectSuccessCallback;
 		private Action<SLTStatus> _connectFailCallback;
-		private Action _levelContentLoadSuccessCalbck;
+		private Action _levelContentLoadSuccessCallback;
 		private Action<SLTStatus> _levelContentLoadFailCallback;
 
-        private int _requestIdleTimeout; // TODO @gyln: use this...
+        private int _requestIdleTimeout;
         private bool _devMode;
-		private bool _autoSyncEnabled;
-		private bool _isDataSynced;
-        private bool _started;
+		private bool _autoRegisterDevice;
+		private bool _started;
+		private bool _isSynced;
         private bool _useNoLevels;
         private bool _useNoFeatures;
         private string _levelType;
@@ -84,9 +78,12 @@ namespace saltr
 			if (saltr == null)
 			{
 				saltr = new GameObject();
+				saltr.SetActive(false);
 				saltr.name = SALTR_GAME_OBJECT_NAME;
 				saltr.AddComponent<GETPOSTWrapper>();
 				_wrapper = saltr.AddComponent<SaltrWrapper>();
+				_wrapper.saltr = this;
+				saltr.SetActive(true);
 			}
 			else 
 			{
@@ -102,8 +99,7 @@ namespace saltr
 			_levelType = null;
 			
 			_devMode = false;
-			_autoSyncEnabled = true;
-			_isDataSynced = false;
+			_autoRegisterDevice = true;
 			_started = false;
 			_requestIdleTimeout = 0;
 			
@@ -129,16 +125,19 @@ namespace saltr
 			init(clientKey, DeviceId, useCache);
         }
 
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.SLTUnity"/>.
+		/// </summary>
 		public SLTUnity(string clientKey, string DeviceId)
 		{
 			init(clientKey, DeviceId, true);
 		}
 
-		/// <summary>
-		/// Sets the repository used by this instance. An appropriate repository is already set by a constructor,
-		/// so you will need this only if you want to implement and use your own custom repository (<see cref="saltr.repository.ISLTRepository"/>).
-		/// </summary>        
-		public ISLTRepository repository
+		// <summary>
+		// Sets the repository used by this instance. An appropriate repository is already set by a constructor,
+		// so you will need this only if you want to implement and use your own custom repository (<see cref="saltr.repository.ISLTRepository"/>).
+		// </summary>        
+		internal ISLTRepository repository
         {
             set { _repository = value; }
         }
@@ -163,7 +162,7 @@ namespace saltr
 
 		/// <summary>
 		/// Sets a value indicating weather this <see cref="saltr.SLTUnity"/> should operate in dev(developer) mode.
-		/// In this mode client data(e.g. developer defined features) can be synced with Saltr using sync() call.
+		/// In this mode client data(e.g. developer defined features) will be synced with Saltr, once, after successful <see cref="saltr.SLTUnity.connect"/> call.
 		/// </summary>
 		/// <value><c>true</c> to enable; <c>false</c> to disable.</value>
         public bool devMode
@@ -172,13 +171,13 @@ namespace saltr
         }
 
 		/// <summary>
-		/// Sets a value indicating whether client data should be automatically synced (see <see cref="saltr.SLTUnity.syncData()"/>)
-		/// after successfully connecting with Saltr. In this way data will be synced only once in the lifetime of this object.
+		/// Sets a value indicating whether device registratioon dialog should be automaticaly shown in dev mode(<see cref="saltr.SLTUnity.devMode"/>),
+		/// after successful <see cref="saltr.SLTUnity.connect"/> call, if the device was not registered already.
 		/// </summary>
 		/// <value><c>true</c> to enable; <c>false</c> to disable. By default is set to <c>true</c></value>
-		public bool autoSyncEnabled
+		public bool autoRegisterDevice
 		{
-			set { _autoSyncEnabled = value; }
+			set { _autoRegisterDevice = value; }
 		}
 		
 		/// <summary>
@@ -235,7 +234,7 @@ namespace saltr
         }
 
 		/// <summary>
-		/// Gets the experiments.
+		/// Gets a list of all experiments.
 		/// </summary>
 		public List<SLTExperiment> experiments
         {
@@ -360,6 +359,9 @@ namespace saltr
             }
         }
 
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.importLevels"/>.
+		/// </summary>
 		public void importLevels()
 		{
 			importLevels (null);
@@ -390,6 +392,9 @@ namespace saltr
             }
         }
 
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.defineFeature"/>.
+		/// </summary>
 		public void defineFeature(string token, Dictionary<string,object> properties)
 		{
 			defineFeature(token, properties, false);
@@ -397,7 +402,7 @@ namespace saltr
 
 		/// <summary>
 		/// Checks if everything is initialized properly and starts the instance.
-		/// After this call you can access application data (levels, features and experiments), and establish connection with the server.
+		/// After this call you can access application data (levels, features), and establish connection with the server.
 		/// </summary>
         public void start()
         {
@@ -432,13 +437,13 @@ namespace saltr
 
 		/// <summary>
 		/// Establishes connection to the server and updates application data(levels, features and experiments).
-		/// After connecting successfully you can load level content from server with <see cref="saltr.SLTUnity.loadLevelContent"/> 
+		/// After connecting successfully you can load level content from server with <see cref="saltr.SLTUnity.loadLevelContent"/> .
 		/// </summary>
 		/// <param name="successCallback">Success callback.</param>
 		/// <param name="failCallback">Fail callback, receives <see cref="saltr.status.SLTStatus"/> object as the first parameter.</param>
-		/// <param name="basicProperties">(Optional)Basic properties.</param>
-		/// <param name="customProperties">(Optional)Custom properties.</param>
-        public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)// TODO @gyln:  shouldn't basicProperties be of a type BasicProperties 
+		/// <param name="basicProperties">(Optional)Basic properties. Same as in <see cref="saltr.SLTUnity.addProperties"/>.</param>
+		/// <param name="customProperties">(Optional)Custom properties. Same as in <see cref="saltr.SLTUnity.addProperties"/>.</param>
+        public void connect(Action successCallback, Action<SLTStatus> failCallback, SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
             if (!_started)
 			{
@@ -459,17 +464,23 @@ namespace saltr
             resource.load();
         }
 
-		public void connect(Action successCallback, Action<SLTStatus> failCallback, Dictionary<string, object> basicProperties)
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.connect"/>.
+		/// </summary>
+		public void connect(Action successCallback, Action<SLTStatus> failCallback, SLTBasicProperties basicProperties)
 		{
 			connect(successCallback, failCallback, basicProperties, null);
 		}
 
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.connect"/>.
+		/// </summary>
 		public void connect(Action successCallback, Action<SLTStatus> failCallback)
 		{
 			connect(successCallback, failCallback, null);
 		}
 
-        private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties)
+		private SLTResource createAppDataResource(Action<SLTResource> loadSuccessCallback, Action<SLTResource> loadFailCallback, SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
 
@@ -517,7 +528,7 @@ namespace saltr
 		/// <param name="useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established. <c>true</c> by default. </param>
         public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatus> loadFailCallback, bool useCache)
         {
-            _levelContentLoadSuccessCalbck = loadSuccessCallback;
+            _levelContentLoadSuccessCallback = loadSuccessCallback;
             _levelContentLoadFailCallback = loadFailCallback;
             object content = null;
             if (_conected == false)
@@ -541,17 +552,20 @@ namespace saltr
             }
         }
 
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.loadLevelContent"/>.
+		/// </summary>
 		public void loadLevelContent(SLTLevel SLTLevel, Action loadSuccessCallback, Action<SLTStatus> loadFailCallback)
 		{
 			loadLevelContent(SLTLevel, loadSuccessCallback, loadFailCallback, true);
 		}
 
 		/// <summary>
-		/// Adds properties.
+		/// Associates some properties with this client, that are used to assign it to a certain user group in Saltr.
 		/// </summary>
-		/// <param name="basicProperties">Basic properties.</param>
-		/// <param name="customProperties">Custom properties.</param>
-        public void addProperties(Dictionary<string, object> basicProperties, Dictionary<string, object> customProperties) // TODO @gyln:  shouldn't basicProperties be of a type BasicProperties
+		/// <param name="basicProperties">Basic properties. Standard set of client properties</param>
+		/// <param name="customProperties">(Optional)Custom properties.</param>
+        public void addProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
             if (basicProperties == null && customProperties == null)
                 return;
@@ -603,17 +617,15 @@ namespace saltr
             resource.load();
         }
 
-		public void addProperties(Dictionary<string, object> basicProperties)
+		/// <summary>
+		/// See <see cref="saltr.SLTUnity.addProperties"/>.
+		/// </summary>
+		public void addProperties(SLTBasicProperties basicProperties)
 		{
 			addProperties(basicProperties, null);
 		}
 
-		public void addProperties()
-		{
-			addProperties(null);
-		}
-
-        private object loadLevelContentFromDisk(SLTLevel sltLevel)
+		private object loadLevelContentFromDisk(SLTLevel sltLevel)
         {
             string url = Utils.formatString(SLTConfig.LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE, sltLevel.packIndex.ToString(), sltLevel.localIndex.ToString());
             return _repository.getObjectFromApplication(url);
@@ -673,7 +685,7 @@ namespace saltr
         private void levelContentLoadSuccessHandler(SLTLevel sltLevel, object content)
         {
             sltLevel.updateContent(content.toDictionaryOrNull());
-            _levelContentLoadSuccessCalbck();
+            _levelContentLoadSuccessCallback();
         }
 
         private object loadLevelContentInternally(SLTLevel sltLevel)
@@ -717,10 +729,9 @@ namespace saltr
 
             if (success)
             {
-				if (_autoSyncEnabled && !_isDataSynced)
+				if (_devMode && !_isSynced)
 				{
-					syncData();
-					_isDataSynced = true;
+					sync();
 				}
 
                 if (response.ContainsKey("levelType"))
@@ -804,19 +815,9 @@ namespace saltr
             }
             _levelPacks.Clear();
         }
-
-		/// <summary>
-		/// Syncs the client data with Saltr. This inclides defined features. 
-		/// After sync, in case the device is not associated wiht any account in Saltr, a device registration dialog will appear,
-		/// where you can specify the email of the account you want to associate the devise with.
-		/// </summary>
-        public void syncData()
+		
+        void sync()
         {
-			if(!_devMode)
-			{
-				return;
-			}
-
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
             urlVars["cmd"] = SLTConfig.ACTION_DEV_SYNC_DATA; //TODO @GSAR: remove later
             urlVars["action"] = SLTConfig.ACTION_DEV_SYNC_DATA;
@@ -856,26 +857,58 @@ namespace saltr
             resource.load();
         }
 
+		/// <summary>
+		/// Opens the device registration dialog. Can be called after <see cref="saltr.SLTUnity.start"/> only.
+		/// </summary>
+		public void registerDevice()
+		{
+			if(!_started) 
+			{
+				throw new Exception("Method 'registerDevice()' should be called after 'start()' only.");
+			}
+			_wrapper.showDeviceRegistationDialog(addDeviceToSALTR);
+		}
 
-        protected void syncSuccessHandler(SLTResource SLTResource)
+        void syncSuccessHandler(SLTResource SLTResource)
         {
 			object data = SLTResource.data;
 
 			if(data == null)
 			{
-				Debug.Log("[Saltr] Dev feature Sync's response.jsonData is null.");
+				Debug.Log("[Saltr] Dev feature Sync's data is null.");
 				return;
 			}
 
 			IEnumerable<object> response = (IEnumerable<object>)data.toDictionaryOrNull().getValue("response");
-			if(response != null && response.Count() > 0 && response.ElementAt(0).toDictionaryOrNull().getValue("registrationRequired")!=null)
+			if(response == null) 
 			{
-				_wrapper.showDeviceRegistationDialog(addDeviceToSALTR);
+				Debug.Log("[Saltr] Dev feature Sync's response is null.");
+				return;
 			}
-			Debug.Log("[Saltr] Dev feature Sync is complete.");
+
+			if(response.Count() <= 0)
+			{
+				Debug.Log("[Saltr] Dev feature Sync response's length is <= 0.");
+				return;
+			}
+
+			Dictionary<string,object> responseObject = response.ElementAt(0).toDictionaryOrNull();
+
+			if((bool)responseObject.getValue("success") == false)
+			{
+				if((SLTStatus.Code)responseObject.getValue("error").toDictionaryOrNull().getValue("code").toIntegerOrZero() == SLTStatus.Code.REGISTRATION_REQUIRED && _autoRegisterDevice)
+				{
+					registerDevice();
+				}
+			}
+			else
+			{
+				Debug.Log("[Saltr] Dev feature Sync is complete.");
+				_isSynced = true;
+			}
         }
 
-        protected void syncFailHandler(SLTResource SLTResource)
+        void syncFailHandler(SLTResource resource)
         {
             Debug.Log("[Saltr] Dev feature Sync has failed.");
         }
@@ -950,6 +983,7 @@ namespace saltr
 				if(success)
 				{
 					_wrapper.setStatus("Success");
+					sync ();
 				}
 				else
 				{
@@ -982,7 +1016,7 @@ namespace saltr
         }
 
 
-        protected void levelContentLoadFailHandler()
+        void levelContentLoadFailHandler()
         {
             _levelContentLoadFailCallback(new SLTStatusLevelContentLoadFail());
         }

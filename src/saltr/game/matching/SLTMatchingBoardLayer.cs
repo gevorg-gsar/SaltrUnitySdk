@@ -12,7 +12,7 @@ namespace saltr.game.matching
 	{
 		private List<SLTChunk> _chunks;
 
-		public SLTMatchingBoardLayer(string LayerId, int LayerIndex):base(LayerId,LayerIndex)
+		internal SLTMatchingBoardLayer(string LayerId, int LayerIndex):base(LayerId,LayerIndex)
 		{
 			_chunks = new List<SLTChunk>();
 		}
@@ -28,10 +28,10 @@ namespace saltr.game.matching
 			}
 		}
 
-		/// <summary>
-		/// Adds a chunk to the layer.
-		/// </summary>
-		public void addChunk(SLTChunk chunk)
+		// <summary>
+		// Adds a chunk to the layer.
+		// </summary>
+		internal void addChunk(SLTChunk chunk)
 		{
 			_chunks.Add(chunk);
 		}

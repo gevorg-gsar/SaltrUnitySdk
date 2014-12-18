@@ -15,7 +15,7 @@ namespace saltr.game
 		private List<SLTAssetState> _states;
         private object _properties;
        
-        public SLTAssetInstance(string Token, List<SLTAssetState> states, object Properties)
+        internal SLTAssetInstance(string Token, List<SLTAssetState> states, object Properties)
         {
             _token = Token;
             _states = states;

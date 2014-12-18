@@ -30,7 +30,7 @@ namespace saltr.game.canvas2d
             get { return _pivotY; }
         }
 
-        public SLT2DAssetState(string token, Dictionary<string, object> properties, float pivotX, float pivotY)
+        internal SLT2DAssetState(string token, Dictionary<string, object> properties, float pivotX, float pivotY)
             : base(token, properties)
         {
             _pivotX = pivotX;

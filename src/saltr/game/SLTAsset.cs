@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr.game
 {
-    public class SLTAsset
+    internal class SLTAsset
     {
         private string _token;
         private object _properties;

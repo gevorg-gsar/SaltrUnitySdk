@@ -5,9 +5,9 @@ using System.Text;
 
 namespace saltr.status
 {
-   public class SLTStatusLevelsParseError : SLTStatus
+	internal class SLTStatusLevelsParseError : SLTStatus
     {
-		public SLTStatusLevelsParseError(): base(SLTStatus.CLIENT_LEVELS_PARSE_ERROR, "[SALTR] Failed to decode Levels.")
+		public SLTStatusLevelsParseError(): base(SLTStatus.Code.CLIENT_LEVELS_PARSE_ERROR, "[SALTR] Failed to decode Levels.")
 		{
 		}
     }

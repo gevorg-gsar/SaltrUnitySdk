@@ -7,6 +7,9 @@ using saltr.resource;
 
 namespace saltr.utils
 {
+	/// <summary>
+	/// Wrapper component over UnityEngine.WWW, used for network interactions in SDK.
+	/// </summary>
 	public class GETPOSTWrapper : MonoBehaviour
 	{
 	    private float elapsedTime = 0.0f;
@@ -73,7 +76,7 @@ namespace saltr.utils
 	        else elapsedTime = 0;
 	    }
 
-	    public void GET(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+	    internal void GET(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
 	    {
 	        if (isDownloading)
 	        {
@@ -102,7 +105,7 @@ namespace saltr.utils
 
 
 
-	    public WWW POST(string url, Dictionary<string, string> post, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+	    internal WWW POST(string url, Dictionary<string, string> post, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
 	    {
 	        Debug.Log("EnteredToPost" + "url: " +  url);
 
@@ -152,7 +155,7 @@ namespace saltr.utils
 	        WWW = new WWW(url);
 	    }
 
-		public bool busy
+		internal bool busy
 		{
 			get {return isDownloading;}
 		}

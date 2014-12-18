@@ -10,9 +10,9 @@ namespace saltr.game.matching
 	/// </summary>
     public class SLTCellsIterator
     {
-        public SLTCells _cells;
-        public uint _vectorLength;
-        public int _currentPosition;
+        SLTCells _cells;
+        uint _vectorLength;
+        int _currentPosition;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="saltr.game.matching.SLTCellsIterator"/> class.

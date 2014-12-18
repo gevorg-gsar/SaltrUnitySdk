@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr
 {
-    class SLTBasicProperties
+    public class SLTBasicProperties
     {
         private string _age;
 		private string _gender;			//Gender "F", "M", "female", "male"

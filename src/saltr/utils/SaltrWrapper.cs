@@ -6,60 +6,91 @@ using saltr;
 using saltr.status;
 using saltr.utils;
 
+namespace saltr.utils
+{
+
+/// <summary>
+/// Saltr wrapper.
+/// </summary>
 public class SaltrWrapper : MonoBehaviour
 {
-    public string clientKey;
-    public string deviceId = "";
-    public string socialId;
-    public bool devMode = false;
-	public bool autoSync = true;
-    public bool useCache = true;
-    public bool useNoLevels = false;
-    public bool useNoFeatures = false;
-    public int requestIdleTimeout = 0;
-    public string localLevelPackage = SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL; // in Resources
+	[SerializeField]
+	string clientKey = "";
+	[SerializeField]
+	string deviceId = "";
+	[SerializeField]
+	string socialId = "";
+	[SerializeField]
+	bool devMode = false;
+	[SerializeField]
+	bool autoRegisterDevice = true;
+	[SerializeField]
+	bool useCache = true;
+	[SerializeField]
+	bool useNoLevels = false;
+	[SerializeField]
+	bool useNoFeatures = false;
+	[SerializeField]
+	int requestIdleTimeout = 0;
+	[SerializeField]
+    string localLevelPackage = SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL; // in Resources
 
     [System.Serializable]
-    public class featureEntry
+    internal class featureEntry
     {
-        public string token;
-        public propertyEntry[] properties;
+        public string token = "";
+        public propertyEntry[] properties = null;
         public bool required = false;
     }
     [System.Serializable]
-    public class propertyEntry
+    internal class propertyEntry
     {
-        public string key;
-        public string value;
+        public string key = "";
+        public string value = "";
     }
-    public featureEntry[] defaultFeatures;
-    public bool autoStart = false;
+	
+	[SerializeField]
+    featureEntry[] defaultFeatures = null;
+	[SerializeField]
+    bool autoStart = false;
 
 
     private SLTUnity _saltr;
 
-    #region Properties
+    #region Propertiess
+	/// <summary>
+	/// Gets all levels count.
+	/// </summary>
     public int AllLevelsCount
     {
         get { return (int)_saltr.allLevelsCount; }
     }
 
+	/// <summary>
+	/// Gets the <see cref="saltr.SLTUnity"/> instance.
+	/// </summary>
     public SLTUnity saltr
     {
         get { return _saltr; }
+		internal set { _saltr = value; }
     }
     #endregion
 
 
-    //public virtual void Awake(){}
-    protected void Awake()
+    /// <summary>
+	/// Creates and initialises <see cref="saltr.SLTUnity"/> instance.
+    /// </summary>
+    protected virtual void Awake()
     {
+		if(_saltr != null)
+				return;
+
         gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
         deviceId = deviceId != "" ? deviceId : SystemInfo.deviceUniqueIdentifier;
-        _saltr = new SLTUnity(clientKey, deviceId, useCache);
+		_saltr = new SLTUnity(clientKey, deviceId, useCache);
         _saltr.socialId = socialId;
         _saltr.devMode = devMode;
-		_saltr.autoSyncEnabled = autoSync;
+		_saltr.autoRegisterDevice = autoRegisterDevice;
         _saltr.useNoLevels = useNoLevels;
         _saltr.useNoFeatures = useNoFeatures;
         _saltr.requestIdleTimeout = requestIdleTimeout;
@@ -71,7 +102,10 @@ public class SaltrWrapper : MonoBehaviour
             _saltr.start();
     }
 
-	virtual protected void defineFeatures()
+	/// <summary>
+	/// Defines features that can be specified in the Inspector.
+	/// </summary>
+	protected virtual void defineFeatures()
 	{
 		foreach (featureEntry feateure in defaultFeatures)
 		{
@@ -168,21 +202,23 @@ public class SaltrWrapper : MonoBehaviour
 
 	}
 
-	public void showDeviceRegistationDialog(Action<string> callback)
+	internal void showDeviceRegistationDialog(Action<string> callback)
 	{
 		_showDeviceRegistationDialog = true;
 		_deviceRegistationDialogCallback = callback;
 	}
 
-	public void hideDeviceRegistationDialog()
+	internal void hideDeviceRegistationDialog()
 	{
 		_showDeviceRegistationDialog = false;
 		_loading = false;
 	}
 
-	public void setStatus(string status)
+	internal void setStatus(string status)
 	{
 		_status = status;
 		_loading = false;
 	}
+}
+
 }

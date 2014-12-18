@@ -42,7 +42,7 @@ namespace saltr.game.matching
         }
 
 
-        public SLTMatchingBoard(SLTCells cells, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
+        internal SLTMatchingBoard(SLTCells cells, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
             : base(layers, properties)
         {
             _cells = cells;

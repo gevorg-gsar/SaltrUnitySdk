@@ -7,7 +7,7 @@ using saltr.utils;
 namespace saltr.game.matching
 {
 
-    public class SLTMatchingLevelParser : SLTLevelParser
+    internal class SLTMatchingLevelParser : SLTLevelParser
     {
         private static SLTMatchingLevelParser INSTANCE = null;
 

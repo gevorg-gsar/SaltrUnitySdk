@@ -12,7 +12,7 @@ using saltr.utils;
 
 namespace saltr.resource
 {
-    public class SLTResource
+    internal class SLTResource
     {
         private string _id;
 
@@ -47,10 +47,10 @@ namespace saltr.resource
 
 
         protected Action<SLTResource> _onSuccess;
-        protected Action _onProgress;
+//        protected Action _onProgress;
         private Action<SLTResource> _onFail;
 
-        public SLTResource(string Id, SLTResourceTicket Ticket, Action<SLTResource> onSuccess, Action<SLTResource> onFail)
+        internal SLTResource(string Id, SLTResourceTicket Ticket, Action<SLTResource> onSuccess, Action<SLTResource> onFail)
         {
             this._id = Id;
             this._ticket = Ticket;

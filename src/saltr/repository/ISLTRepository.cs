@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr.repository
 {
-   public interface ISLTRepository
+   internal interface ISLTRepository
     {
         object getObjectFromStorage(string name);
 

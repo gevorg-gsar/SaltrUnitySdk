@@ -42,7 +42,7 @@ namespace saltr.game
         /// </summary>
 		public const string LEVEL_TYPE_2DCANVAS = "canvas2D";
 
-        public static SLTLevelParser getParser(string levelType)
+        internal static SLTLevelParser getParser(string levelType)
         {
             switch (levelType)
             {
@@ -111,7 +111,7 @@ namespace saltr.game
             get { return _version; }
         }
 
-        public SLTLevel(string id, string levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
+        internal SLTLevel(string id, string levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
         {
             _localIndex = localIndex;
             _packIndex = packIndex;
@@ -134,7 +134,7 @@ namespace saltr.game
             return _boards.getValue<SLTBoard>(id);
         }
 
-        public void updateContent(Dictionary<string, object> rootNode)
+        internal void updateContent(Dictionary<string, object> rootNode)
         {
             Dictionary<string, object> boardsNode = new Dictionary<string, object>();
 

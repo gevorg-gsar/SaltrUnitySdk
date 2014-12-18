@@ -16,7 +16,7 @@ namespace saltr.game
         private int _index;
         
 
-        public SLTLevelPack(string token, int index, List<SLTLevel> levels)
+        internal SLTLevelPack(string token, int index, List<SLTLevel> levels)
         {
             _token = token;
             _index = index;
@@ -47,12 +47,15 @@ namespace saltr.game
 			get { return _index; }
 		}
 
+		/// <summary>
+		/// Returns the token.
+		/// </summary>
         public override string ToString()
         {
             return _token;
         }
 
-		public void dispose()
+		internal void dispose()
 		{
 			// We are NOT disposing levels here as they still can be used by the app (references!).
 			// We let levels to be garbage collected later if not used.

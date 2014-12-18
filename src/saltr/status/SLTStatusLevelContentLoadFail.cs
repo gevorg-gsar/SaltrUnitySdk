@@ -5,9 +5,9 @@ using System.Text;
 
 namespace saltr.status
 {
-   public class SLTStatusLevelContentLoadFail : SLTStatus
+	internal class SLTStatusLevelContentLoadFail : SLTStatus
     {
-		public SLTStatusLevelContentLoadFail():base(SLTStatus.CLIENT_LEVEL_CONTENT_LOAD_FAIL, "Level content load has failed.")
+		public SLTStatusLevelContentLoadFail():base(SLTStatus.Code.CLIENT_LEVEL_CONTENT_LOAD_FAIL, "Level content load has failed.")
 		{
 		}
     }

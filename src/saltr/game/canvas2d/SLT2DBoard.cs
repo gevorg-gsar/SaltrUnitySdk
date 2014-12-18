@@ -32,7 +32,7 @@ namespace saltr.game.canvas2d
         }
 
 
-        public SLT2DBoard(float width, float height, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
+        internal SLT2DBoard(float width, float height, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
             : base(layers, properties)
         {
             _width = width;

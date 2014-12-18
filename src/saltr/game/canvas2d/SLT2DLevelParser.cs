@@ -6,7 +6,7 @@ using saltr.utils;
 
 namespace saltr.game.canvas2d
 {
-    public class SLT2DLevelParser : SLTLevelParser
+    internal class SLT2DLevelParser : SLTLevelParser
     {
 
         private static SLT2DLevelParser INSTANCE;

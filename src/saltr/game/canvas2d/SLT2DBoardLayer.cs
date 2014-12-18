@@ -11,7 +11,7 @@ namespace saltr.game.canvas2d
 
 		private List<SLT2DAssetInstance> _assetInctances;
 
-		public SLT2DBoardLayer(string layerId, int layerIndex) : base(layerId,layerIndex)
+		internal SLT2DBoardLayer(string layerId, int layerIndex) : base(layerId,layerIndex)
 		{
 			_assetInctances = new List<SLT2DAssetInstance>();
 		}

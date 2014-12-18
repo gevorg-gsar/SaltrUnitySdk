@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr.utils
 {
-    class HTTPStatus
+    internal class HTTPStatus
     {
         public static readonly int HTTP_STATUS_400 = 400;
         public static readonly int HTTP_STATUS_403 = 403;

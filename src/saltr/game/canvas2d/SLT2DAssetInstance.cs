@@ -41,7 +41,7 @@ namespace saltr.game.canvas2d
         }
 
 
-        public SLT2DAssetInstance(string token, List<SLTAssetState> states, object properties, float x, float y, float rotaition)
+        internal SLT2DAssetInstance(string token, List<SLTAssetState> states, object properties, float x, float y, float rotaition)
             : base(token, states, properties)
         {
             _x = x;

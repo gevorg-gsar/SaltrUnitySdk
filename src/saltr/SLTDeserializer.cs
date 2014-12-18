@@ -7,7 +7,7 @@ using saltr.utils;
 
 namespace saltr
 {
-    public class SLTDeserializer
+    internal class SLTDeserializer
     {
         public SLTDeserializer()
         { }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr.game.matching
 {
-    public class SLTCompositeAsset : SLTAsset
+    internal class SLTCompositeAsset : SLTAsset
     {
         public IEnumerable<object> _cellInfos { get; set; }
 

@@ -5,10 +5,10 @@ using System.Text;
 
 namespace saltr.game.matching
 {
-	/// <summary>
-	/// Represents a chunk, a cllection of cells on matching board that is populated with assets according to certain rules.
-	/// </summary>
-    public class SLTChunk
+	// <summary>
+	// Represents a chunk, a cllection of cells on matching board that is populated with assets according to certain rules.
+	// </summary>
+    internal class SLTChunk
     {
         private string _layerToken;
         private int _layerIndex;
@@ -19,7 +19,7 @@ namespace saltr.game.matching
         private List<SLTCell> _availableCells;
         private Dictionary<string, object> _assetMap;
 
-        public SLTChunk(string layerToken, int layerIndex, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, Dictionary<string,object> assetMap)
+        internal SLTChunk(string layerToken, int layerIndex, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, Dictionary<string,object> assetMap)
         {
             _layerIndex = layerIndex;
             _layerToken = layerToken;
@@ -166,7 +166,7 @@ namespace saltr.game.matching
             }
         }
 
-        class tempFractionComparer : IComparer<tempFractionObject>
+        internal class tempFractionComparer : IComparer<tempFractionObject>
         {
             public int Compare(tempFractionObject x, tempFractionObject y)
             {
@@ -188,14 +188,10 @@ namespace saltr.game.matching
         }
 
 
-        public class tempFractionObject 
+        internal class tempFractionObject 
         {
             public int fraction { get; set; }
             public SLTChunkAssetRule assetRule { get; set; }
-
-
-
-           
         }
 
         private void generateAssetInstancesByCount(List<SLTChunkAssetRule> countChunkAssetRules)

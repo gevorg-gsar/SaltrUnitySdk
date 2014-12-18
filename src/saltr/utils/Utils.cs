@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 namespace saltr.utils
 {
-    public static class Utils
+    internal static class Utils
     {
         public static string formatString(string format, params string[] args)
         {

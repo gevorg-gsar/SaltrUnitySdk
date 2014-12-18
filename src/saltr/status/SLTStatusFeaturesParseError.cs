@@ -5,9 +5,9 @@ using System.Text;
 
 namespace saltr.status
 {
-	class SLTStatusFeaturesParseError : SLTStatus
+	internal class SLTStatusFeaturesParseError : SLTStatus
 	{
-		public SLTStatusFeaturesParseError(): base(SLTStatus.CLIENT_FEATURES_PARSE_ERROR, "[SALTR] Failed to decode Features.")
+		public SLTStatusFeaturesParseError(): base(SLTStatus.Code.CLIENT_FEATURES_PARSE_ERROR, "[SALTR] Failed to decode Features.")
 		{
 		}
 	}

@@ -20,7 +20,7 @@ namespace saltr.game.matching
 		Dictionary<string, object> _instancesByLayerId;
 		Dictionary<string, object> _instancesByLayerIndex;
 
-		public SLTCell(int col, int row)
+		internal SLTCell(int col, int row)
 		{
 			_col = col;
 			_row = row;
@@ -87,7 +87,7 @@ namespace saltr.game.matching
             return _instancesByLayerIndex.getValue(layerIndex.ToString()) as SLTAssetInstance;
         }
 		
-        public void setAssetInstance(string layerId, int layerIndex, SLTAssetInstance assetInstance) 
+        internal void setAssetInstance(string layerId, int layerIndex, SLTAssetInstance assetInstance) 
         {
             if (_isBlocked == false)
             {
@@ -96,7 +96,7 @@ namespace saltr.game.matching
             }
         }
 		
-		public void removeAssetInctance(string layerId, int layerIndex) 
+		internal void removeAssetInctance(string layerId, int layerIndex) 
 		{
 			_instancesByLayerId.Remove(layerId);
 			_instancesByLayerIndex.Remove(layerIndex.ToString());

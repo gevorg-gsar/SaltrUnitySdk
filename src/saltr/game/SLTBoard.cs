@@ -14,7 +14,7 @@ namespace saltr.game
         private Dictionary<string, object> _properties;
         private List<SLTBoardLayer> _layers;
 		
-        public SLTBoard(List<SLTBoardLayer> layers, Dictionary<string, object> properties)
+        internal SLTBoard(List<SLTBoardLayer> layers, Dictionary<string, object> properties)
         {
             _properties = properties;
             _layers = layers;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace saltr.game.matching
 {
-    public class SLTChunkAssetRule
+    internal class SLTChunkAssetRule
     {
         private string _assetId;
 		private IEnumerable<object> _stateIds;
