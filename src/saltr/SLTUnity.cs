@@ -512,7 +512,7 @@ namespace saltr
                 args.customProperties = customProperties;
             }
 
-            urlVars["args"] = LitJson.JsonMapper.ToJson(args);
+			urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
             return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
@@ -610,7 +610,7 @@ namespace saltr
                 res.dispose();
             };
 
-            urlVars["args"] = LitJson.JsonMapper.ToJson(args);
+			urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
             SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
@@ -845,12 +845,12 @@ namespace saltr
             List<object> featureList = new List<object>();
 			foreach (SLTFeature feature in _developerFeatures.Values)
             {
-				featureList.Add(new { token = feature.token, value = LitJson.JsonMapper.ToJson(feature.properties) });
+				featureList.Add(feature.ToDictionary());
             }
 
             args.developerFeatures = featureList;
 
-            urlVars["args"] = LitJson.JsonMapper.ToJson(args);
+			urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
             SLTResource resource = new SLTResource("syncFeatures", ticket, syncSuccessHandler, syncFailHandler);
@@ -935,7 +935,7 @@ namespace saltr
 
 			string model = "Unknown";
 			string os = "Unknown";
-#if UNITY_IPHONE
+#if UNITY_IOS
 			model = Utils.getHumanReadableDeviceModel(SystemInfo.deviceModel); 
 			os = SystemInfo.operatingSystem.Replace("Phone ", "");
 #elif UNITY_ANDROID
@@ -963,7 +963,7 @@ namespace saltr
 				throw new Exception("Email is required.");
 			}
 
-			urlVars["args"] = LitJson.JsonMapper.ToJson(args);
+			urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 			
 			SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars);
 			SLTResource resource = new SLTResource("addDevice", ticket, addDeviceSuccessHandler, addDeviceFailHandler);
@@ -999,7 +999,7 @@ namespace saltr
 		void addDeviceFailHandler (SLTResource resource)
 		{
 			Debug.Log("[Saltr] Dev adding new device has failed.");
-			_wrapper.setStatus("Faild");
+			_wrapper.setStatus("Failed");
 		}
 
         private void appDataLoadFailCallback(SLTResource resource)
