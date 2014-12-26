@@ -9,11 +9,11 @@ namespace saltr.game.canvas2d
 	/// </summary>
 	public class SLT2DBoardLayer : SLTBoardLayer {
 
-		private List<SLT2DAssetInstance> _assetInctances;
+		private List<SLT2DAssetInstance> _assetInstances;
 
 		internal SLT2DBoardLayer(string layerId, int layerIndex) : base(layerId,layerIndex)
 		{
-			_assetInctances = new List<SLT2DAssetInstance>();
+			_assetInstances = new List<SLT2DAssetInstance>();
 		}
 
 		/// <summary>
@@ -21,15 +21,15 @@ namespace saltr.game.canvas2d
 		/// </summary>
 		public List<SLT2DAssetInstance> assetInstances
 		{
-			get{return _assetInctances;}
+			get{return _assetInstances;}
 		}
 
 		/// <summary>
-		/// Adds the asset inctance to the board.
+		/// Adds the asset instance to the board.
 		/// </summary>
-		public void addAssetInctance(SLT2DAssetInstance instance)
+		public void addAssetInstance(SLT2DAssetInstance instance)
 		{
-			_assetInctances.Add(instance);
+			_assetInstances.Add(instance);
 		}
 
 		/// <summary>

@@ -40,7 +40,7 @@ namespace saltr.game.matching
 		}
 
 		/// <summary>
-		/// Gets or sets the column of the cell.
+		/// Gets or sets the row of the cell.
 		/// </summary>
 		public int row
 		{
@@ -96,7 +96,7 @@ namespace saltr.game.matching
             }
         }
 		
-		internal void removeAssetInctance(string layerId, int layerIndex) 
+		internal void removeAssetInstance(string layerId, int layerIndex) 
 		{
 			_instancesByLayerId.Remove(layerId);
 			_instancesByLayerIndex.Remove(layerIndex.ToString());

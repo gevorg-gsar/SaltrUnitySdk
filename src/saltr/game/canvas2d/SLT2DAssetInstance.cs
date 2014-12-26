@@ -6,7 +6,7 @@ using UnityEngine;
 namespace saltr.game.canvas2d
 {
 	/// <summary>
-	/// Represents an inctance of a 2D asset on board
+	/// Represents an instance of a 2D asset on board
 	/// </summary>
     public class SLT2DAssetInstance : SLTAssetInstance
     {

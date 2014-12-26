@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,7 +85,7 @@ namespace saltr.game.canvas2d
 
                 IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
 
-                layer.addAssetInctance(new SLT2DAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties, x, y, rotation));
+                layer.addAssetInstance(new SLT2DAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties, x, y, rotation));
             }
         }
 

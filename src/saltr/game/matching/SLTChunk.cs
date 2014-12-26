@@ -6,7 +6,7 @@ using System.Text;
 namespace saltr.game.matching
 {
 	// <summary>
-	// Represents a chunk, a cllection of cells on matching board that is populated with assets according to certain rules.
+	// Represents a chunk, a collection of cells on matching board that is populated with assets according to certain rules.
 	// </summary>
     internal class SLTChunk
     {
@@ -34,7 +34,7 @@ namespace saltr.game.matching
 		{
 			foreach(SLTCell cell in _chunkCells)
 			{
-				cell.removeAssetInctance(_layerToken, _layerIndex);
+				cell.removeAssetInstance(_layerToken, _layerIndex);
 			}
 		}
 
