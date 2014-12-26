@@ -46,17 +46,17 @@ namespace saltr
 			_required = Required;
 		}
 
-		public SLTFeature(string token, Dictionary<string,object> Properties, bool Required)
+		internal SLTFeature(string token, Dictionary<string,object> Properties, bool Required)
 		{
 			Init(token, Properties, Required);
 		}
 
-		public SLTFeature(string token, Dictionary<string,object> Properties)
+		internal SLTFeature(string token, Dictionary<string,object> Properties)
 		{
 			Init(token, Properties, false);
 		}
 
-		public SLTFeature(string token)
+		internal SLTFeature(string token)
 		{
 			Init(token, null, false);
 		}
@@ -65,5 +65,13 @@ namespace saltr
         {
             return "Feature { token : " + _token + " , value : " + _properties + "}";
         }
+
+		internal Dictionary<string, object> ToDictionary()
+		{
+			var ret = new Dictionary<string, object>();
+			ret["token"] = _token;
+			ret["value"] = MiniJSON.Json.Serialize(_properties);
+			return ret;
+		}
     }
 }
