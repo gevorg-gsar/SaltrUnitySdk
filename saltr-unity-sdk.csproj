@@ -80,9 +80,6 @@
     <Reference Include="UnityEngine">
       <HintPath>dll\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="LitJSON">
-      <HintPath>dll\LitJSON.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -135,6 +132,15 @@
     <Compile Include="src\saltr\utils\MiniJSON.cs" />
     <Compile Include="src\saltr\utils\Utils.cs" />
     <Compile Include="src\saltr\utils\SaltrWrapper.cs" />
+    <Compile Include="src\saltr\utils\LitJson\IJsonWrapper.cs" />
+    <Compile Include="src\saltr\utils\LitJson\JsonData.cs" />
+    <Compile Include="src\saltr\utils\LitJson\JsonException.cs" />
+    <Compile Include="src\saltr\utils\LitJson\JsonMapper.cs" />
+    <Compile Include="src\saltr\utils\LitJson\JsonMockWrapper.cs" />
+    <Compile Include="src\saltr\utils\LitJson\JsonReader.cs" />
+    <Compile Include="src\saltr\utils\LitJson\JsonWriter.cs" />
+    <Compile Include="src\saltr\utils\LitJson\Lexer.cs" />
+    <Compile Include="src\saltr\utils\LitJson\ParserToken.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
