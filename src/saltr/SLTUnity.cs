@@ -935,21 +935,24 @@ namespace saltr
 
 			string model = "Unknown";
 			string os = "Unknown";
-#if UNITY_IOS
-			model = Utils.getHumanReadableDeviceModel(SystemInfo.deviceModel); 
-			os = SystemInfo.operatingSystem.Replace("Phone ", "");
-#elif UNITY_ANDROID
-			model = SystemInfo.deviceModel;
-			int iVersionNumber = 0;
-			string androidVersion = SystemInfo.operatingSystem;
-			int sdkPos = androidVersion.IndexOf("API-");
-			iVersionNumber = int.Parse(androidVersion.Substring(sdkPos+4,2).ToString());
-			os = "Android " + iVersionNumber;
-#else
-			model = SystemInfo.deviceModel;
-			os = SystemInfo.operatingSystem;
-#endif
-
+			switch(Application.platform)
+			{
+			case RuntimePlatform.IPhonePlayer:
+				model = Utils.getHumanReadableDeviceModel(SystemInfo.deviceModel); 
+				os = SystemInfo.operatingSystem.Replace("Phone ", "");
+				break;
+			case RuntimePlatform.Android:
+				model = SystemInfo.deviceModel;
+				int iVersionNumber = 0;
+				string androidVersion = SystemInfo.operatingSystem;
+				int sdkPos = androidVersion.IndexOf("API-");
+				iVersionNumber = int.Parse(androidVersion.Substring(sdkPos+4,2).ToString());
+				os = "Android " + iVersionNumber;
+				break;
+			default:
+				model = SystemInfo.deviceModel;
+				os = SystemInfo.operatingSystem;
+			}
 
 			args.source = model;
 			args.os = os;
