@@ -100,6 +100,7 @@ namespace saltr.utils
 	        else
 	            this.dropTimeout = 3;
 
+//			Debug.Log(url);
 	        StartDownloading(url);
 	    }
 

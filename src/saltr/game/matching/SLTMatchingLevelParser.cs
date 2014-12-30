@@ -92,7 +92,7 @@ namespace saltr.game.matching
                 {
                     string assetId = "";
                     string distribytionType = "";
-                    int distributionVale = 0;
+                    float distributionVale = 0;
                     IEnumerable<object> states = new List<object>();
 
                     if (assetNode.toDictionaryOrNull() != null && assetNode.toDictionaryOrNull().ContainsKey("assetId"))
@@ -102,7 +102,7 @@ namespace saltr.game.matching
                         distribytionType = assetNode.toDictionaryOrNull()["distributionType"].ToString();
 
                     if (assetNode.toDictionaryOrNull() != null && assetNode.toDictionaryOrNull().ContainsKey("distributionValue"))
-                        distributionVale = assetNode.toDictionaryOrNull()["distributionValue"].toIntegerOrZero();
+                        distributionVale = assetNode.toDictionaryOrNull()["distributionValue"].toFloatOrZero();
 
                     if (assetNode.toDictionaryOrNull() != null && assetNode.toDictionaryOrNull().ContainsKey("states"))
                         states = (IEnumerable<object>)assetNode.toDictionaryOrNull()["states"];

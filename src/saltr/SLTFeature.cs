@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using saltr.utils;
 
 namespace saltr
 {
@@ -69,7 +70,8 @@ namespace saltr
 		internal Dictionary<string, object> ToDictionary()
 		{
 			var ret = new Dictionary<string, object>();
-			ret["token"] = _token;
+			ret["token"] = _token.ToUpper();
+			_properties.removeEmptyOrNull();
 			ret["value"] = MiniJSON.Json.Serialize(_properties);
 			return ret;
 		}

@@ -10,7 +10,7 @@ namespace saltr.game.matching
         private string _assetId;
 		private IEnumerable<object> _stateIds;
         private string _distributionType;
-        private int _distributionValue;
+        private float _distributionValue;
 
         public string assetId
         {
@@ -27,12 +27,12 @@ namespace saltr.game.matching
             get { return _distributionType; }
         }
         
-        public int distributionValue
+        public float distributionValue
         {
             get { return _distributionValue; }
         }
 
-        public SLTChunkAssetRule(string assetId, string distributionType, int distributionValue, IEnumerable<object> stateIds)
+        public SLTChunkAssetRule(string assetId, string distributionType, float distributionValue, IEnumerable<object> stateIds)
         {
             _assetId = assetId;
             _distributionType = distributionType;

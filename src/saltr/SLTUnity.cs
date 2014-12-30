@@ -845,11 +845,13 @@ namespace saltr
             List<object> featureList = new List<object>();
 			foreach (SLTFeature feature in _developerFeatures.Values)
             {
-				featureList.Add(feature.ToDictionary());
+				Dictionary<string, object> featureDictionary = feature.ToDictionary();
+				featureDictionary.removeEmptyOrNull();
+				featureList.Add(featureDictionary);
             }
 
             args.developerFeatures = featureList;
-
+			args.RawData.removeEmptyOrNull();
 			urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
@@ -900,6 +902,7 @@ namespace saltr
 				{
 					registerDevice();
 				}
+				Debug.Log("[Saltr] Sync error: " +	responseObject.getValue("error").toDictionaryOrNull().getValue<string>("message"));
 			}
 			else
 			{
@@ -949,9 +952,15 @@ namespace saltr
 				iVersionNumber = int.Parse(androidVersion.Substring(sdkPos+4,2).ToString());
 				os = "Android " + iVersionNumber;
 				break;
+			case RuntimePlatform.WindowsEditor:
+			case RuntimePlatform.WindowsPlayer:
+				model = "PC";
+				os = SystemInfo.operatingSystem;
+				break;
 			default:
 				model = SystemInfo.deviceModel;
 				os = SystemInfo.operatingSystem;
+				break;
 			}
 
 			args.source = model;
@@ -967,7 +976,7 @@ namespace saltr
 			}
 
 			urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
-			
+
 			SLTResourceTicket ticket = getTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars);
 			SLTResource resource = new SLTResource("addDevice", ticket, addDeviceSuccessHandler, addDeviceFailHandler);
 			resource.load();

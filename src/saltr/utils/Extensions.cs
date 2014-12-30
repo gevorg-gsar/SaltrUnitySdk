@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace saltr.utils
 {
@@ -139,6 +140,24 @@ namespace saltr.utils
         {
 			return obj.toIntegerOr(0);
         }
+
+
+		internal static void removeEmptyOrNull(this Dictionary<string,object> dictionary)
+		{
+			for(int i = dictionary.Keys.Count - 1; i >= 0; --i)
+			{
+				string key = dictionary.Keys.ElementAt(i);
+				object value = dictionary[key];
+				if(value == null || (value as String == String.Empty))
+				{
+					dictionary.Remove(key);
+				}
+				else if(value is Dictionary<string, object>)
+				{
+					removeEmptyOrNull(value as Dictionary<string,object>);
+				}
+			}
+		}
 
     }
 }

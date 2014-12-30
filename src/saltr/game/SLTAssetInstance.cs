@@ -23,7 +23,7 @@ namespace saltr.game
         }
 
 		/// <summary>
-		/// Gets the token, a unique identifier for each  asset, not unique for a particular instance
+		/// Gets the token, a unique identifier for each asset, not unique for a particular instance
 		/// </summary>
 		public string token
 		{

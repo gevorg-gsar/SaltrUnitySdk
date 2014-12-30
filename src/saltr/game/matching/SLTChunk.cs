@@ -122,7 +122,7 @@ namespace saltr.game.matching
 
         private void generateAssetInstancesByRatio(List<SLTChunkAssetRule> ratioChunkAssetRules)
         {
-            int ratioSum = 0;
+            float ratioSum = 0;
             int len = ratioChunkAssetRules.Count;
             SLTChunkAssetRule assetRule;
             for (int i = 0; i < len; i++)
@@ -209,7 +209,7 @@ namespace saltr.game.matching
         }
 
 
-        private void generateAssetInstances(int count, string assetId, IEnumerable<object> stateIds)
+        private void generateAssetInstances(float count, string assetId, IEnumerable<object> stateIds)
         {
             SLTAsset asset = _assetMap[assetId] as SLTAsset;
 
