@@ -7,16 +7,16 @@ namespace saltr.repository
 {
    internal interface ISLTRepository
     {
-        object getObjectFromStorage(string name);
+        object GetObjectFromStorage(string name);
 
-        object getObjectFromCache(string fileName);
+        object GetObjectFromCache(string fileName);
 
-        string getObjectVersion(string name);
+        string GetObjectVersion(string name);
 
-        void saveObject(string name, object Object);
+		void SaveObject(string name, object objectToSave);
 
-        void cacheObject(string name, string version, object Object);
+		void CacheObject(string name, string version, object objectToSave);
 
-        object getObjectFromApplication(string fileName);
+        object GetObjectFromApplication(string fileName);
     }
 }

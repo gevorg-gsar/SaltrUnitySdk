@@ -16,7 +16,7 @@ namespace saltr.resource
     {
         private string _id;
 
-        protected string id
+        protected string Id
         {
             get { return _id; }
             set { _id = value; }
@@ -24,7 +24,7 @@ namespace saltr.resource
 
         private bool _isLoaded;
 
-        public bool isLoaded
+        public bool IsLoaded
         {
             get { return _isLoaded; }
             set { _isLoaded = value; }
@@ -32,7 +32,7 @@ namespace saltr.resource
 
         private SLTResourceTicket _ticket;
 
-        public SLTResourceTicket ticket
+        public SLTResourceTicket Ticket
         {
             get { return _ticket; }
             set { _ticket = value; }
@@ -57,46 +57,40 @@ namespace saltr.resource
             this._onSuccess = onSuccess;
             this._onFail = onFail;
 
-            _maxAttempts = _ticket.maxAttempts;
+            _maxAttempts = _ticket.MaxAttempts;
             _fails = 0;
-            _dropTimeout = _ticket.dropTimeout;
+            _dropTimeout = _ticket.DropTimeout;
             _httpStatus = -1;
         }
 
 
-        public void ioErrorHandler()
+        public void IOErrorHandler()
         {
             if (_fails == _maxAttempts)
                 _onFail(this);
             else
-                this.load();
+                this.Load();
         }
 
-
-        private void initLoader()
-        {
-        }
-
-
-        public void load()
+        public void Load()
         {
             _fails++;
             GameObject go = GameObject.Find(SLTUnity.SALTR_GAME_OBJECT_NAME);
             GETPOSTWrapper wrapper = (GETPOSTWrapper)go.GetComponent(typeof(GETPOSTWrapper));
-            if (ticket.method == "post")
+            if (Ticket.Method == "post")
                 //post
-                wrapper.POST(ticket.getURLRequest(), ticket.GetUrlVars(), _onSuccess , _onFail, this);
+                wrapper.POST(Ticket.GetURLRequest(), Ticket.GetUrlVars(), _onSuccess , _onFail, this);
 
             else
-                wrapper.GET(_ticket.getURLRequest(), _onSuccess, _onFail, this);
+                wrapper.GET(_ticket.GetURLRequest(), _onSuccess, _onFail, this);
         }
 
 
-        internal void dispose()
+        internal void Dispose()
         {
         }
 
-        public Dictionary<string, object> data
+        public Dictionary<string, object> Data
         {
             set;
             get;

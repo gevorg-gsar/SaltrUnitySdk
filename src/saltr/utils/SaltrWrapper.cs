@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -33,24 +33,24 @@ public class SaltrWrapper : MonoBehaviour
 	[SerializeField]
 	int requestIdleTimeout = 0;
 	[SerializeField]
-    string localLevelPackage = SLTConfig.LOCAL_LEVELPACK_PACKAGE_URL; // in Resources
+    string localLevelPackage = SLTConfig.LocalLevelPackageUrl; // in Resources
 
     [System.Serializable]
-    internal class featureEntry
+    internal class FeatureEntry
     {
         public string token = "";
-        public propertyEntry[] properties = null;
+        public PropertyEntry[] properties = null;
         public bool required = false;
     }
     [System.Serializable]
-    internal class propertyEntry
+    internal class PropertyEntry
     {
         public string key = "";
         public string value = "";
     }
 	
 	[SerializeField]
-    featureEntry[] defaultFeatures = null;
+    FeatureEntry[] defaultFeatures = null;
 	[SerializeField]
     bool autoStart = false;
 
@@ -63,13 +63,13 @@ public class SaltrWrapper : MonoBehaviour
 	/// </summary>
     public int AllLevelsCount
     {
-        get { return (int)_saltr.allLevelsCount; }
+        get { return (int)_saltr.AllLevelsCount; }
     }
 
 	/// <summary>
 	/// Gets the <see cref="saltr.SLTUnity"/> instance.
 	/// </summary>
-    public SLTUnity saltr
+    public SLTUnity Saltr
     {
         get { return _saltr; }
 		internal set { _saltr = value; }
@@ -88,31 +88,31 @@ public class SaltrWrapper : MonoBehaviour
         gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
         deviceId = deviceId != "" ? deviceId : SystemInfo.deviceUniqueIdentifier;
 		_saltr = new SLTUnity(clientKey, deviceId, useCache);
-        _saltr.socialId = socialId;
-        _saltr.devMode = devMode;
-		_saltr.autoRegisterDevice = autoRegisterDevice;
-        _saltr.useNoLevels = useNoLevels;
-        _saltr.useNoFeatures = useNoFeatures;
-        _saltr.requestIdleTimeout = requestIdleTimeout;
-        _saltr.importLevels(localLevelPackage);
+        _saltr.SocialId = socialId;
+        _saltr.DevMode = devMode;
+		_saltr.AutoRegisterDevice = autoRegisterDevice;
+        _saltr.UseNoLevels = useNoLevels;
+        _saltr.UseNoFeatures = useNoFeatures;
+        _saltr.RequestIdleTimeout = requestIdleTimeout;
+        _saltr.ImportLevels(localLevelPackage);
 
-		defineFeatures();
+		DefineFeatures();
 
         if (autoStart)
-            _saltr.start();
+            _saltr.Start();
     }
 
 	/// <summary>
 	/// Defines features that can be specified in the Inspector.
 	/// </summary>
-	protected virtual void defineFeatures()
+	protected virtual void DefineFeatures()
 	{
-		foreach (featureEntry feateure in defaultFeatures)
+		foreach (FeatureEntry feateure in defaultFeatures)
 		{
 			Dictionary<string, object> properties = new Dictionary<string, object>();
-			foreach (propertyEntry property in feateure.properties)
+			foreach (PropertyEntry property in feateure.properties)
 				properties[property.key] = property.value;
-			_saltr.defineFeature(feateure.token, properties, feateure.required);
+			_saltr.DefineFeature(feateure.token, properties, feateure.required);
 		}
 	}
 
@@ -164,11 +164,11 @@ public class SaltrWrapper : MonoBehaviour
 				GUILayout.BeginHorizontal();
 					if(GUILayout.Button("Close") && !_loading)
 					{
-						hideDeviceRegistationDialog();
+						HideDeviceRegistationDialog();
 					}
 					if(GUILayout.Button("Submit") && !_loading)
 					{
-						if(Utils.validEmail(_email))
+						if(Utils.ValidEmail(_email))
 						{
 							_deviceRegistationDialogCallback(_email);
 							_status = "Loading...";
@@ -202,19 +202,19 @@ public class SaltrWrapper : MonoBehaviour
 
 	}
 
-	internal void showDeviceRegistationDialog(Action<string> callback)
+	internal void ShowDeviceRegistationDialog(Action<string> callback)
 	{
 		_showDeviceRegistationDialog = true;
 		_deviceRegistationDialogCallback = callback;
 	}
 
-	internal void hideDeviceRegistationDialog()
+	internal void HideDeviceRegistationDialog()
 	{
 		_showDeviceRegistationDialog = false;
 		_loading = false;
 	}
 
-	internal void setStatus(string status)
+	internal void SetStatus(string status)
 	{
 		_status = status;
 		_loading = false;

@@ -35,7 +35,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets the rotation.
 		/// </summary>
-        public float rotation
+        public float Rotation
         {
             get { return _rotation; }
         }
@@ -53,7 +53,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets the position as a Unity standard vector, for convenience.
 		/// </summary>
-        public Vector2 position { 
+        public Vector2 Position { 
 			get { return new Vector2(_x, _y); } 
 		}
     }

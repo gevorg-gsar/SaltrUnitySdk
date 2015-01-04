@@ -26,7 +26,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the token, a unique identifier for the pack.
 		/// </summary>
-		public string token
+		public string Token
 		{
 			get { return _token; }
 		}
@@ -34,7 +34,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the list of levels of the pack.
 		/// </summary>
-		public List<SLTLevel> levels
+		public List<SLTLevel> Levels
 		{
 			get { return _levels; }
 		}
@@ -42,7 +42,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the index of the pack.
 		/// </summary>
-		public int index
+		public int Index
 		{
 			get { return _index; }
 		}
@@ -55,7 +55,7 @@ namespace saltr.game
             return _token;
         }
 
-		internal void dispose()
+		internal void Dispose()
 		{
 			// We are NOT disposing levels here as they still can be used by the app (references!).
 			// We let levels to be garbage collected later if not used.
@@ -63,7 +63,7 @@ namespace saltr.game
 			_levels = null;
 		}
 
-        public class SortByIndex : IComparer<SLTLevelPack>
+        internal class SortByIndex : IComparer<SLTLevelPack>
         {
             public int Compare(SLTLevelPack x, SLTLevelPack y)
             {
@@ -77,10 +77,10 @@ namespace saltr.game
                     return 1;
 
 
-                if (x.index > y.index)
+                if (x.Index > y.Index)
                     return 1;
 
-                if (x.index < y.index)
+                if (x.Index < y.Index)
                     return -1;
                 return 1;
             }

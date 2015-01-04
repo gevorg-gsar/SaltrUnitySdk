@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +16,7 @@ namespace saltr.game.matching
 		/// <summary>
         /// Gets the number of rows.
         /// </summary>
-		public int rows
+		public int Rows
         {
             get { return _rows; }
         }
@@ -26,7 +26,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets the number of columns.
 		/// </summary>
-        public int cols
+        public int Cols
         {
             get { return _cols; }
         }
@@ -36,7 +36,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets the cells.
 		/// </summary>
-        public SLTCells cells
+        public SLTCells Cells
         {
             get { return _cells; }
         }
@@ -46,8 +46,8 @@ namespace saltr.game.matching
             : base(layers, properties)
         {
             _cells = cells;
-            _cols = cells.width;
-            _rows = cells.height;
+            _cols = cells.Width;
+            _rows = cells.Height;
         }
 
     }

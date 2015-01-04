@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +18,7 @@ namespace saltr
 		/// <summary>
 		/// Gets the token, a unique identifier for a feature.
 		/// </summary>
-		public string token
+		public string Token
 		{
 			get { return _token; }
 		}
@@ -26,7 +26,7 @@ namespace saltr
 		/// <summary>
 		/// Gets the user defined properties.
 		/// </summary>
-		public Dictionary<string,object> properties
+		public Dictionary<string,object> Properties
 		{
 			get { return _properties; }
 		}
@@ -35,7 +35,7 @@ namespace saltr
 		/// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is required.
 		/// </summary>
 		/// <value><c>true</c> if required; otherwise, <c>false</c>.</value>
-        public bool required
+        public bool Required
         {
             get { return _required; }
         }
@@ -71,7 +71,7 @@ namespace saltr
 		{
 			var ret = new Dictionary<string, object>();
 			ret["token"] = _token.ToUpper();
-			_properties.removeEmptyOrNull();
+			_properties.RemoveEmptyOrNull();
 			ret["value"] = MiniJSON.Json.Serialize(_properties);
 			return ret;
 		}

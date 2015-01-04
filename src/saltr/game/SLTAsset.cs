@@ -23,17 +23,17 @@ namespace saltr.game
             return "[Asset] type: " + _token + ", " + " keys: " + _properties;
         }
 
-		public string token
+		public string Token
 		{
 			get { return _token; }
 		}
 		
-		public object properties
+		public object Properties
 		{
 			get { return _properties; }
 		}
 
-		public List<SLTAssetState> getInstanceStates(IEnumerable<object> stateIds)
+		public List<SLTAssetState> GetInstanceStates(IEnumerable<object> stateIds)
 		{
 			List<SLTAssetState> states = new List<SLTAssetState>(); 
 			foreach(object stateId in stateIds)

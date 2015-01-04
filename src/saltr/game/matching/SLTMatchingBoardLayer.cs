@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,18 +20,18 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Regenerates contents of all the chunks within the layer.
 		/// </summary>
-		public override void regenerate ()
+		public override void Regenerate ()
 		{
 			foreach(SLTChunk chunk in _chunks)
 			{
-				chunk.generateContent();
+				chunk.GenerateContent();
 			}
 		}
 
 		// <summary>
 		// Adds a chunk to the layer.
 		// </summary>
-		internal void addChunk(SLTChunk chunk)
+		internal void AddChunk(SLTChunk chunk)
 		{
 			_chunks.Add(chunk);
 		}

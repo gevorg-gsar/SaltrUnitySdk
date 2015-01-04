@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,16 +24,16 @@ namespace saltr.repository
             Debug.Log("cacheDir: " + _cacheDirectory.FullName);
         }
 
-        public void cacheObject(string name, string version, object Object)
+		public void CacheObject(string name, string version, object objectToSave)
         {
             string filePath = _cacheDirectory + "/" + name;
-            saveInternal(filePath, Object);
+            saveInternal(filePath, objectToSave);
             filePath = _cacheDirectory + "/" + name.Replace(".", "") + "_VERSION_";
 
             saveInternal(filePath, new { _VERSION_ = version });
         }
 
-        public object getObjectFromApplication(string fileName)
+        public object GetObjectFromApplication(string fileName)
         {
             //string file = _applicationDirectory + "/" + fileName;
             // return getIntenrnal(new FileInfo(file));
@@ -41,7 +41,7 @@ namespace saltr.repository
 			return file != null ? MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
         }
 
-        public object getObjectFromCache(string fileName)
+        public object GetObjectFromCache(string fileName)
         {
             string file = _cacheDirectory + "/" + fileName;
            // if (File.Exists(file))
@@ -50,7 +50,7 @@ namespace saltr.repository
              //   return null;
         }
 
-        public object getObjectFromStorage(string name)
+        public object GetObjectFromStorage(string name)
         {
          //   string file = _storageDirectory + "/" + name;
            // return getIntenrnal(new FileInfo(file));
@@ -58,7 +58,7 @@ namespace saltr.repository
             return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(name).text);
         }
 
-        public string getObjectVersion(string name)
+        public string GetObjectVersion(string name)
         {
             string file = _cacheDirectory + "/" + name.Replace(".", "") + "_VERSION_";
             object obj = getIntenrnal(new FileInfo(file));
@@ -72,10 +72,10 @@ namespace saltr.repository
                 return "";
         }
 
-        public void saveObject(string name, object Object)
+		public void SaveObject(string name, object objectToSave)
         {
             string resolvedPath = _storageDirectory + "/" + name;
-            saveInternal(resolvedPath, Object);
+            saveInternal(resolvedPath, objectToSave);
         }
 
         private object getIntenrnal(FileInfo file)

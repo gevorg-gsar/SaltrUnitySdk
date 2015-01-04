@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +7,7 @@ using System.Text;
 namespace saltr.game
 {
 	/// <summary>
-	/// Represents any kind of a board. 
+	/// The SLTBoard class represents a game board. 
 	/// </summary>
    	public class SLTBoard
     {
@@ -24,7 +24,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the properties associated with the board.
 		/// </summary>
-		public Dictionary<string, object> properties
+		public Dictionary<string, object> Properties
 		{
 			get { return _properties; }
 		}
@@ -32,7 +32,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the layers of the board.
 		/// </summary>
-		public List<SLTBoardLayer> layers
+		public List<SLTBoardLayer> Layers
 		{
 			get { return _layers; }
 		}
@@ -40,12 +40,12 @@ namespace saltr.game
 		/// <summary>
 		/// Regenerates contents of all layers.
 		/// </summary>
-		public void regenerate()
+		public void Regenerate()
         {
             for (int i = 0; i < _layers.Count; i++)
             {
                 SLTBoardLayer layer = _layers[i] as SLTBoardLayer;
-                layer.regenerate();
+                layer.Regenerate();
             }
         }
     }

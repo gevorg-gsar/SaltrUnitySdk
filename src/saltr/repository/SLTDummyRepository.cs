@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,32 +13,32 @@ namespace saltr.repository
         {
         }
 
-        public void cacheObject(string name, string version, object Object)
+        public void CacheObject(string name, string version, object obj)
         {
 
         }
 
-        public object getObjectFromApplication(string fileName)
+        public object GetObjectFromApplication(string fileName)
         {
 			return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
         }
 
-        public object getObjectFromCache(string fileName)
+        public object GetObjectFromCache(string fileName)
         {
 			return null;
         }
 
-        public object getObjectFromStorage(string name)
+        public object GetObjectFromStorage(string name)
         {
 			return null;
         }
 
-        public string getObjectVersion(string name)
+        public string GetObjectVersion(string name)
         {
 			return "";
         }
 
-        public void saveObject(string name, object Object)
+        public void SaveObject(string name, object obj)
         {
             
         }

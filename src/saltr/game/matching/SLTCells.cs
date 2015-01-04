@@ -18,7 +18,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets the width - the number of columns.
 		/// </summary>
-        public int width
+        public int Width
         {
             get { return _width; }
         }
@@ -26,7 +26,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets the height - the number of rows.
 		/// </summary>
-        public int height
+        public int Height
         {
             get { return _height; }
         }
@@ -34,7 +34,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets the underlying array containing all the cells.
 		/// </summary>
-        public SLTCell[] rawData
+        public SLTCell[] RawData
         {
             get { return _rawData; }
         }
@@ -42,7 +42,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Gets the default iterator, attached to this instance, which is created on first usage, and remains the same ever since.
 		/// </summary>
-        public SLTCellsIterator iterator
+        public SLTCellsIterator Iterator
         {
             get
             {
@@ -58,15 +58,15 @@ namespace saltr.game.matching
         {
             _width = width;
             _height = height;
-            allocate();
+            Allocate();
         }
 
-        private void allocate()
+        private void Allocate()
         {
             _rawData = new SLTCell[_width * _height];
         }
 
-		internal void insert(int col, int row, SLTCell cell)
+		internal void Insert(int col, int row, SLTCell cell)
         {
             if (_rawData.Count() <= row * _width + col)
                 Array.Resize(ref this._rawData, row * _width + col + 1);
@@ -79,7 +79,7 @@ namespace saltr.game.matching
 		/// </summary>
 		/// <param name="col">The column of the cell.</param>
 		/// <param name="row">The row of the cell.</param>
-		public SLTCell retrieve(int col, int row)
+		public SLTCell Retrieve(int col, int row)
         {
 			if (_rawData.Count() <= row * _width + col)
 				Array.Resize(ref this._rawData, row * _width + col + 1);
@@ -90,7 +90,7 @@ namespace saltr.game.matching
 		/// <summary>
 		/// Creates and returns an iterator, attached to this instance.
 		/// </summary>
-        public SLTCellsIterator getIterator()
+        public SLTCellsIterator GetIterator()
         {
             _iterator = new SLTCellsIterator(this);
             return _iterator;

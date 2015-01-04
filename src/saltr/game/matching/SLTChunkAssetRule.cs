@@ -12,22 +12,22 @@ namespace saltr.game.matching
         private string _distributionType;
         private float _distributionValue;
 
-        public string assetId
+        public string AssetId
         {
             get { return _assetId; }
         }
 
-		public IEnumerable<object> stateId
+		public IEnumerable<object> StateId
         {
             get { return _stateIds; }
         }
 
-        public string distributionType
+        public string DistributionType
         {
             get { return _distributionType; }
         }
         
-        public float distributionValue
+        public float DistributionValue
         {
             get { return _distributionValue; }
         }

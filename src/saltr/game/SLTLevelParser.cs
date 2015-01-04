@@ -12,26 +12,26 @@ namespace saltr.game
     {
 
 
-        public abstract Dictionary<string, object> parseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap);
+        public abstract Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap);
 
-		public Dictionary<string, object> parseLevelAssets(Dictionary<string, object> rootNode)
+		public Dictionary<string, object> ParseLevelAssets(Dictionary<string, object> rootNode)
 		{ 
 			if (!rootNode.ContainsKey ("assets"))
 				return new Dictionary<string, object>();
 			
-			Dictionary<string, object> assetsNodes = rootNode["assets"].toDictionaryOrNull();
+			Dictionary<string, object> assetsNodes = rootNode["assets"].ToDictionaryOrNull();
 			
 			Dictionary<string, object> assetMap = new Dictionary<string, object>();
 			foreach (var assetId in assetsNodes.Keys)
 			{
 				if(assetsNodes.ContainsKey(assetId.ToString()))
-					assetMap[assetId.ToString()] = parseAsset(assetsNodes[assetId.ToString()].toDictionaryOrNull());
+					assetMap[assetId.ToString()] = ParseAsset(assetsNodes[assetId.ToString()].ToDictionaryOrNull());
 			}
 			return assetMap;
 		}
 
 		//Parsing assets here
-		private SLTAsset parseAsset(Dictionary<string, object> assetNode)
+		private SLTAsset ParseAsset(Dictionary<string, object> assetNode)
 		{
 			string token = "";
 			object properties = null;
@@ -43,7 +43,7 @@ namespace saltr.game
 			
 			if (assetNode.ContainsKey("states"))
 			{
-				States = parseAssetStates(assetNode["states"].toDictionaryOrNull());
+				States = ParseAssetStates(assetNode["states"].ToDictionaryOrNull());
 			}
 			
 			if (assetNode.ContainsKey("token"))
@@ -54,18 +54,18 @@ namespace saltr.game
 			return new SLTAsset(token, properties, States);
 		}
 
-		private Dictionary<string, object> parseAssetStates(Dictionary<string, object> stateNodes)
+		private Dictionary<string, object> ParseAssetStates(Dictionary<string, object> stateNodes)
 		{
 			Dictionary<string, object> statesMap = new Dictionary<string, object>();
 			foreach (var stateId in stateNodes.Keys)
 			{
-				statesMap[stateId.ToString()] = parseAssetState(stateNodes[stateId.ToString()].toDictionaryOrNull());
+				statesMap[stateId.ToString()] = ParseAssetState(stateNodes[stateId.ToString()].ToDictionaryOrNull());
 			}
 			
 			return statesMap;
 		}
 
-        protected virtual SLTAssetState parseAssetState(Dictionary<string, object> stateNode)
+        protected virtual SLTAssetState ParseAssetState(Dictionary<string, object> stateNode)
         {
             string token = String.Empty;
             Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -77,7 +77,7 @@ namespace saltr.game
 
             if (stateNode.ContainsKey("properties"))
             {
-                properties = stateNode["properties"].toDictionaryOrNull();
+                properties = stateNode["properties"].ToDictionaryOrNull();
             }
 
             return new SLTAssetState(token, properties);

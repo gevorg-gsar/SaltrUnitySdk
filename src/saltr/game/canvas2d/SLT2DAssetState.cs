@@ -17,7 +17,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets the X coordinate of the pivot relative to the top left corner, in pixels.
 		/// </summary>
-        public float pivotX
+        public float PivotX
         {
             get { return _pivotX; }
         }
@@ -25,7 +25,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets the Y coordinate of the pivot relative to the top left corner, in pixels.
 		/// </summary>
-        public float pivotY
+        public float PivotY
         {
             get { return _pivotY; }
         }

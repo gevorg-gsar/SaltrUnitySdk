@@ -15,24 +15,24 @@ namespace saltr.status
 		/// </summary>
 		public enum Code
 		{
-        	AUTHORIZATION_ERROR = 1001,
-			VALIDATION_ERROR = 1002,
-			API_ERROR = 1003,
-			PARSE_ERROR = 1004,
+        	AuthorizationError = 1001,
+			ValidationError = 1002,
+			APIError = 1003,
+			ParseError = 1004,
 
-			REGISTRATION_REQUIRED = 2001,
-			CLIENT_ERROR = 2002,
+			RegistrationRequired = 2001,
+			ClientError = 2002,
 
-			CLIENT_APP_DATA_LOAD_FAIL = 2040,
-			CLIENT_LEVEL_CONTENT_LOAD_FAIL = 2041,
-			CLIENT_APP_DATA_CONCURRENT_LOAD_REFUSED = 2042,
+			ClientAppDataLoadFail = 2040,
+			ClientLevelContentLoadFail = 2041,
+			ClientAppDataConcurrentLoadRefused = 2042,
 
 
-			CLIENT_FEATURES_PARSE_ERROR = 2050,
-			CLIENT_EXPERIMENTS_PARSE_ERROR = 2051,
-			CLIENT_LEVELS_PARSE_ERROR = 2052,
+			ClientFeaturesParseError = 2050,
+			ClientExperimentsParseError = 2051,
+			ClientLevelsParseError = 2052,
 
-			UNKNOWN_ERROR = -1
+			UnknownError = -1
 		}
 
 		private Code _statusCode;
@@ -40,7 +40,7 @@ namespace saltr.status
 		/// <summary>
 		/// Gets and integer status code.
 		/// </summary>
-		public Code statusCode
+		public Code StatusCode
         {
             get { return _statusCode; }
         }
@@ -49,7 +49,7 @@ namespace saltr.status
 		/// <summary>
 		/// Gets a human-readable status message.
 		/// </summary>
-        public string statusMessage
+        public string StatusMessage
         {
             get { return _statusMessage; }
         }
@@ -59,7 +59,7 @@ namespace saltr.status
 			if(Enum.IsDefined(typeof(Code), code))
 				_statusCode = (Code)code;
 			else
-				_statusCode = Code.UNKNOWN_ERROR;
+				_statusCode = Code.UnknownError;
 
             _statusMessage = message;
 			UnityEngine.Debug.Log(message);

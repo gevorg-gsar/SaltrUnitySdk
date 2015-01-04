@@ -55,7 +55,7 @@ namespace saltr.utils
 	                if (WWW.error == null)
 	                {
 	                    //Debug.Log("Download is finished!" + WWW.text);
-	                    _resource.data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
+	                    _resource.Data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
 	                    isDownloading = false;
 	                    WWW.Dispose();
 	                    WWW = null;
@@ -95,8 +95,8 @@ namespace saltr.utils
 	        this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
 	        this._resource = resource;
 
-	        if (resource.ticket.dropTimeout != 0)
-	            this.dropTimeout = resource.ticket.dropTimeout;
+	        if (resource.Ticket.DropTimeout != 0)
+	            this.dropTimeout = resource.Ticket.DropTimeout;
 	        else
 	            this.dropTimeout = 3;
 
@@ -116,14 +116,14 @@ namespace saltr.utils
 	        this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
 	        this._resource = resource;
 
-	        if (resource.ticket.dropTimeout != 0)
-	            this.dropTimeout = resource.ticket.dropTimeout;
+	        if (resource.Ticket.DropTimeout != 0)
+	            this.dropTimeout = resource.Ticket.DropTimeout;
 	        else
 	            this.dropTimeout = 3;
 
 	      
 	            form.AddField("args", MiniJSON.Json.Serialize( post));
-	            form.AddField("cmd", SLTConfig.ACTION_DEV_SYNC_DATA);
+	            form.AddField("cmd", SLTConfig.ActionDevSyncData);
 
 
 	            //foreach (var item in post.Keys)

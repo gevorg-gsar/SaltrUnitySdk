@@ -16,7 +16,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets the width of the board in pixels as is in Saltr level editor.
 		/// </summary>
-        public float width
+        public float Width
         {
             get { return _width; }
         }
@@ -26,7 +26,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets the height of the board in pixels as is in Saltr level editor.
 		/// </summary>
-        public float height
+        public float Height
         {
             get { return _height; }
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,7 @@ namespace saltr
         public SLTDeserializer()
         { }
 
-        public static List<SLTExperiment> decodeExperiments(Dictionary<string, object> rootNode)
+        public static List<SLTExperiment> DecodeExperiments(Dictionary<string, object> rootNode)
         {
             if (rootNode == null)
                 return new List<SLTExperiment>();
@@ -58,7 +58,7 @@ namespace saltr
             return experiments;
         }
 		
-        public static Dictionary<string, SLTFeature> decodeFeatures(Dictionary<string, object> rootNode)
+        public static Dictionary<string, SLTFeature> DecodeFeatures(Dictionary<string, object> rootNode)
         {
             if (rootNode == null)
 				return new Dictionary<string, SLTFeature>();
@@ -95,11 +95,11 @@ namespace saltr
             return features;
         }
 		
-		public static List<SLTLevelPack> decodeLevels(Dictionary<string, object> rootNod)
+		public static List<SLTLevelPack> DecodeLevels(Dictionary<string, object> rootNod)
 		{
 			if (rootNod == null)
 				return new List<SLTLevelPack>();
-			string levelType = SLTLevel.LEVEL_TYPE_MATCHING;
+			string levelType = SLTLevel.LevelTypeMatching;
 			
 			if (rootNod.ContainsKey("levelType"))
 			{
@@ -129,7 +129,7 @@ namespace saltr
 					
 					int packIndex = 0;
 					if (levelPackDictionary.ContainsKey("index"))
-						packIndex = levelPackDictionary["index"].toIntegerOrZero();
+						packIndex = levelPackDictionary["index"].ToIntegerOrZero();
 					
 					List<SLTLevel> levelStructureList = new List<SLTLevel>();
 					
@@ -148,11 +148,11 @@ namespace saltr
 						
 						int id = 0;
 						if (levelDict.ContainsKey("id"))
-							id = levelDict["id"].toIntegerOrZero();
+							id = levelDict["id"].ToIntegerOrZero();
 						
 						int ind = 0;
 						if (levelDict.ContainsKey("index"))
-							ind = levelDict["index"].toIntegerOrZero();
+							ind = levelDict["index"].ToIntegerOrZero();
 						
 						
 						string url = "";
@@ -161,7 +161,7 @@ namespace saltr
 						
 						int version = 0;
 						if (levelDict.ContainsKey("version"))
-							version = levelDict["version"].toIntegerOrZero();
+							version = levelDict["version"].ToIntegerOrZero();
 						
 
 						// if (levelDict.ContainsKey("index"))
@@ -181,7 +181,7 @@ namespace saltr
 						}
 						
 						//TODO @GSAR: later, leave localIndex only!
-						levelStructureList.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, prop.toDictionaryOrNull(), version.ToString()));
+						levelStructureList.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, prop.ToDictionaryOrNull(), version.ToString()));
 					}
 
 					//TODO @GSAR: remove this sort when SALTR confirms correct ordering

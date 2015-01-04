@@ -15,7 +15,7 @@ namespace saltr.utils
 		/// Tries to convert the the object to string->object dictionary. If succesfull returns it otherwise returns null.
 		/// </summary>
 		/// <returns>The dictionary or null.</returns>
-        public static Dictionary<string, object> toDictionaryOrNull(this object obj)
+        public static Dictionary<string, object> ToDictionaryOrNull(this object obj)
         {
             Dictionary<string, object> dictionaryToReturn = new Dictionary<string, object>();
             try
@@ -35,7 +35,7 @@ namespace saltr.utils
 		/// Gets the value corresponding to the given key.
 		/// </summary>
 		/// <returns>The corresponding value, if the key excists, otherwise <c>null</c>.</returns>
-        public static object getValue(this Dictionary<string, object> dictionary, string key)
+        public static object GetValue(this Dictionary<string, object> dictionary, string key)
         {
             if (dictionary.ContainsKey(key))
             {
@@ -50,7 +50,7 @@ namespace saltr.utils
 		/// </summary>
 		/// <returns>The corresponding value, if the key excists, otherwise <c>null</c>.</returns>
 		/// <typeparam name="Type">The value will be cast to this type.</typeparam>
-		public static Type getValue<Type>(this Dictionary<string, object> dictionary, string key) where Type : class
+		public static Type GetValue<Type>(this Dictionary<string, object> dictionary, string key) where Type : class
 		{
 			if (dictionary.ContainsKey(key))
 			{
@@ -64,7 +64,7 @@ namespace saltr.utils
 		/// Tries to convert the the object to string->string dictionary. If succesfull returns it otherwise returns null.
 		/// </summary>
 		/// <returns>The dictionary or null.</returns>
-        public static Dictionary<string, string> toDictionaryStringOrNull(this object obj)
+        public static Dictionary<string, string> ToDictionaryStringOrNull(this object obj)
         {
             Dictionary<string, string> dictionaryToReturn = new Dictionary<string, string>();
             try
@@ -83,7 +83,7 @@ namespace saltr.utils
 		/// <summary>
 		/// Tries to convert the the object to a float. If succesfull returns it otherwise returns the specified value.
 		/// </summary>
-		public static float toFloatOr(this object obj, float value)
+		public static float ToFloatOr(this object obj, float value)
 		{
 			float x = value;
 			string str = "";
@@ -105,16 +105,16 @@ namespace saltr.utils
 		/// <summary>
 		/// Tries to convert the the object to a float. If succesfull returns it otherwise returns zero.
 		/// </summary>
-        public static float toFloatOrZero(this object obj)
+        public static float ToFloatOrZero(this object obj)
         {
-			return obj.toFloatOr(0);
+			return obj.ToFloatOr(0);
         }
 
 
 		/// <summary>
 		/// Tries to convert the the object to an integer. If succesfull returns it otherwise returns the specified value.
 		/// </summary>
-		public static int toIntegerOr(this object obj, int value)
+		public static int ToIntegerOr(this object obj, int value)
 		{
 			int x = value;
 			string str = "";
@@ -136,13 +136,13 @@ namespace saltr.utils
 		/// <summary>
 		/// Tries to convert the the object to an integer. If succesfull returns it otherwise returns zero.
 		/// </summary>
-        public static int toIntegerOrZero(this object obj)
+        public static int ToIntegerOrZero(this object obj)
         {
-			return obj.toIntegerOr(0);
+			return obj.ToIntegerOr(0);
         }
 
 
-		internal static void removeEmptyOrNull(this Dictionary<string,object> dictionary)
+		internal static void RemoveEmptyOrNull(this Dictionary<string,object> dictionary)
 		{
 			for(int i = dictionary.Keys.Count - 1; i >= 0; --i)
 			{
@@ -154,7 +154,7 @@ namespace saltr.utils
 				}
 				else if(value is Dictionary<string, object>)
 				{
-					removeEmptyOrNull(value as Dictionary<string,object>);
+					RemoveEmptyOrNull(value as Dictionary<string,object>);
 				}
 			}
 		}

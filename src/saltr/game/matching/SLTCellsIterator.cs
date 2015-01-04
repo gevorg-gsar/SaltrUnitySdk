@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,14 +21,14 @@ namespace saltr.game.matching
         public SLTCellsIterator(SLTCells cells)
         {
             _cells = cells;
-            reset();
+            Reset();
         }
 
 		/// <summary>
 		/// Indicates wheather there are any more cells remaining to traverse.
 		/// </summary>
 		/// <returns><c>true</c>, if there are any cells remaining to traverse, <c>false</c> otherwise.</returns>
-        public bool hasNext()
+        public bool HasNext()
         {
             return _currentPosition != _vectorLength;
         }
@@ -37,17 +37,17 @@ namespace saltr.game.matching
 		/// Advances the iterator.
 		/// </summary>
 		/// <returns> The next cell, prior advancing.</returns>
-        public SLTCell next()
+        public SLTCell Next()
         {
-            return _cells.rawData[_currentPosition++];
+            return _cells.RawData[_currentPosition++];
         }
 
 		/// <summary>
 		/// Resets the iterator.
 		/// </summary>
-        public void reset()
+        public void Reset()
         {
-            _vectorLength = (uint)_cells.rawData.Count();
+            _vectorLength = (uint)_cells.RawData.Count();
             _currentPosition = 0;
         }
     }

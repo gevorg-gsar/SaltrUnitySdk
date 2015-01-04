@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,24 +32,24 @@ namespace saltr.game
 		/// <summary>
 		/// Used for parsing data retrieved from saltr.
 		/// </summary>
-        public const string LEVEL_TYPE_NONE = "noLevels";
+        public const string LevelTypeNone = "noLevels";
         /// <summary>
         /// A level with "matching" boards and assets.
         /// </summary>
-		public const string LEVEL_TYPE_MATCHING = "matching";
+		public const string LevelTypeMatching = "matching";
         /// <summary>
         /// A level with 2D boards and assets.
         /// </summary>
-		public const string LEVEL_TYPE_2DCANVAS = "canvas2D";
+		public const string LevelType2DCanvas = "canvas2D";
 
         internal static SLTLevelParser getParser(string levelType)
         {
             switch (levelType)
             {
-                case LEVEL_TYPE_MATCHING:
+                case LevelTypeMatching:
                     return SLTMatchingLevelParser.getInstance();
-                case LEVEL_TYPE_2DCANVAS:
-                    return SLT2DLevelParser.getInstance();
+                case LevelType2DCanvas:
+                    return SLT2DLevelParser.GetInstance();
             }
             return null;
         }
@@ -57,7 +57,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the index of the pack the level is in.
 		/// </summary>
-        public int packIndex
+        public int PackIndex
         {
             get { return _packIndex; }
         }
@@ -65,7 +65,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the index of the level within its pack.
 		/// </summary>
-        public int localIndex
+        public int LocalIndex
         {
             get { return _localIndex; }
         }
@@ -73,7 +73,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the URL, used to retrieve contents of the level from Saltr.
 		/// </summary>
-        public string contentUrl
+        public string ContentUrl
         {
             get { return _contentUrl; }
         }
@@ -81,7 +81,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the index of the level in all levels.
 		/// </summary>
-        public int index
+        public int Index
         {
             get { return _index; }
         }
@@ -89,7 +89,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the properties of the level.
 		/// </summary>
-        public object properties
+        public object Properties
         {
             get { return _properties; }
         }
@@ -98,7 +98,7 @@ namespace saltr.game
 		/// Gets a value indicating whether this <see cref="saltr.game.SLTLevel"/> content is ready to be read.
 		/// </summary>
 		/// <value><c>true</c> if content is ready; otherwise, <c>false</c>.</value>
-        public bool contentReady
+        public bool ContentReady
         {
             get { return _contentReady; }
         }
@@ -106,7 +106,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the version.
 		/// </summary>
-        public string version
+        public string Version
         {
             get { return _version; }
         }
@@ -129,12 +129,12 @@ namespace saltr.game
 		/// </summary>
 		/// <returns>The board specified by the id.</returns>
 		/// <param name="id">Board identifier.</param>
-        public SLTBoard getBoard(string id)
+        public SLTBoard GetBoard(string id)
         {
-            return _boards.getValue<SLTBoard>(id);
+            return _boards.GetValue<SLTBoard>(id);
         }
 
-        internal void updateContent(Dictionary<string, object> rootNode)
+        internal void UpdateContent(Dictionary<string, object> rootNode)
         {
             Dictionary<string, object> boardsNode = new Dictionary<string, object>();
 
@@ -147,7 +147,7 @@ namespace saltr.game
 
             if (rootNode.ContainsKey("boards"))
             {
-                boardsNode = rootNode["boards"].toDictionaryOrNull();
+                boardsNode = rootNode["boards"].ToDictionaryOrNull();
 
             }
             else
@@ -162,7 +162,7 @@ namespace saltr.game
             {
                 try
                 {
-                    _assetMap = parser.parseLevelAssets(rootNode);
+                    _assetMap = parser.ParseLevelAssets(rootNode);
                 }
                 catch (Exception e)
                 {
@@ -171,7 +171,7 @@ namespace saltr.game
 
                 try
                 {
-                    _boards = parser.parseLevelContent(boardsNode, _assetMap);
+                    _boards = parser.ParseLevelContent(boardsNode, _assetMap);
                 }
                 catch (Exception e)
                 {
@@ -180,7 +180,7 @@ namespace saltr.game
 
                 if (_boards != null)
                 {
-                    regenerateAllBoards();
+                    RegenerateAllBoards();
                     _contentReady = true;
                 }
             }
@@ -196,12 +196,12 @@ namespace saltr.game
 		/// Regenerates contents of the board specified by boardId. 
 		/// </summary>
 		/// <param name="boardId">Board identifier.</param>
-        public void regenerateBoard(string boardId)
+        public void RegenerateBoard(string boardId)
         {
             if (_boards != null && _boards[boardId] != null)
             {
                 SLTBoard board = _boards[boardId] as SLTBoard;
-                board.regenerate();
+                board.Regenerate();
 
             }
         }
@@ -209,18 +209,18 @@ namespace saltr.game
 		/// <summary>
 		/// Regenerates contents of all boards.
 		/// </summary>
-        public void regenerateAllBoards()
+        public void RegenerateAllBoards()
         {
             foreach (var key in _boards.Keys)
             {
                 if (_boards[key] as SLTBoard == null)
                     Debug.Log("castNull");
 
-                (_boards[key] as SLTBoard).regenerate();
+                (_boards[key] as SLTBoard).Regenerate();
             }
         }
 
-        public class SortByIndex : IComparer<SLTLevel>
+        internal class SortByIndex : IComparer<SLTLevel>
         {
             public int Compare(SLTLevel x, SLTLevel y)
             {
@@ -234,13 +234,13 @@ namespace saltr.game
                     return 1;
 
 
-                if (x.index > y.index)
+                if (x.Index > y.Index)
                     return 1;
 
-                if (x.index < y.index)
+                if (x.Index < y.Index)
                     return -1;
 
-                if (x.index == y.index)
+                if (x.Index == y.Index)
                     return 0;
 
                 return 1;

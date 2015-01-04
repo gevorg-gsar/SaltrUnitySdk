@@ -8,7 +8,7 @@ namespace saltr.utils
 {
     internal static class Utils
     {
-        public static string formatString(string format, params string[] args)
+        public static string FormatString(string format, params string[] args)
         {
 		
             for (int i = 0; i < args.Count(); i++)
@@ -25,7 +25,7 @@ namespace saltr.utils
 //			return emailExpression.test(email);
 //		}
 
-		public static bool validEmail(string email)
+		public static bool ValidEmail(string email)
 		{
 			string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" 
 				+ @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" 
@@ -35,7 +35,7 @@ namespace saltr.utils
 			return regex.IsMatch(email);
 		}
 
-		public static string getHumanReadableDeviceModel(string deviceModel)
+		public static string GetHumanReadableDeviceModel(string deviceModel)
 		{
 			switch(deviceModel)
 			{

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,9 @@ namespace saltr
     {
 		internal Dictionary<string, object> RawData;
 
-
+		/// <summary>
+		/// Class constructor.
+		/// </summary>
 		public SLTBasicProperties()
 		{
 			RawData = new Dictionary<string, object>();
@@ -28,9 +30,9 @@ namespace saltr
 		/// <summary>
 		/// The age of the user.
 		/// </summary>
-        public string age
+        public string Age
         {
-			get { return RawData.getValue<string>("age"); }
+			get { return RawData.GetValue<string>("age"); }
 			set { RawData["age"] = value; }
         }
 
@@ -38,141 +40,121 @@ namespace saltr
 		/// The gender information of the user.
 		/// Possible values are "f" (female) and "m" (male)
 		/// </summary>
-        public string gender
+        public string Gender
 		{
-			get { return RawData.getValue<string>("gender"); }
+			get { return RawData.GetValue<string>("gender"); }
 			set { RawData["gender"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the app version.
+		/// Version of the client app, e.g. 4.1.1.
 		/// </summary>
-		/// <value>Version of the client app, e.g. 4.1.1.</value>
-        public string appVersion
+        public string AppVersion
 		{
-			get { return RawData.getValue<string>("appVersion"); }
+			get { return RawData.GetValue<string>("appVersion"); }
 			set { RawData["appVersion"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the system.
+		/// The name of the OS the current device is running. E.g. iPhone OS.
 		/// </summary>
-		/// <value>The name of the OS the current device is running. E.g. iPhone OS.</value>
-        public string systemName
+        public string SystemName
 		{
-			get { return RawData.getValue<string>("systemName"); }
+			get { return RawData.GetValue<string>("systemName"); }
 			set { RawData["systemName"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the system version.
+		/// The version number of the OS the current device is running. E.g. 6.0.
 		/// </summary>
-		/// <value>The version number of the OS the current device is running. E.g. 6.0.</value>
-        public string systemVersion
+        public string SystemVersion
 		{
-			get { return RawData.getValue<string>("systemVersion"); }
+			get { return RawData.GetValue<string>("systemVersion"); }
 			set { RawData["systemVersion"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the browser.
+		/// The name of the browser the current device is running. E.g. Chrome.
 		/// </summary>
-		/// <value>The name of the browser the current device is running. E.g. Chrome.</value>
-        public string browserName
+        public string BrowserName
 		{
-			get { return RawData.getValue<string>("browserName"); }
+			get { return RawData.GetValue<string>("browserName"); }
 			set { RawData["browserName"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the browser version.
+		/// The version number of the browser the current device is running. E.g. 17.0.
 		/// </summary>
-		/// <value>The version number of the browser the current device is running. E.g. 17.0.</value>
-        public string browserVersion
+        public string BrowserVersion
 		{
-			get { return RawData.getValue<string>("browserVersion"); }
+			get { return RawData.GetValue<string>("browserVersion"); }
 			set { RawData["browserVersion"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the device.
+		/// A human-readable name representing the device.
 		/// </summary>
-		/// <value>A human-readable name representing the device.</value>
-        public string deviceName
+        public string DeviceName
 		{
-			get { return RawData.getValue<string>("deviceName"); }
+			get { return RawData.GetValue<string>("deviceName"); }
 			set { RawData["deviceName"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the type of the device.
+		/// The Type name of the device. E.g. iPad.
 		/// </summary>
-		/// <value>The Type name of the device. E.g. iPad.</value>
-        public string deviceType
+        public string DeviceType
 		{
-			get { return RawData.getValue<string>("deviceType"); }
+			get { return RawData.GetValue<string>("deviceType"); }
 			set { RawData["deviceType"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the locale.
+		/// The current locale the user is in. E.g. en_US.
 		/// </summary>
-		/// <value>The current locale the user is in. E.g. en_US.</value>
-        public string locale
+        public string Locale
 		{
-			get { return RawData.getValue<string>("locale"); }
+			get { return RawData.GetValue<string>("locale"); }
 			set { RawData["locale"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the contry.
-		/// </summary>
-		/// <value>
 		/// The country the user is in, specified by ISO 2-letter code. E.g. US for United States. 
 		/// Set to (locate) to detect the country based on the IP address of the caller.
-		/// </value>
-        public string contry
+		/// </summary>
+        public string Contry
 		{
-			get { return RawData.getValue<string>("contry"); }
+			get { return RawData.GetValue<string>("contry"); }
 			set { RawData["contry"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the region.
-		/// </summary>
-		/// <value>
 		/// The region (state) the user is in. E.g. ca for California.
 		/// Set to (locate) to detect the region based on the IP address of the caller.
-		/// </value>
-        public string region
+		/// </summary>
+        public string Region
 		{
-			get { return RawData.getValue<string>("region"); }
+			get { return RawData.GetValue<string>("region"); }
 			set { RawData["region"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the city.
-		/// </summary>
-		/// <value>
 		/// The city the user is in. E.g. San Francisco.
 		/// Set to (locate) to detect the city based on the IP address of the caller.
-		/// </value>
-        public string city
+		/// </summary>
+        public string City
 		{
-			get { return RawData.getValue<string>("city"); }
+			get { return RawData.GetValue<string>("city"); }
 			set { RawData["city"] = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the location.
-		/// </summary>
-		/// <value>
 		/// The location (latitude/longitude) of the user. E.g. 37.775,-122.4183.
 		/// Set to (locate) to detect the location based on the IP address of the caller.
-		/// </value>
-        public string location
+		/// </summary>
+        public string Location
 		{
-			get { return RawData.getValue<string>("location"); }
+			get { return RawData.GetValue<string>("location"); }
 			set { RawData["location"] = value; }
 		}
     }

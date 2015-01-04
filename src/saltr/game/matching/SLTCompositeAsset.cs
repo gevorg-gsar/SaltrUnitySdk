@@ -16,10 +16,10 @@ namespace saltr.game.matching
         }
     
     
-    SLTAssetInstance getInstance(IEnumerable<object> stateIds)
+    SLTAssetInstance GetInstance(IEnumerable<object> stateIds)
         {
-            return new SLTCompositeInstance (token, getInstanceStates(stateIds),
-                properties, _cellInfos);
+            return new SLTCompositeInstance (Token, GetInstanceStates(stateIds),
+                Properties, _cellInfos);
         }
 
     }

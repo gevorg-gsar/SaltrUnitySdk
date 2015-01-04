@@ -6,7 +6,8 @@ using System.Text;
 namespace saltr.game
 {
 	/// <summary>
-	/// Represents a particular instance of an asset, placed on board.
+	/// The SLTAssetInstance class represents the game asset instance placed on board.
+	/// It holds the unique identifier of the asset and current instance related states and properties.
 	/// </summary>
     public class SLTAssetInstance
     {
@@ -15,33 +16,33 @@ namespace saltr.game
 		private List<SLTAssetState> _states;
         private object _properties;
        
-        internal SLTAssetInstance(string Token, List<SLTAssetState> states, object Properties)
+        internal SLTAssetInstance(string token, List<SLTAssetState> states, object properties)
         {
-            _token = Token;
+            _token = token;
             _states = states;
-            _properties = Properties;
+            _properties = properties;
         }
 
 		/// <summary>
-		/// Gets the token, a unique identifier for each asset, not unique for a particular instance
+		/// The unique identifier of the asset, not unique for the instance, instead acts as a type.
 		/// </summary>
-		public string token
+		public string Token
 		{
 			get { return _token; }
 		}
 
 		/// <summary>
-		/// Gets the states the instance is in.
+		/// The current instance states.
 		/// </summary>
-		public List<SLTAssetState> states
+		public List<SLTAssetState> States
 		{
 			get { return _states; }
 		}
 
 		/// <summary>
-		/// Gets the asset properties.
+		/// The current instance properties.
 		/// </summary>
-		public object properties
+		public object Properties
 		{
 			get { return _properties; }
 		}

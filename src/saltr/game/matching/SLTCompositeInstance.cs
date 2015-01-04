@@ -9,7 +9,7 @@ namespace saltr.game.matching
     {
         private IEnumerable<object> _cells;
 
-        public IEnumerable<object> cells
+        public IEnumerable<object> Cells
         {
             get { return _cells; }
         }

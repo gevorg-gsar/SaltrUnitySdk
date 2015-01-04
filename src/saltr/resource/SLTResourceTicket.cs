@@ -14,21 +14,21 @@ namespace saltr.resource
 
         private int _maxAttempts;
 
-        public int maxAttempts
+        public int MaxAttempts
         {
             get { return _maxAttempts; }
             set { _maxAttempts = value; }
         }
 
         private int _fails;
-        public int fails
+        public int Fails
         {
             get { return _fails; }
             set { _fails = value; }
         }
 
         private int _dropTimeout;
-        public int dropTimeout
+        public int DropTimeout
         {
             get { return _dropTimeout; }
             set { _dropTimeout = value; }
@@ -47,11 +47,11 @@ namespace saltr.resource
             this._variables = urlVars;
         }
 
-        public int idleTimeout { get; set; }
-        public string method { get; set; }
+        public int IdleTimeout { get; set; }
+        public string Method { get; set; }
 
 
-        internal string getURLRequest()
+        internal string GetURLRequest()
         {
             string requestUrl = _url;
 			char seperator = '?';

@@ -19,7 +19,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Gets all the asset instances present on the board.
 		/// </summary>
-		public List<SLT2DAssetInstance> assetInstances
+		public List<SLT2DAssetInstance> AssetInstances
 		{
 			get{return _assetInstances;}
 		}
@@ -27,7 +27,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Adds the asset instance to the board.
 		/// </summary>
-		public void addAssetInstance(SLT2DAssetInstance instance)
+		public void AddAssetInstance(SLT2DAssetInstance instance)
 		{
 			_assetInstances.Add(instance);
 		}
@@ -35,7 +35,7 @@ namespace saltr.game.canvas2d
 		/// <summary>
 		/// Currently has no effect, since 2D boards do not have any randomized content.
 		/// </summary>
-		public override void regenerate ()
+		public override void Regenerate ()
 		{
 			// nothing to do here yet
 		}

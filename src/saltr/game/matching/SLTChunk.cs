@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,18 +30,18 @@ namespace saltr.game.matching
             //_availableCells = new List<SLTCell>();
         }
 
-		void resetChunkCells ()
+		void ResetChunkCells ()
 		{
 			foreach(SLTCell cell in _chunkCells)
 			{
-				cell.removeAssetInstance(_layerToken, _layerIndex);
+				cell.RemoveAssetInstance(_layerToken, _layerIndex);
 			}
 		}
 
-        public void generateContent()
+        public void GenerateContent()
         {
 			//resetting chunk cells, as when chunk can contain empty cells, previous generation can leave assigned values to cells
-			resetChunkCells();
+			ResetChunkCells();
 
 			//availableCells are being always overwritten here, so no need to initialize
 			_availableCells = _chunkCells.ToList();
@@ -68,7 +68,7 @@ namespace saltr.game.matching
             for (int i = 0; i < _chunkAssetRules.Count; i++)
             {
                 SLTChunkAssetRule assetRule = _chunkAssetRules[i];
-                switch (assetRule.distributionType)
+                switch (assetRule.DistributionType)
                 {
                     case "count":
                         countChunkAssetRules.Add(assetRule);
@@ -84,20 +84,20 @@ namespace saltr.game.matching
 
             if (countChunkAssetRules.Count > 0)
             {
-                generateAssetInstancesByCount(countChunkAssetRules);
+                GenerateAssetInstancesByCount(countChunkAssetRules);
             }
             if (ratioChunkAssetRules.Count > 0)
             {
-                generateAssetInstancesByRatio(ratioChunkAssetRules);
+                GenerateAssetInstancesByRatio(ratioChunkAssetRules);
             }
             else if (randomChunkAssetRules.Count > 0)
             {
-                generateAssetInstancesRandomly(randomChunkAssetRules);
+                GenerateAssetInstancesRandomly(randomChunkAssetRules);
             }
 			_availableCells.Clear();
         }
 
-        private void generateAssetInstancesRandomly(List<SLTChunkAssetRule> randomChunkAssetRules)
+        private void GenerateAssetInstancesRandomly(List<SLTChunkAssetRule> randomChunkAssetRules)
         {
             int len = randomChunkAssetRules.Count;
             uint availableCellsNum = (uint)_availableCells.Count;
@@ -114,13 +114,13 @@ namespace saltr.game.matching
                 {
 
                     chunkAssetRule = randomChunkAssetRules[i];
-                    count = i == lastChunkAssetIndex ? _availableCells.Count : (int)randomWithin(minAssetCount, maxAssetCount);
-                    generateAssetInstances(count, chunkAssetRule.assetId, chunkAssetRule.stateId);
+                    count = i == lastChunkAssetIndex ? _availableCells.Count : (int)RandomWithin(minAssetCount, maxAssetCount);
+                    GenerateAssetInstances(count, chunkAssetRule.AssetId, chunkAssetRule.StateId);
                 }
             }
         }
 
-        private void generateAssetInstancesByRatio(List<SLTChunkAssetRule> ratioChunkAssetRules)
+        private void GenerateAssetInstancesByRatio(List<SLTChunkAssetRule> ratioChunkAssetRules)
         {
             float ratioSum = 0;
             int len = ratioChunkAssetRules.Count;
@@ -128,12 +128,12 @@ namespace saltr.game.matching
             for (int i = 0; i < len; i++)
             {
                 assetRule = ratioChunkAssetRules[i];
-                ratioSum += assetRule.distributionValue;
+                ratioSum += assetRule.DistributionValue;
             }
             int availableCellsNum = _availableCells.Count;
             float proportion = 0;
             int count;
-            List<tempFractionObject> fractionAssets = new List<tempFractionObject>();
+            List<TempFractionObject> fractionAssets = new List<TempFractionObject>();
             if (ratioSum != 0)
             {
                 for (int j = 0; j < len; j++)
@@ -141,11 +141,11 @@ namespace saltr.game.matching
                     assetRule = ratioChunkAssetRules[j];
 
                     if (ratioSum * availableCellsNum != 0)
-						proportion = assetRule.distributionValue * availableCellsNum / ratioSum;
+						proportion = assetRule.DistributionValue * availableCellsNum / ratioSum;
 
                     count = (int)proportion;
 
-                    tempFractionObject fractObject = new tempFractionObject()
+                    TempFractionObject fractObject = new TempFractionObject()
                     {
                         fraction = (int)(proportion - count),
                         assetRule = assetRule
@@ -153,22 +153,22 @@ namespace saltr.game.matching
 
                     fractionAssets.Add(fractObject);
 
-                    generateAssetInstances(count, assetRule.assetId, assetRule.stateId);
+                    GenerateAssetInstances(count, assetRule.AssetId, assetRule.StateId);
                 }
 
-                fractionAssets.Sort(new tempFractionComparer());
+                fractionAssets.Sort(new TempFractionComparer());
                 availableCellsNum = _availableCells.Count;
 
                 for (int k = 0; k < availableCellsNum; k++)
                 {
-                    generateAssetInstances(1, fractionAssets[k].assetRule.assetId, fractionAssets[k].assetRule.stateId);
+                    GenerateAssetInstances(1, fractionAssets[k].assetRule.AssetId, fractionAssets[k].assetRule.StateId);
                 }
             }
         }
 
-        internal class tempFractionComparer : IComparer<tempFractionObject>
+        internal class TempFractionComparer : IComparer<TempFractionObject>
         {
-            public int Compare(tempFractionObject x, tempFractionObject y)
+            public int Compare(TempFractionObject x, TempFractionObject y)
             {
                 if (x == null & y == null)
                     return 1;
@@ -188,18 +188,18 @@ namespace saltr.game.matching
         }
 
 
-        internal class tempFractionObject 
+        internal class TempFractionObject 
         {
             public int fraction { get; set; }
             public SLTChunkAssetRule assetRule { get; set; }
         }
 
-        private void generateAssetInstancesByCount(List<SLTChunkAssetRule> countChunkAssetRules)
+        private void GenerateAssetInstancesByCount(List<SLTChunkAssetRule> countChunkAssetRules)
         {
             for (int i = 0; i < countChunkAssetRules.Count; i++)
             {
                 SLTChunkAssetRule assetRule = countChunkAssetRules[i];
-                generateAssetInstances(assetRule.distributionValue, assetRule.assetId, assetRule.stateId);
+                GenerateAssetInstances(assetRule.DistributionValue, assetRule.AssetId, assetRule.StateId);
             }
         }
 
@@ -209,7 +209,7 @@ namespace saltr.game.matching
         }
 
 
-        private void generateAssetInstances(float count, string assetId, IEnumerable<object> stateIds)
+        private void GenerateAssetInstances(float count, string assetId, IEnumerable<object> stateIds)
         {
             SLTAsset asset = _assetMap[assetId] as SLTAsset;
 
@@ -223,7 +223,7 @@ namespace saltr.game.matching
                 if(_availableCells.Any())
                 randCell = _availableCells[randCellIndex];
 
-				randCell.setAssetInstance( _layerToken , _layerIndex, new SLTAssetInstance(asset.token, asset.getInstanceStates(stateIds), asset.properties));
+				randCell.SetAssetInstance( _layerToken , _layerIndex, new SLTAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties));
 
                 if(_availableCells.Any())
                 _availableCells.RemoveAt(randCellIndex);
@@ -233,7 +233,7 @@ namespace saltr.game.matching
         }
 
 
-        private void generateWeakAssetsInstances(List<SLTChunkAssetRule> weakChunkAssetInfos)
+        private void GenerateWeakAssetsInstances(List<SLTChunkAssetRule> weakChunkAssetInfos)
         {
             int len = weakChunkAssetInfos.Count;
 
@@ -248,19 +248,19 @@ namespace saltr.game.matching
                 for (int i = 0; i < len; i++)
                 {
                     SLTChunkAssetRule chunkAssetInfo = weakChunkAssetInfos[i];
-                    uint count = (uint)(i == lastChunkAssetIndex ? _availableCells.Count : randomWithin(minAssetCount, maxAssetCount));
+                    uint count = (uint)(i == lastChunkAssetIndex ? _availableCells.Count : RandomWithin(minAssetCount, maxAssetCount));
                 }
             }
         }
 
-        private static float randomWithin(float min, float max, bool isFloat)
+        private static float RandomWithin(float min, float max, bool isFloat)
         {
             return isFloat ? new Random().Next(0, (int)(1 + (max - min))) + min : (int)(new Random().Next(0, (int)(1 + max - min))) + min;
         }
 
-		private static float randomWithin(float min, float max)
+		private static float RandomWithin(float min, float max)
 		{
-			return randomWithin(min,max,false);
+			return RandomWithin(min,max,false);
 		}
     }
 }

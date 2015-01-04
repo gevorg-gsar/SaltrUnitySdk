@@ -15,90 +15,90 @@ namespace saltr.resource
 			RawData = new Dictionary<string, object>();
 		}
 
-       	public string CLIENT
+       	public string Client
 		{
-			get { return RawData.getValue<string>("CLIENT"); }
+			get { return RawData.GetValue<string>("CLIENT"); }
 			set { RawData["CLIENT"] = value; }
 		}
 
-       	public string deviceId
+       	public string DeviceId
 		{
-			get { return RawData.getValue<string>("deviceId"); }
+			get { return RawData.GetValue<string>("deviceId"); }
 			set { RawData["deviceId"] = value; }
 		}
 
-      	public string socialId
+      	public string SocialId
 		{
-			get { return RawData.getValue<string>("socialId"); }
+			get { return RawData.GetValue<string>("socialId"); }
 			set { RawData["socialId"] = value; }
 		}
 
 //       	public string socialNetwork;
 
-       	public string clientKey
+       	public string ClientKey
 		{
-			get { return RawData.getValue<string>("clientKey"); }
+			get { return RawData.GetValue<string>("clientKey"); }
 			set { RawData["clientKey"] = value; }
 		}
 
 //       	public string appVersion;
 
-		public List<object> developerFeatures
+		public List<object> DeveloperFeatures
 		{
-			get { return RawData.getValue<List<object>>("developerFeatures"); }
+			get { return RawData.GetValue<List<object>>("developerFeatures"); }
 			set { RawData["developerFeatures"] = value; }
 		}
 
-		public string apiVersion
+		public string ApiVersion
 		{
-			get { return RawData.getValue<string>("apiVersion"); }
+			get { return RawData.GetValue<string>("apiVersion"); }
 			set { RawData["apiVersion"] = value; }
 		}
 
 //       	public string saltrUserId;
 
-		public bool devMode
+		public bool DevMode
 		{
-			get { return (bool) RawData.getValue("devMode"); }
+			get { return (bool) RawData.GetValue("devMode"); }
 			set { RawData["devMode"] = value; }
 		}
 		
-		public SLTBasicProperties basicProperties
+		public SLTBasicProperties BasicProperties
 		{
-			get { return new SLTBasicProperties(RawData.getValue("basicProperties").toDictionaryOrNull()); }
+			get { return new SLTBasicProperties(RawData.GetValue("basicProperties").ToDictionaryOrNull()); }
 			set { RawData["basicProperties"] = value.RawData; }
 		}
 
-		public Dictionary<string, object> customProperties
+		public Dictionary<string, object> CustomProperties
 		{
-			get { return RawData.getValue("customProperties").toDictionaryOrNull(); }
+			get { return RawData.GetValue("customProperties").ToDictionaryOrNull(); }
 			set { RawData["customProperties"] = value; }
 		}
 
 		// TODO @gyln: make a different class for these? can inherit from a base that will have the common fields
-		public string id
+		public string Id
 		{
-			get { return RawData.getValue<string>("id"); }
+			get { return RawData.GetValue<string>("id"); }
 			set { RawData["id"] = value; }
 		}
 
 //		public string type;
 
-		public string source
+		public string Source
 		{
-			get { return RawData.getValue<string>("source"); }
+			get { return RawData.GetValue<string>("source"); }
 			set { RawData["source"] = value; }
 		}
 
-		public string os
+		public string OS
 		{
-			get { return RawData.getValue<string>("os"); }
+			get { return RawData.GetValue<string>("os"); }
 			set { RawData["os"] = value; }
 		}
 
-		public string email
+		public string Email
 		{
-			get { return RawData.getValue<string>("email"); }
+			get { return RawData.GetValue<string>("email"); }
 			set { RawData["email"] = value; }
 		}
   	}

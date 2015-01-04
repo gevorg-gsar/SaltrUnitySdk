@@ -13,16 +13,16 @@ namespace saltr.game
 		string _token;
 		Dictionary<string, object> _properties;
 
-     	internal SLTAssetState(string Token, Dictionary<string,object> Properties)
+     	internal SLTAssetState(string token, Dictionary<string,object> properties)
        	{
-           _token = Token;
-           _properties = Properties;
+           _token = token;
+           _properties = properties;
        	}
 
 		/// <summary>
 		/// Gets the token, a unique identifier for each state of an asset.
 		/// </summary>
-		public string token
+		public string Token
 		{
 			get{return _token;}
 		}
@@ -30,7 +30,7 @@ namespace saltr.game
 		/// <summary>
 		/// Gets the properties, associated with the state.
 		/// </summary>
-		public Dictionary<string,object> properties
+		public Dictionary<string,object> Properties
 		{
 			get{return _properties;}
 		}

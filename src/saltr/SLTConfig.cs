@@ -10,11 +10,11 @@ namespace saltr
 	/// </summary>
     public class SLTConfig
     {
-		
-        internal static readonly string ACTION_GET_APP_DATA = "getAppData";
-		internal static readonly string ACTION_ADD_PROPERTIES = "addProperties";
-		internal static readonly string ACTION_DEV_SYNC_DATA = "sync";
-		internal static readonly string ACTION_DEV_REGISTER_DEVICE = "registerDevice";
+		//TODO @gyln: Group these actions in an enum or a struct?
+        internal static readonly string ActionGetAppData = "getAppData";
+		internal static readonly string ActionAddProperties = "addProperties";
+		internal static readonly string ActionDevSyncData = "sync";
+		internal static readonly string ActionDevRegisterDevice = "registerDevice";
         
 
 		internal static readonly string SALTR_API_URL = "https://api.saltr.com/call";
@@ -22,15 +22,15 @@ namespace saltr
 
 
         //used to
-		internal static readonly string APP_DATA_URL_CACHE = "app_data_cache.json";
+		internal static readonly string AppDataUrlCache = "app_data_cache.json";
 		/// <summary>
 		/// Default path to the local level files.
 		/// </summary>
-        public static readonly string LOCAL_LEVELPACK_PACKAGE_URL = "saltr/level_packs";
-		internal static readonly string LOCAL_LEVEL_CONTENT_PACKAGE_URL_TEMPLATE = "saltr/pack_{0}/level_{1}";
-		internal static readonly string LOCAL_LEVEL_CONTENT_CACHE_URL_TEMPLATE = "pack_{0}_level_{1}.json";
+        public static readonly string LocalLevelPackageUrl = "saltr/level_packs";
+		internal static readonly string LocalLevelContentPackageUrlTemplate = "saltr/pack_{0}/level_{1}";
+		internal static readonly string LocalLevelContentCacheUrlTemplate = "pack_{0}_level_{1}.json";
 
-		internal static readonly string RESULT_SUCCEED = "SUCCEED";
-		internal static readonly string RESULT_ERROR = "ERROR";
+		internal static readonly string ResultSuccess = "SUCCEED";
+		internal static readonly string ResultError = "ERROR";
     }
 }
