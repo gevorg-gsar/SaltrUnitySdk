@@ -72,7 +72,7 @@ namespace saltr
 			return GetTicket(url, urlVars, 0);
 		}
 
-		void Init(string clientKey, string DeviceId, bool useCache)
+		void Init(string clientKey, string deviceId, bool useCache)
 		{
 			GameObject saltr = GameObject.Find(SALTR_GAME_OBJECT_NAME);
 			if (saltr == null)
@@ -91,7 +91,7 @@ namespace saltr
 			}
 			
 			_clientKey = clientKey;
-			_deviceId = DeviceId;
+			_deviceId = deviceId;
 			_isLoading = false;
 			_conected = false;
 			_useNoLevels = false;
@@ -120,17 +120,17 @@ namespace saltr
 		/// <param name="clientKey">Client key.</param>
 		/// <param name="DeviceId">Device identifier.</param>
 		/// <param name="useCache">If set to <c>true</c> use cache. If not specified defaults to <c>true</c></param>
-        public SLTUnity(string clientKey, string DeviceId, bool useCache)
+        public SLTUnity(string clientKey, string deviceId, bool useCache)
         {
-			Init(clientKey, DeviceId, useCache);
+			Init(clientKey, deviceId, useCache);
         }
 
 		/// <summary>
 		/// See <see cref="saltr.SLTUnity.SLTUnity"/>.
 		/// </summary>
-		public SLTUnity(string clientKey, string DeviceId)
+		public SLTUnity(string clientKey, string deviceId)
 		{
-			Init(clientKey, DeviceId, true);
+			Init(clientKey, deviceId, true);
 		}
 
 		// <summary>
@@ -304,7 +304,9 @@ namespace saltr
 			foreach (SLTFeature feature in _activeFeatures.Values)
             {
                 if (feature != null && feature.Token != null)
-                    tokens.Add(feature.Token);
+				{
+					tokens.Add(feature.Token);
+				}
             }
             return tokens;
         }
@@ -326,7 +328,9 @@ namespace saltr
                 {
                     SLTFeature devFeature = _developerFeatures[token];
 					if (devFeature != null && devFeature.Required)
-                        return devFeature.Properties.ToDictionaryOrNull();
+					{
+						return devFeature.Properties.ToDictionaryOrNull();
+					}
                 }
 
             return null;
@@ -406,15 +410,20 @@ namespace saltr
 		/// </summary>
         public void Start()
         {
-            if (_deviceId == null)
-                throw new Exception("deviceId field is required and can't be null.");
+            if (_deviceId == null) 
+			{
+				throw new Exception("deviceId field is required and can't be null.");
+			}
 
-            if (_developerFeatures.Count == 0 && !_useNoFeatures)
+            if (_developerFeatures.Count == 0 && !_useNoFeatures) 
+			{
 				throw new Exception("Features should be defined.");
-
+			}
+				
             if (_levelPacks.Count == 0 && !_useNoLevels)
+			{
 				throw new Exception("Levels should be imported.");
-
+			}
 
             object cachedData = _repository.GetObjectFromCache(SLTConfig.AppDataUrlCache);
             if (cachedData == null)
@@ -534,16 +543,22 @@ namespace saltr
             if (_conected == false)
             {
                 if (useCache)
-                    content = LoadLevelContentInternally(level);
+				{
+					content = LoadLevelContentInternally(level);
+				}
                 else
-                    content = LoadLevelContentFromDisk(level);
+				{
+					content = LoadLevelContentFromDisk(level);
+				}
 
                 LevelContentLoadSuccessHandler(level, content);
             }
             else
             {
                 if (useCache == false || level.Version != GetCachedLevelVersion(level))
-                    LoadLevelContentFromSaltr(level);
+				{
+					LoadLevelContentFromSaltr(level);
+				}
                 else
                 {
                     content = LoadLevelContentFromCache(level);
@@ -567,8 +582,10 @@ namespace saltr
 		/// <param name="customProperties">(Optional)Custom properties.</param>
         public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
-            if (basicProperties == null && customProperties == null)
-                return;
+            if (basicProperties == null && customProperties == null) 
+			{
+				return;
+			}
 
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
             urlVars["cmd"] = SLTConfig.ActionAddProperties; //TODO @GSAR: remove later
@@ -588,14 +605,20 @@ namespace saltr
             else
 				throw new Exception("Field 'deviceId' is a required.");
 
-            if (_socialId != null)
-                args.SocialId = _socialId;
+            if (_socialId != null) 
+			{
+				args.SocialId = _socialId;
+			}
 
-            if (basicProperties != null)
-                args.BasicProperties = basicProperties;
+            if (basicProperties != null) 
+			{
+				args.BasicProperties = basicProperties;
+			}
 
-            if (customProperties != null)
-                args.CustomProperties = customProperties;
+            if (customProperties != null) 
+			{
+				args.CustomProperties = customProperties;
+			}
 
             Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
             {
@@ -648,14 +671,21 @@ namespace saltr
             {
                 object contentData = res.Data;
                 if (contentData != null)
-                    CacheLevelContent(level, contentData);
+				{
+					CacheLevelContent(level, contentData);
+				}
                 else
-                    contentData = LoadLevelContentInternally(level);
-
+				{
+					contentData = LoadLevelContentInternally(level);
+				}
                 if (contentData != null)
-                    LevelContentLoadSuccessHandler(level, contentData);
+				{
+					LevelContentLoadSuccessHandler(level, contentData);
+				}
                 else
-                    LevelContentLoadFailHandler();
+				{
+					LevelContentLoadFailHandler();
+				}
                 res.Dispose();
             };
 
@@ -663,9 +693,13 @@ namespace saltr
             {
                 object contentData = LoadLevelContentInternally(level);
 				if (contentData != null)
-				LevelContentLoadSuccessHandler(level, contentData);
+				{
+					LevelContentLoadSuccessHandler(level, contentData);
+				}
 				else
-				LevelContentLoadFailHandler();
+				{
+					LevelContentLoadFailHandler();
+				}
 				SLTResource.Dispose();
 			};
 
@@ -799,10 +833,12 @@ namespace saltr
                 if (response.ContainsKey("error"))
                 {
                     _connectFailCallback(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>("error").GetValue<string>("code")), response.GetValue<Dictionary<string, object>>("error").GetValue<string>("message")));
-
                 }
                 else
-                    _connectFailCallback(new SLTStatus(response.GetValue<string>("errorCode").ToIntegerOrZero(), response.GetValue<string>("errorMessage")));
+				{
+					_connectFailCallback(new SLTStatus(response.GetValue<string>("errorCode").ToIntegerOrZero(), response.GetValue<string>("errorMessage")));
+				}
+                    
             }
             resource.Dispose();
         }

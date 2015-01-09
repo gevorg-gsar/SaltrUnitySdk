@@ -33,12 +33,11 @@ namespace saltr.game
 			get { return _properties; }
 		}
 
-		public List<SLTAssetState> GetInstanceStates(IEnumerable<object> stateIds)
+		public override List<SLTAssetState> GetInstanceStates(IEnumerable<object> stateIds)
 		{
 			List<SLTAssetState> states = new List<SLTAssetState>(); 
 			foreach(object stateId in stateIds)
 			{
-
 				SLTAssetState state = _stateMap[stateId.ToString()] as SLTAssetState;
 
 				if(state != null)
