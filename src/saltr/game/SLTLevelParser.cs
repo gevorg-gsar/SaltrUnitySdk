@@ -56,7 +56,7 @@ namespace saltr.game
 
         protected virtual SLTAssetState ParseAssetState(Dictionary<string, object> stateNode)
         {
-			string token = tateNode.ContainsKey("token") ? stateNode["token"].ToString() : String.Empty;
+            string token = stateNode.ContainsKey("token") ? stateNode["token"].ToString() : String.Empty;
 			Dictionary<string, object> properties = stateNode.ContainsKey("properties") ? stateNode["properties"].ToDictionaryOrNull() : new Dictionary<string, object>();
 
             return new SLTAssetState(token, properties);
