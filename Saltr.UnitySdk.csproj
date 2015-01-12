@@ -130,7 +130,7 @@
     <Compile Include="Utils\GETPOSTWrapper.cs" />
     <Compile Include="Utils\HTTPStatus.cs" />
     <Compile Include="Utils\MiniJSON.cs" />
-    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Utils\Util.cs" />
     <Compile Include="Utils\SaltrWrapper.cs" />
     <Compile Include="Utils\LitJson\IJsonWrapper.cs" />
     <Compile Include="Utils\LitJson\JsonData.cs" />
