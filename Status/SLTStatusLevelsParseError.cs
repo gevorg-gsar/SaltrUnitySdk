@@ -7,7 +7,7 @@ namespace Saltr.UnitySdk.Status
 {
 	internal class SLTStatusLevelsParseError : SLTStatus
     {
-		public SLTStatusLevelsParseError(): base(SLTStatus.Code.ClientLevelsParseError, "[SALTR] Failed to decode Levels.")
+		public SLTStatusLevelsParseError(): base(SLTStatusCode.ClientLevelsParseError, "[SALTR] Failed to decode Levels.")
 		{
 		}
     }

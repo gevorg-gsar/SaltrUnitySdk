@@ -10,108 +10,97 @@ using Saltr.UnitySdk.Status;
 
 namespace Saltr.UnitySdk.Game
 {
-	/// <summary>
-	/// Represents a level - a uniquely identifiable collection of boards and user defined properties.
-	/// </summary>
+    /// <summary>
+    /// Represents a level - a uniquely identifiable collection of boards and user defined properties.
+    /// </summary>
     public class SLTLevel
     {
         protected Dictionary<string, object> _boards;
 
         private string _id;
-        private string _levelType;
         private int _index;
         private int _localIndex;
         private int _packIndex;
         private string _contentUrl;
         private object _properties;
         private string _version;
+        private SLTLevelType _levelType;
 
         private bool _contentReady;
         Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
-		/// <summary>
-		/// Used for parsing data retrieved from saltr.
-		/// </summary>
-        public const string LevelTypeNone = "noLevels";
-        /// <summary>
-        /// A level with "matching" boards and assets.
-        /// </summary>
-		public const string LevelTypeMatching = "matching";
-        /// <summary>
-        /// A level with 2D boards and assets.
-        /// </summary>
-		public const string LevelType2DCanvas = "canvas2D";
-
-        internal static SLTLevelParser getParser(string levelType)
+        internal static SLTLevelParser getParser(SLTLevelType levelType)
         {
-            switch (levelType)
+            if (levelType == SLTLevelType.Matching)
             {
-                case LevelTypeMatching:
-                    return SLTMatchingLevelParser.getInstance();
-                case LevelType2DCanvas:
-                    return SLT2DLevelParser.GetInstance();
+                return SLTMatchingLevelParser.getInstance();
             }
+            else if(levelType == SLTLevelType.Canvas2D)
+            {
+                return SLT2DLevelParser.GetInstance();
+            }
+
             return null;
         }
 
-		/// <summary>
-		/// Gets the index of the pack the level is in.
-		/// </summary>
+        /// <summary>
+        /// Gets the index of the pack the level is in.
+        /// </summary>
         public int PackIndex
         {
             get { return _packIndex; }
         }
 
-		/// <summary>
-		/// Gets the index of the level within its pack.
-		/// </summary>
+        /// <summary>
+        /// Gets the index of the level within its pack.
+        /// </summary>
         public int LocalIndex
         {
             get { return _localIndex; }
         }
 
-		/// <summary>
-		/// Gets the URL, used to retrieve contents of the level from Saltr.
-		/// </summary>
+        /// <summary>
+        /// Gets the URL, used to retrieve contents of the level from Saltr.
+        /// </summary>
         public string ContentUrl
         {
             get { return _contentUrl; }
         }
 
-		/// <summary>
-		/// Gets the index of the level in all levels.
-		/// </summary>
+        /// <summary>
+        /// Gets the index of the level in all levels.
+        /// </summary>
         public int Index
         {
             get { return _index; }
         }
 
-		/// <summary>
-		/// Gets the properties of the level.
-		/// </summary>
+        /// <summary>
+        /// Gets the properties of the level.
+        /// </summary>
         public object Properties
         {
             get { return _properties; }
         }
 
-		/// <summary>
-		/// Gets a value indicating whether this <see cref="saltr.Game.SLTLevel"/> content is ready to be read.
-		/// </summary>
-		/// <value><c>true</c> if content is ready; otherwise, <c>false</c>.</value>
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="saltr.Game.SLTLevel"/> content is ready to be read.
+        /// </summary>
+        /// <value><c>true</c> if content is ready; otherwise, <c>false</c>.</value>
         public bool ContentReady
         {
             get { return _contentReady; }
         }
 
-		/// <summary>
-		/// Gets the version.
-		/// </summary>
+        /// <summary>
+        /// Gets the version.
+        /// </summary>
         public string Version
         {
             get { return _version; }
         }
 
-        internal SLTLevel(string id, string levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
+        internal SLTLevel(string id, SLTLevelType levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
         {
             _localIndex = localIndex;
             _packIndex = packIndex;
@@ -124,11 +113,11 @@ namespace Saltr.UnitySdk.Game
             _version = version;
         }
 
-		/// <summary>
-		/// Gets a board by id.
-		/// </summary>
-		/// <returns>The board specified by the id.</returns>
-		/// <param name="id">Board identifier.</param>
+        /// <summary>
+        /// Gets a board by id.
+        /// </summary>
+        /// <returns>The board specified by the id.</returns>
+        /// <param name="id">Board identifier.</param>
         public SLTBoard GetBoard(string id)
         {
             return _boards.GetValue<SLTBoard>(id);
@@ -192,10 +181,10 @@ namespace Saltr.UnitySdk.Game
 
         }
 
-		/// <summary>
-		/// Regenerates contents of the board specified by boardId. 
-		/// </summary>
-		/// <param name="boardId">Board identifier.</param>
+        /// <summary>
+        /// Regenerates contents of the board specified by boardId. 
+        /// </summary>
+        /// <param name="boardId">Board identifier.</param>
         public void RegenerateBoard(string boardId)
         {
             if (_boards != null && _boards[boardId] != null)
@@ -206,9 +195,9 @@ namespace Saltr.UnitySdk.Game
             }
         }
 
-		/// <summary>
-		/// Regenerates contents of all boards.
-		/// </summary>
+        /// <summary>
+        /// Regenerates contents of all boards.
+        /// </summary>
         public void RegenerateAllBoards()
         {
             foreach (var key in _boards.Keys)
@@ -247,5 +236,25 @@ namespace Saltr.UnitySdk.Game
             }
         }
 
+    }
+
+    public enum SLTLevelType
+    {
+        /// <summary>
+        /// Default Enum value is 0, should be used to detect that not supported LevelType is received.
+        /// </summary>
+        Unknown = 0,
+        /// <summary>
+        /// Used for parsing data retrieved from saltr.
+        /// </summary>
+        NoLevels,
+        /// <summary>
+        /// A level with "matching" boards and assets.
+        /// </summary>
+        Matching,
+        /// <summary>
+        /// A level with 2D boards and assets.
+        /// </summary>
+        Canvas2D
     }
 }

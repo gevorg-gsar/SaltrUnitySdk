@@ -7,7 +7,7 @@ namespace Saltr.UnitySdk.Status
 {
 	internal class SLTStatusLevelsParserMissing : SLTStatus
 	{
-		public SLTStatusLevelsParserMissing(): base(SLTStatus.Code.ClientLevelsParseError, "[SALTR] Failed to find parser for current level type.")
+		public SLTStatusLevelsParserMissing(): base(SLTStatusCode.ClientLevelsParseError, "[SALTR] Failed to find parser for current level type.")
 		{
 		}
 	}

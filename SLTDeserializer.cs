@@ -99,11 +99,11 @@ namespace Saltr.UnitySdk
 		{
 			if (rootNod == null)
 				return new List<SLTLevelPack>();
-			string levelType = SLTLevel.LevelTypeMatching;
+            SLTLevelType levelType = SLTLevelType.Matching;
 			
 			if (rootNod.ContainsKey("levelType"))
 			{
-				levelType = rootNod["levelType"].ToString();
+				levelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), rootNod["levelType"].ToString(), true);
 			}
 			
 			
