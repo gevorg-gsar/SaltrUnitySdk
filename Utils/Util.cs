@@ -65,21 +65,21 @@ namespace Saltr.UnitySdk.Utils
 			case "iPhone4,1":
 				return "iPhone 4S";
 			case "iPhone5,1":
-				return "iPhone 5"; // (model A1428, AT&T/Canada)
+				return "iPhone 5"; // (deviceModel A1428, AT&T/Canada)
 			case "iPhone5,2":
-				return "iPhone 5"; // (model A1429, everything else)
+				return "iPhone 5"; // (deviceModel A1429, everything else)
 			case "iPad3,4":
 				return "iPad 4"; // "4th Generation iPad"; ipad retina?
 			case "iPad2,5":
 				return "iPad Mini";
 			case "iPhone5,3":
-				return "iPhone 5c"; // (model A1456, A1532 | GSM)
+				return "iPhone 5c"; // (deviceModel A1456, A1532 | GSM)
 			case "iPhone5,4":
-				return "iPhone 5c"; // (model A1507, A1516, A1526 (China), A1529 | Global)
+				return "iPhone 5c"; // (deviceModel A1507, A1516, A1526 (China), A1529 | Global)
 			case "iPhone6,1":
-				return "iPhone 5s"; // (model A1433, A1533 | GSM)
+				return "iPhone 5s"; // (deviceModel A1433, A1533 | GSM)
 			case "iPhone6,2":
-				return "iPhone 5s"; // (model A1457, A1518, A1528 (China), A1530 | Global)
+				return "iPhone 5s"; // (deviceModel A1457, A1518, A1528 (China), A1530 | Global)
 			case "iPad4,1":
 				return "iPad Air"; // 5th Generation - Wifi
 			case "iPad4,2":

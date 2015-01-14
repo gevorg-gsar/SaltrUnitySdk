@@ -57,7 +57,7 @@ namespace Saltr.UnitySdk.Resource
 
 //       	public string saltrUserId;
 
-		public bool DevMode
+		public bool IsDevMode
 		{
 			get { return (bool) RawData.GetValue("devMode"); }
 			set { RawData["devMode"] = value; }

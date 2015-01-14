@@ -10,7 +10,7 @@ namespace Saltr.UnitySdk.Utils
 	/// <summary>
 	/// Wrapper component over UnityEngine.WWW, used for network interactions in SDK.
 	/// </summary>
-	public class GETPOSTWrapper : MonoBehaviour
+	public class NetworkWrapper : MonoBehaviour
 	{
 	    private float elapsedTime = 0.0f;
 		private bool isDownloading = false;
@@ -80,7 +80,7 @@ namespace Saltr.UnitySdk.Utils
 	    {
 	        if (isDownloading)
 	        {
-				foreach(GETPOSTWrapper GPWrap in gameObject.GetComponents<GETPOSTWrapper>())
+				foreach(NetworkWrapper GPWrap in gameObject.GetComponents<NetworkWrapper>())
 				{
 					if(!GPWrap.busy)
 					{
@@ -88,7 +88,7 @@ namespace Saltr.UnitySdk.Utils
 						return;
 					}
 				}
-				gameObject.AddComponent<GETPOSTWrapper>().GET(url,appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
+				gameObject.AddComponent<NetworkWrapper>().GET(url,appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
 	            return;
 	        }
 	        this._appDataLoadFailHandler = appDataLoadFailHandler;

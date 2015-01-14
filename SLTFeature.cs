@@ -32,9 +32,9 @@ namespace Saltr.UnitySdk
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is required.
+		/// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is isRequired.
 		/// </summary>
-		/// <value><c>true</c> if required; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if isRequired; otherwise, <c>false</c>.</value>
         public bool Required
         {
             get { return _required; }

@@ -23,7 +23,7 @@ public class SaltrWrapper : MonoBehaviour
 	[SerializeField]
 	bool devMode = false;
 	[SerializeField]
-	bool autoRegisterDevice = true;
+	bool isAutoRegisteredDevice = true;
 	[SerializeField]
 	bool useCache = true;
 	[SerializeField]
@@ -89,8 +89,8 @@ public class SaltrWrapper : MonoBehaviour
         deviceId = deviceId != "" ? deviceId : SystemInfo.deviceUniqueIdentifier;
 		_saltr = new SLTUnity(clientKey, deviceId, useCache);
         _saltr.SocialId = socialId;
-        _saltr.DevMode = devMode;
-		_saltr.AutoRegisterDevice = autoRegisterDevice;
+        _saltr.IsDevMode = devMode;
+		_saltr.IsAutoRegisteredDevice = isAutoRegisteredDevice;
         _saltr.UseNoLevels = useNoLevels;
         _saltr.UseNoFeatures = useNoFeatures;
         _saltr.RequestIdleTimeout = requestIdleTimeout;

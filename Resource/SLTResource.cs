@@ -76,7 +76,7 @@ namespace Saltr.UnitySdk.Resource
         {
             _fails++;
             GameObject go = GameObject.Find(SLTUnity.SALTR_GAME_OBJECT_NAME);
-            GETPOSTWrapper wrapper = (GETPOSTWrapper)go.GetComponent(typeof(GETPOSTWrapper));
+            NetworkWrapper wrapper = (NetworkWrapper)go.GetComponent(typeof(NetworkWrapper));
             if (Ticket.Method == "post")
                 //post
                 wrapper.POST(Ticket.GetURLRequest(), Ticket.GetUrlVars(), _onSuccess , _onFail, this);

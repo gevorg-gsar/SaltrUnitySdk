@@ -127,7 +127,7 @@
     <Compile Include="Status\SLTStatusLevelParserMissing.cs" />
     <Compile Include="Status\SLTStatusLevelsParseError.cs" />
     <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Utils\GETPOSTWrapper.cs" />
+    <Compile Include="Utils\NetworkWrapper.cs" />
     <Compile Include="Utils\HTTPStatus.cs" />
     <Compile Include="Utils\MiniJSON.cs" />
     <Compile Include="Utils\Util.cs" />
