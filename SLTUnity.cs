@@ -16,7 +16,7 @@ namespace Saltr.UnitySdk
     /// <summary>
     /// The entry point to SDK, and the main class, used to send and receive data from Saltr.
     /// </summary>
-    public class SLTUnity // TODO @gyln: reorder memebrs as is in as3 sdk
+    public class SLTUnity// TODO @gyln: reorder memebrs as is in as3 sdk
     {
         #region Constants
 
@@ -218,7 +218,7 @@ namespace Saltr.UnitySdk
             }
 
             return ticket;
-        }
+        } 
 
         private static SLTResourceTicket GetTicket(string url, Dictionary<string, string> urlVars)
         {

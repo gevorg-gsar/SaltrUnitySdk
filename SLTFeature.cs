@@ -11,17 +11,32 @@ namespace Saltr.UnitySdk
 	/// </summary>
     public class SLTFeature
     {
+        #region Fields
+
         private string _token;
-        private Dictionary<string,object> _properties;
-        private bool _required;
-		
-		/// <summary>
+        private bool _isRequired;
+        private Dictionary<string, object> _properties;
+
+        #endregion Fields
+
+        #region properties
+
+        /// <summary>
 		/// Gets the token, a unique identifier for a feature.
 		/// </summary>
 		public string Token
 		{
 			get { return _token; }
 		}
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is isRequired.
+        /// </summary>
+        /// <value><c>true</c> if isRequired; otherwise, <c>false</c>.</value>
+        public bool Required
+        {
+            get { return _isRequired; }
+        }
 
 		/// <summary>
 		/// Gets the user defined properties.
@@ -31,49 +46,54 @@ namespace Saltr.UnitySdk
 			get { return _properties; }
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is isRequired.
-		/// </summary>
-		/// <value><c>true</c> if isRequired; otherwise, <c>false</c>.</value>
-        public bool Required
+        #endregion properties
+
+        #region Ctor
+
+        public SLTFeature(string token, Dictionary<string, object> properties, bool isRequired)
         {
-            get { return _required; }
+            Init(token, properties, isRequired);
         }
 
-		void Init(string token, Dictionary<string,object> Properties, bool Required)
-		{
-			_token = token;
-			_properties = Properties;
-			_required = Required;
-		}
+        public SLTFeature(string token, Dictionary<string, object> properties)
+        {
+            Init(token, properties, false);
+        }
 
-		internal SLTFeature(string token, Dictionary<string,object> Properties, bool Required)
-		{
-			Init(token, Properties, Required);
-		}
+        public SLTFeature(string token)
+        {
+            Init(token, null, false);
+        }
 
-		internal SLTFeature(string token, Dictionary<string,object> Properties)
-		{
-			Init(token, Properties, false);
-		}
+        #endregion Ctor
 
-		internal SLTFeature(string token)
-		{
-			Init(token, null, false);
-		}
+        #region Internal Methods
+
+        private void Init(string token, Dictionary<string, object> properties, bool isRequired)
+        {
+            _token = token;
+            _properties = properties;
+            _isRequired = isRequired;
+        }
+
+        #endregion Internal Methods
+
+        #region Utils
 
         public override string ToString()
         {
             return "Feature { token : " + _token + " , value : " + _properties + "}";
         }
 
-		internal Dictionary<string, object> ToDictionary()
+		public Dictionary<string, object> ToDictionary()
 		{
-			var ret = new Dictionary<string, object>();
-			ret["token"] = _token.ToUpper();
+			var featureDict = new Dictionary<string, object>();
+			featureDict["token"] = _token.ToUpper();
 			_properties.RemoveEmptyOrNull();
-			ret["value"] = MiniJSON.Json.Serialize(_properties);
-			return ret;
-		}
+			featureDict["value"] = MiniJSON.Json.Serialize(_properties);
+			return featureDict;
+        }
+
+        #endregion Utils
     }
 }
