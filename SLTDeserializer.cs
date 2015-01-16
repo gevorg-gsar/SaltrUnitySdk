@@ -33,7 +33,7 @@ namespace Saltr.UnitySdk
 
                     string token = "";
                     string partition = "";
-                    string type = "";
+                    string experimentType = "";
                     IEnumerable<object> customEvents = null;
 
                     if (experimentDictionary.ContainsKey("token"))
@@ -43,14 +43,14 @@ namespace Saltr.UnitySdk
                         partition = experimentDictionary["partition"].ToString();
 
                     if (experimentDictionary.ContainsKey("type"))
-                        type = experimentDictionary["type"].ToString();
+                        experimentType = experimentDictionary["type"].ToString();
 
                     if (experimentDictionary.ContainsKey("customEventList"))
                         customEvents = (IEnumerable<object>)experimentDictionary["customEventList"];
 
 
 
-                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, type, customEvents);
+                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, experimentType, customEvents);
                     experiments.Add(experimentInfo);
                 }
             }

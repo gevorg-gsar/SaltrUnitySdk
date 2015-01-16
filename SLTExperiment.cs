@@ -11,59 +11,73 @@ namespace Saltr.UnitySdk
 	/// </summary>
     public class SLTExperiment
     {
-		/// <summary>
-		/// Represents experiment type.
-		/// </summary>
-		public enum Type
-		{
-			Feature,
-			Level_Pack
-		}
+        #region Fields
 
+        private string _token;
         private string _partition;
-		private string _token;
-		private Type _type;
 
-		private IEnumerable<object> _customEvents;
-		
-		internal SLTExperiment(string token, string partition, string type, IEnumerable<object> customEvents)
-		{
-			_token = token;
-			_partition = partition;
-			_type = (Type)Enum.Parse(typeof(Type), type, true);
-			_customEvents = customEvents;
-		}
+        private SLTExperimentType _experimentType;
+        private IEnumerable<object> _customEvents;
 
-		/// <summary>
-		/// The partition letter the client is assign to (<c>"A"</c>, <c>"B"</c>, <c>"C"</c>, etc.).
-		/// </summary>
+        #endregion Fields
+
+        #region Properties
+
+
+        /// <summary>
+        /// The partition letter the client is assign to (<c>"A"</c>, <c>"B"</c>, <c>"C"</c>, etc.).
+        /// </summary>
         public string Partition
         {
             get { return _partition; }
         }
 
-		/// <summary>
-		/// A unique identifier for the experiment.
-		/// </summary>
+        /// <summary>
+        /// A unique identifier for the experiment.
+        /// </summary>
         public string Token
         {
             get { return _token; }
         }
 
-		/// <summary>
-		/// The type of the experiment. See <see cref="saltr.SLTExperimet.Type"/>.
-		/// </summary>
-		public Type type
+        /// <summary>
+        /// The experimentType of the experiment. See <see cref="saltr.SLTExperimet.SLTExperimentType"/>.
+        /// </summary>
+        public SLTExperimentType ExperimentType
         {
-            get { return _type; }
+            get { return _experimentType; }
         }
 
-		// <summary>
-		// The array of comma separated event names for which A/B test data should be send.
-		// </summary>
-		internal IEnumerable<object> CustomEvents
-		{
-			get { return _customEvents; }
-		}
+        // <summary>
+        // The array of comma separated event names for which A/B test data should be send.
+        // </summary>
+        public IEnumerable<object> CustomEvents
+        {
+            get { return _customEvents; }
+        }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTExperiment(string token, string partition, string experimentType, IEnumerable<object> customEvents)
+        {
+            _token = token;
+            _partition = partition;
+            _customEvents = customEvents;
+            _experimentType = (SLTExperimentType)Enum.Parse(typeof(SLTExperimentType), experimentType, true);
+        }
+
+        #endregion Ctor       
+
+    }
+    
+    /// <summary>
+    /// Represents experiment experimentType.
+    /// </summary>
+    public enum SLTExperimentType
+    {
+        Feature,
+        LevelPack
     }
 }
