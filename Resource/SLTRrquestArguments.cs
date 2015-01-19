@@ -6,100 +6,118 @@ using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Resource
 {
-   	internal class SLTRequestArguments // TODO @gyln: get rid of alll the strings 
- 	{
-		internal Dictionary <string, object> RawData;
+   	public class SLTRequestArguments // TODO @gyln: get rid of alll the strings 
+    {
+        #region Fields
 
-		public SLTRequestArguments()
-		{
-			RawData = new Dictionary<string, object>();
-		}
+        private Dictionary<string, object> _rawData;
 
-       	public string Client
-		{
-			get { return RawData.GetValue<string>("CLIENT"); }
-			set { RawData["CLIENT"] = value; }
-		}
+        #endregion Fields
 
-       	public string DeviceId
-		{
-			get { return RawData.GetValue<string>("deviceId"); }
-			set { RawData["deviceId"] = value; }
-		}
+        #region Ctor
 
-      	public string SocialId
-		{
-			get { return RawData.GetValue<string>("socialId"); }
-			set { RawData["socialId"] = value; }
-		}
+        public SLTRequestArguments()
+        {
+            _rawData = new Dictionary<string, object>();
+        }
 
-//       	public string socialNetwork;
+        #endregion Ctor
 
-       	public string ClientKey
-		{
-			get { return RawData.GetValue<string>("clientKey"); }
-			set { RawData["clientKey"] = value; }
-		}
+        #region Properties
 
-//       	public string appVersion;
+        public Dictionary<string, object> RawData
+        {
+            get { return _rawData; }
+        }
 
-		public List<object> DeveloperFeatures
-		{
-			get { return RawData.GetValue<List<object>>("developerFeatures"); }
-			set { RawData["developerFeatures"] = value; }
-		}
+        public string Client
+        {
+            get { return RawData.GetValue<string>("CLIENT"); }
+            set { RawData["CLIENT"] = value; }
+        }
 
-		public string ApiVersion
-		{
-			get { return RawData.GetValue<string>("apiVersion"); }
-			set { RawData["apiVersion"] = value; }
-		}
+        public string DeviceId
+        {
+            get { return RawData.GetValue<string>("deviceId"); }
+            set { RawData["deviceId"] = value; }
+        }
 
-//       	public string saltrUserId;
+        public string SocialId
+        {
+            get { return RawData.GetValue<string>("socialId"); }
+            set { RawData["socialId"] = value; }
+        }
 
-		public bool IsDevMode
-		{
-			get { return (bool) RawData.GetValue("devMode"); }
-			set { RawData["devMode"] = value; }
-		}
-		
-		public SLTBasicProperties BasicProperties
-		{
-			get { return new SLTBasicProperties(RawData.GetValue("basicProperties").ToDictionaryOrNull()); }
-			set { RawData["basicProperties"] = value.RawData; }
-		}
+        //       	public string socialNetwork;
 
-		public Dictionary<string, object> CustomProperties
-		{
-			get { return RawData.GetValue("customProperties").ToDictionaryOrNull(); }
-			set { RawData["customProperties"] = value; }
-		}
+        public string ClientKey
+        {
+            get { return RawData.GetValue<string>("clientKey"); }
+            set { RawData["clientKey"] = value; }
+        }
 
-		// TODO @gyln: make a different class for these? can inherit from a base that will have the common fields
-		public string Id
-		{
-			get { return RawData.GetValue<string>("id"); }
-			set { RawData["id"] = value; }
-		}
+        //       	public string appVersion;
 
-//		public string type;
+        public List<object> DeveloperFeatures
+        {
+            get { return RawData.GetValue<List<object>>("developerFeatures"); }
+            set { RawData["developerFeatures"] = value; }
+        }
 
-		public string Source
-		{
-			get { return RawData.GetValue<string>("source"); }
-			set { RawData["source"] = value; }
-		}
+        public string ApiVersion
+        {
+            get { return RawData.GetValue<string>("apiVersion"); }
+            set { RawData["apiVersion"] = value; }
+        }
 
-		public string OS
-		{
-			get { return RawData.GetValue<string>("os"); }
-			set { RawData["os"] = value; }
-		}
+        //       	public string saltrUserId;
 
-		public string Email
-		{
-			get { return RawData.GetValue<string>("email"); }
-			set { RawData["email"] = value; }
-		}
+        public bool IsDevMode
+        {
+            get { return (bool)RawData.GetValue("devMode"); }
+            set { RawData["devMode"] = value; }
+        }
+
+        public SLTBasicProperties BasicProperties
+        {
+            get { return new SLTBasicProperties(RawData.GetValue("basicProperties").ToDictionaryOrNull()); }
+            set { RawData["basicProperties"] = value.RawData; }
+        }
+
+        public Dictionary<string, object> CustomProperties
+        {
+            get { return RawData.GetValue("customProperties").ToDictionaryOrNull(); }
+            set { RawData["customProperties"] = value; }
+        }
+
+        // TODO @gyln: make a different class for these? can inherit from a base that will have the common fields
+        public string Id
+        {
+            get { return RawData.GetValue<string>("id"); }
+            set { RawData["id"] = value; }
+        }
+
+        //		public string type;
+
+        public string Source
+        {
+            get { return RawData.GetValue<string>("source"); }
+            set { RawData["source"] = value; }
+        }
+
+        public string OS
+        {
+            get { return RawData.GetValue<string>("os"); }
+            set { RawData["os"] = value; }
+        }
+
+        public string Email
+        {
+            get { return RawData.GetValue<string>("email"); }
+            set { RawData["email"] = value; }
+        }
+
+        #endregion Properties
+       
   	}
 }
