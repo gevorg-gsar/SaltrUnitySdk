@@ -60,12 +60,12 @@ namespace Saltr.UnitySdk
 
         #region Ctor
 
-        public SLTExperiment(string token, string partition, string experimentType, IEnumerable<object> customEvents)
+        public SLTExperiment(string token, string partition, SLTExperimentType experimentType, IEnumerable<object> customEvents)
         {
             _token = token;
             _partition = partition;
             _customEvents = customEvents;
-            _experimentType = (SLTExperimentType)Enum.Parse(typeof(SLTExperimentType), experimentType, true);
+            _experimentType = experimentType;
         }
 
         #endregion Ctor       
@@ -73,10 +73,11 @@ namespace Saltr.UnitySdk
     }
     
     /// <summary>
-    /// Represents experiment experimentType.
+    /// Represents the type of an experiment.
     /// </summary>
     public enum SLTExperimentType
     {
+        Unknown,
         Feature,
         LevelPack
     }
