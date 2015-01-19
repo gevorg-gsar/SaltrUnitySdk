@@ -276,8 +276,8 @@ namespace Saltr.UnitySdk
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
 
-            urlVars["cmd"] = SLTConfig.ActionGetAppData; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConfig.ActionGetAppData;
+            urlVars["cmd"] = SLTConstants.ActionGetAppData; //TODO @GSAR: remove later
+            urlVars["action"] = SLTConstants.ActionGetAppData;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -306,7 +306,7 @@ namespace Saltr.UnitySdk
 
             urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
-            SLTResourceTicket ticket = GetTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
+            SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
             return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
         }
 
@@ -322,14 +322,14 @@ namespace Saltr.UnitySdk
 
         private object LoadLevelContentFromDisk(SLTLevel level)
         {
-            string url = Util.FormatString(SLTConfig.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string url = Util.FormatString(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectFromApplication(url);
         }
 
         private object LoadLevelContentFromCache(SLTLevel level)
         {
 
-            string url = Util.FormatString(SLTConfig.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string url = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectFromCache(url);
         }
 
@@ -382,7 +382,7 @@ namespace Saltr.UnitySdk
 
         private string GetCachedLevelVersion(SLTLevel level)
         {
-            string cachedFileName = Util.FormatString(SLTConfig.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string cachedFileName = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectVersion(cachedFileName);
         }
 
@@ -398,8 +398,8 @@ namespace Saltr.UnitySdk
         private void Sync()
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConfig.ActionDevSyncData; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConfig.ActionDevSyncData;
+            urlVars["cmd"] = SLTConstants.ActionDevSyncData; //TODO @GSAR: remove later
+            urlVars["action"] = SLTConstants.ActionDevSyncData;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -436,7 +436,7 @@ namespace Saltr.UnitySdk
             args.RawData.RemoveEmptyOrNull();
             urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
-            SLTResourceTicket ticket = GetTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
+            SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
             SLTResource resource = new SLTResource("syncFeatures", ticket, SyncSuccessHandler, SyncFailHandler);
             resource.Load();
         }
@@ -444,7 +444,7 @@ namespace Saltr.UnitySdk
         private void AddDeviceToSaltr(string email)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["action"] = SLTConfig.ActionDevRegisterDevice;
+            urlVars["action"] = SLTConstants.ActionDevRegisterDevice;
             urlVars["clientKey"] = _clientKey;
 
             SLTRequestArguments args = new SLTRequestArguments();
@@ -500,14 +500,14 @@ namespace Saltr.UnitySdk
 
             urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
-            SLTResourceTicket ticket = GetTicket(SLTConfig.SALTR_DEVAPI_URL, urlVars);
+            SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars);
             SLTResource resource = new SLTResource("addDevice", ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
             resource.Load();
         }
 
         private void CacheLevelContent(SLTLevel level, object content)
         {
-            string cachedFileName = Util.FormatString(SLTConfig.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string cachedFileName = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             _repository.CacheObject(cachedFileName, level.Version.ToString(), content);
         }
 
@@ -549,7 +549,7 @@ namespace Saltr.UnitySdk
                     response = data["responseData"].ToDictionaryOrNull();
                 }
 
-                isSuccess = (data.ContainsKey("status") && data["status"].ToString() == SLTConfig.ResultSuccess);
+                isSuccess = (data.ContainsKey("status") && data["status"].ToString() == SLTConstants.ResultSuccess);
             }
 
             _isLoading = false;
@@ -613,7 +613,7 @@ namespace Saltr.UnitySdk
                 }
 
                 _isConected = true;
-                _repository.CacheObject(SLTConfig.AppDataUrlCache, "0", response);
+                _repository.CacheObject(SLTConstants.AppDataUrlCache, "0", response);
 
                 _activeFeatures = saltrFeatures;
                 _connectSuccessCallback();
@@ -830,7 +830,7 @@ namespace Saltr.UnitySdk
 
             if (_isStarted == false)
             {
-                path = path == null ? SLTConfig.LocalLevelPackageUrl : path;
+                path = path == null ? SLTConstants.LocalLevelPackageUrl : path;
                 object applicationData = _repository.GetObjectFromApplication(path);
                 _levelPacks = SLTDeserializer.DecodeLevels(applicationData.ToDictionaryOrNull());
             }
@@ -902,7 +902,7 @@ namespace Saltr.UnitySdk
                 throw new Exception("Levels should be imported.");
             }
 
-            object cachedData = _repository.GetObjectFromCache(SLTConfig.AppDataUrlCache);
+            object cachedData = _repository.GetObjectFromCache(SLTConstants.AppDataUrlCache);
             if (cachedData == null)
             {
                 foreach (var item in _developerFeatures.Keys)
@@ -1028,8 +1028,8 @@ namespace Saltr.UnitySdk
             }
 
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConfig.ActionAddProperties; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConfig.ActionAddProperties;
+            urlVars["cmd"] = SLTConstants.ActionAddProperties; //TODO @GSAR: remove later
+            urlVars["action"] = SLTConstants.ActionAddProperties;
 
             SLTRequestArguments args = new SLTRequestArguments()
             {
@@ -1077,7 +1077,7 @@ namespace Saltr.UnitySdk
 
             urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
-            SLTResourceTicket ticket = GetTicket(SLTConfig.SALTR_API_URL, urlVars, _requestIdleTimeout);
+            SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
             SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
             resource.Load();
         }

@@ -33,7 +33,7 @@ public class SaltrWrapper : MonoBehaviour
 	[SerializeField]
 	int requestIdleTimeout = 0;
 	[SerializeField]
-    string localLevelPackage = SLTConfig.LocalLevelPackageUrl; // in Resources
+    string localLevelPackage = SLTConstants.LocalLevelPackageUrl; // in Resources
 
     [System.Serializable]
     internal class FeatureEntry

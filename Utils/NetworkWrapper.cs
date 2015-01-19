@@ -123,7 +123,7 @@ namespace Saltr.UnitySdk.Utils
 
 	      
 	            form.AddField("args", MiniJSON.Json.Serialize( post));
-	            form.AddField("cmd", SLTConfig.ActionDevSyncData);
+	            form.AddField("cmd", SLTConstants.ActionDevSyncData);
 
 
 	            //foreach (var item in post.Keys)

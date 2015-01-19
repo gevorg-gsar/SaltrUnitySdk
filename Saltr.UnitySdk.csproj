@@ -84,7 +84,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="SLTBasicProperties.cs" />
-    <Compile Include="SLTConfig.cs" />
+    <Compile Include="SLTConstants.cs" />
     <Compile Include="SLTDeserializer.cs" />
     <Compile Include="SLTExperiment.cs" />
     <Compile Include="SLTFeature.cs" />
