@@ -12,7 +12,7 @@ using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Resource
 {
-    internal class SLTResource
+    public class SLTResource
     {
         private string _id;
 
@@ -50,7 +50,7 @@ namespace Saltr.UnitySdk.Resource
 //        protected Action _onProgress;
         private Action<SLTResource> _onFail;
 
-        internal SLTResource(string Id, SLTResourceTicket Ticket, Action<SLTResource> onSuccess, Action<SLTResource> onFail)
+        public SLTResource(string Id, SLTResourceTicket Ticket, Action<SLTResource> onSuccess, Action<SLTResource> onFail)
         {
             this._id = Id;
             this._ticket = Ticket;

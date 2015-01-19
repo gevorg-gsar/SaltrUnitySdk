@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Saltr.UnitySdk.Resource
 {
-    internal class SLTResourceTicket
+    public class SLTResourceTicket
     {
         private string _url;
         private Dictionary<string,string> _variables;
