@@ -19,7 +19,7 @@ using System.Reflection;
 
 namespace LitJson
 {
-    internal struct PropertyMetadata
+    public struct PropertyMetadata
     {
         public MemberInfo Info;
         public bool       IsField;
@@ -27,7 +27,7 @@ namespace LitJson
     }
 
 
-    internal struct ArrayMetadata
+    public struct ArrayMetadata
     {
         private Type element_type;
         private bool is_array;
@@ -57,7 +57,7 @@ namespace LitJson
     }
 
 
-    internal struct ObjectMetadata
+    public struct ObjectMetadata
     {
         private Type element_type;
         private bool is_dictionary;
@@ -88,16 +88,16 @@ namespace LitJson
     }
 
 
-    internal delegate void ExporterFunc    (object obj, JsonWriter writer);
-	internal   delegate void ExporterFunc<T> (T obj, JsonWriter writer);
+    public delegate void ExporterFunc    (object obj, JsonWriter writer);
+	public   delegate void ExporterFunc<T> (T obj, JsonWriter writer);
 
-    internal delegate object ImporterFunc                (object input);
-	internal   delegate TValue ImporterFunc<TJson, TValue> (TJson input);
+    public delegate object ImporterFunc                (object input);
+	public   delegate TValue ImporterFunc<TJson, TValue> (TJson input);
 
-	internal delegate IJsonWrapper WrapperFactory ();
+	public delegate IJsonWrapper WrapperFactory ();
 
 
-    internal class JsonMapper
+    public class JsonMapper
     {
         #region Fields
         private static int max_nesting_depth;
@@ -132,6 +132,7 @@ namespace LitJson
 
 
         #region Constructors
+        
         static JsonMapper ()
         {
             max_nesting_depth = 100;
@@ -157,6 +158,7 @@ namespace LitJson
             RegisterBaseExporters ();
             RegisterBaseImporters ();
         }
+
         #endregion
 
 

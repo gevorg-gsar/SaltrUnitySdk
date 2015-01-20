@@ -79,6 +79,6 @@ namespace Saltr.UnitySdk
     {
         Unknown,
         Feature,
-        LevelPack
+        Level
     }
 }

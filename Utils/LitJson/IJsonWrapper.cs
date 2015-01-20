@@ -30,7 +30,7 @@ namespace LitJson
         Boolean
     }
 
-    internal interface IJsonWrapper : IList, IOrderedDictionary
+    public interface IJsonWrapper : IList, IOrderedDictionary
     {
         bool IsArray   { get; }
         bool IsBoolean { get; }
