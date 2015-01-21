@@ -8,157 +8,178 @@ using Saltr.UnitySdk.Resource;
 namespace Saltr.UnitySdk.Utils
 {
 	/// <summary>
-	/// Wrapper component over UnityEngine.WWW, used for network interactions in SDK.
+	/// Wrapper component over UnityEngine._www, used for network interactions in SDK.
 	/// </summary>
 	public class NetworkWrapper : MonoBehaviour
-	{
-	    private float elapsedTime = 0.0f;
-		private bool isDownloading = false;
-	    private WWW WWW = null;
-	    private int dropTimeout;
-	    private SLTResource _resource;
-	    private Action<SLTResource> _appDataLoadSuccessHandler;
-	    private Action<SLTResource> _appDataLoadFailHandler;
+    {
+        #region Fields
 
-		void Awake()
-		{
-			DontDestroyOnLoad (gameObject);
-		}
+        private int _dropTimeout;
+        private float _elapsedTime = 0.0f;
+        private bool _isDownloading = false;
+        private WWW _www = null;
+        private SLTResource _resource;
+        private Action<SLTResource> _appDataLoadSuccessHandler;
+        private Action<SLTResource> _appDataLoadFailHandler;
 
-	    void Start() { }
+        #endregion Fields
 
-	    void Update()
-	    {
-	        if (isDownloading)
-	        {
-	            elapsedTime += Time.deltaTime;
-	            if( elapsedTime >= dropTimeout)
-	            {
-	                Debug.Log("[Asset] Loading is too long, so it stopped by force.");
-	                isDownloading = false;
-	                if (WWW != null)
-	                {
-	                    WWW.Dispose();
-	                    WWW = null;
-	                }
-	                _appDataLoadFailHandler(_resource);
-	            }
-	            else if (WWW != null && WWW.isDone)
-	            {
-	                //if (WWW == null)
-	                //{
-	                //	Debug.Log("WWW is null!");
-	                //	resource.ioErrorHandler();
-	                //	isDownloading = false;
-	                //}
+        #region Properties
 
-	                if (WWW.error == null)
-	                {
-	                    //Debug.Log("Download is finished!" + WWW.text);
-	                    _resource.Data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(WWW.text);
-	                    isDownloading = false;
-	                    WWW.Dispose();
-	                    WWW = null;
-	                    _appDataLoadSuccessHandler(_resource);
-	                }
+        public bool IsBusy
+        {
+            get { return _isDownloading; }
+        }
 
-	                else
-	                {
-	                    Debug.Log("Download error : " + WWW.error);
-	                    isDownloading = false;
-	                    WWW.Dispose();
-	                    WWW = null;
-	                    _appDataLoadFailHandler(_resource);
-	                    //_resource.ioErrorHandler();
-	                }
-	            }
-	        }
-	        else elapsedTime = 0;
-	    }
+        #endregion Properties
 
-	    internal void GET(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
-	    {
-	        if (isDownloading)
-	        {
-				foreach(NetworkWrapper GPWrap in gameObject.GetComponents<NetworkWrapper>())
-				{
-					if(!GPWrap.busy)
-					{
-						GPWrap.GET(url,appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
-						return;
-					}
-				}
-				gameObject.AddComponent<NetworkWrapper>().GET(url,appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
-	            return;
-	        }
-	        this._appDataLoadFailHandler = appDataLoadFailHandler;
-	        this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
-	        this._resource = resource;
+        #region Messages
 
-	        if (resource.Ticket.DropTimeout != 0)
-	            this.dropTimeout = resource.Ticket.DropTimeout;
-	        else
-	            this.dropTimeout = 3;
+        private void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
 
-//			Debug.Log(url);
-	        StartDownloading(url);
-	    }
+        private void Start() { }
+
+        private void Update()
+        {
+            if (_isDownloading)
+            {
+                _elapsedTime += Time.deltaTime;
+                if (_elapsedTime >= _dropTimeout)
+                {
+                    Debug.Log("[Asset] Loading is too long, so it stopped by force.");
+                    _isDownloading = false;
+                    if (_www != null)
+                    {
+                        _www.Dispose();
+                        _www = null;
+                    }
+                    _appDataLoadFailHandler(_resource);
+                }
+                else if (_www != null && _www.isDone)
+                {
+                    //if (_www == null)
+                    //{
+                    //	Debug.Log("_www is null!");
+                    //	resource.ioErrorHandler();
+                    //	_isDownloading = false;
+                    //}
+
+                    if (_www.error == null)
+                    {
+                        //Debug.Log("Download is finished!" + _www.text);
+                        _resource.Data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(_www.text);
+                        _isDownloading = false;
+                        _www.Dispose();
+                        _www = null;
+                        _appDataLoadSuccessHandler(_resource);
+                    }
+
+                    else
+                    {
+                        Debug.Log("Download error : " + _www.error);
+                        _isDownloading = false;
+                        _www.Dispose();
+                        _www = null;
+                        _appDataLoadFailHandler(_resource);
+                        //_resource.ioErrorHandler();
+                    }
+                }
+            }
+            else _elapsedTime = 0;
+        }
+
+        #endregion Messages
+
+        #region Business Methods
+
+        public void GET(string url, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+        {
+            if (_isDownloading)
+            {
+                foreach (NetworkWrapper GPWrap in gameObject.GetComponents<NetworkWrapper>())
+                {
+                    if (!GPWrap.IsBusy)
+                    {
+                        GPWrap.GET(url, appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
+                        return;
+                    }
+                }
+                gameObject.AddComponent<NetworkWrapper>().GET(url, appDataLoadSuccessHandler, appDataLoadFailHandler, resource);
+                return;
+            }
+            this._appDataLoadFailHandler = appDataLoadFailHandler;
+            this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
+            this._resource = resource;
+
+            if (resource.Ticket.DropTimeout != 0)
+                this._dropTimeout = resource.Ticket.DropTimeout;
+            else
+                this._dropTimeout = 3;
+
+            //			Debug.Log(url);
+            StartDownloading(url);
+        }
+
+        public WWW POST(string url, Dictionary<string, string> post, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
+        {
+            Debug.Log("EnteredToPost" + "url: " + url);
+
+            WWWForm form = new WWWForm();
+
+            this._appDataLoadFailHandler = appDataLoadFailHandler;
+            this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
+            this._resource = resource;
+
+            if (resource.Ticket.DropTimeout != 0)
+            {
+                this._dropTimeout = resource.Ticket.DropTimeout;
+            }
+            else
+            { 
+                this._dropTimeout = 3;
+            }
+
+            form.AddField("args", MiniJSON.Json.Serialize(post));
+            form.AddField("cmd", SLTConstants.ActionDevSyncData);
+
+
+            //foreach (var item in post.Keys)
+            //{
+            //    post[item] = MiniJSON.Json.Serialize(post[item]);
+            //}
+
+
+            Debug.Log(MiniJSON.Json.Serialize(post));
 
 
 
-	    internal WWW POST(string url, Dictionary<string, string> post, Action<SLTResource> appDataLoadSuccessHandler, Action<SLTResource> appDataLoadFailHandler, SLTResource resource)
-	    {
-	        Debug.Log("EnteredToPost" + "url: " +  url);
+            //foreach (KeyValuePair<String, String> post_arg in post)
+            //{
+            //    form.AddField(post_arg.Key, post_arg.Value);
+            //}
 
-	        WWWForm form = new WWWForm();
+            _isDownloading = true;
+            _elapsedTime = 0f;
+            _www = new WWW(url, form);
 
-	        this._appDataLoadFailHandler = appDataLoadFailHandler;
-	        this._appDataLoadSuccessHandler = appDataLoadSuccessHandler;
-	        this._resource = resource;
+            return null;
+        }
 
-	        if (resource.Ticket.DropTimeout != 0)
-	            this.dropTimeout = resource.Ticket.DropTimeout;
-	        else
-	            this.dropTimeout = 3;
+        #endregion Business Methods
 
-	      
-	            form.AddField("args", MiniJSON.Json.Serialize( post));
-	            form.AddField("cmd", SLTConstants.ActionDevSyncData);
+        #region Internal Mehods
 
+        private void StartDownloading(string url)
+        {
+            _elapsedTime = 0.0f;
+            _isDownloading = true;
+            _www = new WWW(url);
+        }
 
-	            //foreach (var item in post.Keys)
-	            //{
-	            //    post[item] = MiniJSON.Json.Serialize(post[item]);
-	            //}
-
-
-	            Debug.Log(MiniJSON.Json.Serialize(post));
-	      
-
-
-	        //foreach (KeyValuePair<String, String> post_arg in post)
-	        //{
-	        //    form.AddField(post_arg.Key, post_arg.Value);
-	        //}
-
-	        isDownloading = true;
-	        elapsedTime = 0f;
-	         WWW = new WWW(url, form);
-
-
-	        return null;
-	    }
-
-	    private void StartDownloading(string url)
-	    {
-	        elapsedTime = 0.0f;
-	        isDownloading = true;
-	        WWW = new WWW(url);
-	    }
-
-		internal bool busy
-		{
-			get {return isDownloading;}
-		}
+        #endregion Internal Mehods
+        
 	}
 }

@@ -7,26 +7,9 @@ using UnityEngine;
 
 namespace Saltr.UnitySdk.Utils
 {
-    internal static class Util
+    public static class Util
     {
-        public static string FormatString(string format, params string[] args)
-        {
-		
-            for (int i = 0; i < args.Count(); i++)
-            {
-                Regex rgx = new Regex("{" + i + "}");
-              format = rgx.Replace(format, args[i]);
-            }
-			//Debug.Log(format);        
-			return format;
-        }
-
-//		public static function checkEmailValidation(email:String):Boolean {
-//			var emailExpression:RegExp = /([a-z0-9._-]+?)@([a-z0-9.-]+)\.([a-z]{2,4})/;
-//			return emailExpression.test(email);
-//		}
-
-		public static bool ValidEmail(string email)
+		public static bool IsValidEmail(string email)
 		{
 			string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" 
 				+ @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" 

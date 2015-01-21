@@ -188,9 +188,9 @@ namespace Saltr.UnitySdk
         /// <summary>
         /// Initializes a new instance of the <see cref="saltr.SLTUnity"/> class.
         /// </summary>
-        /// <param name="clientKey">Client key.</param>
+        /// <param name="_clientKey">Client key.</param>
         /// <param name="DeviceId">Device identifier.</param>
-        /// <param name="useCache">If set to <c>true</c> use cache. If not specified defaults to <c>true</c></param>
+        /// <param name="_useCache">If set to <c>true</c> use cache. If not specified defaults to <c>true</c></param>
         public SLTUnity(string clientKey, string deviceId, bool useCache)
         {
             Init(clientKey, deviceId, useCache);
@@ -322,14 +322,14 @@ namespace Saltr.UnitySdk
 
         private object LoadLevelContentFromDisk(SLTLevel level)
         {
-            string url = Util.FormatString(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string url = string.Format(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectFromApplication(url);
         }
 
         private object LoadLevelContentFromCache(SLTLevel level)
         {
 
-            string url = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string url = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectFromCache(url);
         }
 
@@ -382,7 +382,7 @@ namespace Saltr.UnitySdk
 
         private string GetCachedLevelVersion(SLTLevel level)
         {
-            string cachedFileName = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectVersion(cachedFileName);
         }
 
@@ -507,7 +507,7 @@ namespace Saltr.UnitySdk
 
         private void CacheLevelContent(SLTLevel level, object content)
         {
-            string cachedFileName = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             _repository.CacheObject(cachedFileName, level.Version.ToString(), content);
         }
 
@@ -974,7 +974,7 @@ namespace Saltr.UnitySdk
         /// <param name="SLTLevel">The level, contents of which will be updated.</param>
         /// <param name="loadSuccessCallback">Load isSuccess callback.</param>
         /// <param name="loadFailCallback">Load fail callback, receives <see cref="saltr.Status.SLTStatus"/> object as the first parameter.</param>
-        /// <param name="useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established. <c>true</c> by default. </param>
+        /// <param name="_useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established. <c>true</c> by default. </param>
         public void LoadLevelContent(SLTLevel level, Action loadSuccessCallback, Action<SLTStatus> loadFailCallback, bool useCache)
         {
             _levelContentLoadSuccessCallback = loadSuccessCallback;
