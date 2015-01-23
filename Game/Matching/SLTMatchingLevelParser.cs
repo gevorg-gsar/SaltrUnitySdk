@@ -119,7 +119,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
                         if (assetNode.ContainsKey("distributionValue"))
                         {
-                            distributionVale = assetNode["distributionValue"].ToFloatOrZero();
+                            float.TryParse(assetNode["distributionValue"].ToString(), out distributionVale);
                         }
 
                         if (assetNode.ContainsKey("states"))

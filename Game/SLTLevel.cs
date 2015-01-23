@@ -35,7 +35,7 @@ namespace Saltr.UnitySdk.Game
             {
                 return SLTMatchingLevelParser.getInstance();
             }
-            else if(levelType == SLTLevelType.Canvas2D)
+            else if (levelType == SLTLevelType.Canvas2D)
             {
                 return SLT2DLevelParser.GetInstance();
             }

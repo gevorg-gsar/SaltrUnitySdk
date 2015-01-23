@@ -20,9 +20,9 @@ namespace Saltr.UnitySdk.Utils
             if (dictionary.ContainsKey(key))
             {
                 return dictionary[key];
-            }
-            else
-                return null;
+            } 
+             
+            return null;
         }
 
         /// <summary>
@@ -36,60 +36,9 @@ namespace Saltr.UnitySdk.Utils
             {
                 return dictionary[key] as Type;
             }
-            else
-                return null;
+
+            return null;
         }
-
-        /// <summary>
-        /// Tries to convert the the object to string->string dictionary. If succesfull returns it otherwise returns null.
-        /// </summary>
-        /// <returns>The dictionary or null.</returns>
-        public static Dictionary<string, string> ToDictionaryStringOrNull(this object obj)
-        {
-            Dictionary<string, string> dictionaryToReturn = new Dictionary<string, string>();
-            try
-            {
-                dictionaryToReturn = (Dictionary<string, string>)obj;
-
-                return dictionaryToReturn;
-            }
-
-            catch
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Tries to convert the the object to a float. If succesfull returns it otherwise returns the specified value.
-        /// </summary>
-        public static float ToFloatOr(this object obj, float value)
-        {
-            float x = value;
-            string str = "";
-
-            try
-            {
-                str = obj.ToString();
-
-                x = float.Parse(str);
-                return x;
-            }
-
-            catch
-            {
-                return x;
-            }
-        }
-
-        /// <summary>
-        /// Tries to convert the the object to a float. If succesfull returns it otherwise returns zero.
-        /// </summary>
-        public static float ToFloatOrZero(this object obj)
-        {
-            return obj.ToFloatOr(0);
-        }
-
 
         /// <summary>
         /// Tries to convert the the object to an integer. If succesfull returns it otherwise returns the specified value.
@@ -120,7 +69,6 @@ namespace Saltr.UnitySdk.Utils
         {
             return obj.ToIntegerOr(0);
         }
-
 
         internal static void RemoveEmptyOrNull(this Dictionary<string, object> dictionary)
         {
