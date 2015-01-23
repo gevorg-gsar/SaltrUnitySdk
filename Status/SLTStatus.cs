@@ -5,48 +5,61 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Status
 {
-	/// <summary>
-	/// Represents a status of various operations carried out by the SDK.
-	/// </summary>
+    /// <summary>
+    /// Represents a status of various operations carried out by the SDK.
+    /// </summary>
     public class SLTStatus
     {
-		private SLTStatusCode _statusCode;
+        #region Fields
 
-		/// <summary>
-		/// Gets and integer status code.
-		/// </summary>
-		public SLTStatusCode StatusCode
+        private string _statusMessage;
+        private SLTStatusCode _statusCode;
+
+        #endregion Fields
+
+        #region Properties
+
+        public SLTStatusCode StatusCode
         {
             get { return _statusCode; }
         }
 
-        private string _statusMessage;
-		/// <summary>
-		/// Gets a human-readable status message.
-		/// </summary>
+        /// <summary>
+        /// Gets a human-readable status message.
+        /// </summary>
         public string StatusMessage
         {
             get { return _statusMessage; }
         }
 
-		internal SLTStatus(int code, string message)
-        {
-			if(Enum.IsDefined(typeof(SLTStatusCode), code))
-				_statusCode = (SLTStatusCode)code;
-			else
-				_statusCode = SLTStatusCode.UnknownError;
+        #endregion
 
-            _statusMessage = message;
-			UnityEngine.Debug.Log(message);
+        #region Ctor
+
+        public SLTStatus(int statusCode, string statusMessage)
+        {
+            if (Enum.IsDefined(typeof(SLTStatusCode), statusCode))
+            {
+                _statusCode = (SLTStatusCode)statusCode;
+            }
+            else
+            { 
+                _statusCode = SLTStatusCode.UnknownError;
+            }
+
+            _statusMessage = statusMessage;
+            UnityEngine.Debug.Log(statusMessage);
         }
 
-		internal SLTStatus(SLTStatusCode code, string message)
-		{
-			_statusCode = code;
-			_statusMessage = message;
-			UnityEngine.Debug.Log(message);
-		}
+        public SLTStatus(SLTStatusCode statusCode, string statusMessage)
+        {
+            _statusCode = statusCode;
+            _statusMessage = statusMessage;
+            UnityEngine.Debug.Log(statusMessage);
+        }
 
+        #endregion Ctor
+        
     }
 
     /// <summary>

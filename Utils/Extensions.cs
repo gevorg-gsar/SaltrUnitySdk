@@ -40,7 +40,7 @@ namespace Saltr.UnitySdk.Utils
             return null;
         }
 
-        internal static void RemoveEmptyOrNull(this Dictionary<string, object> dictionary)
+        public static void RemoveEmptyOrNullEntries(this Dictionary<string, object> dictionary)
         {
             for (int i = dictionary.Keys.Count - 1; i >= 0; --i)
             {
@@ -52,7 +52,7 @@ namespace Saltr.UnitySdk.Utils
                 }
                 else if (value is Dictionary<string, object>)
                 {
-                    RemoveEmptyOrNull(value as Dictionary<string, object>);
+                    RemoveEmptyOrNullEntries(value as Dictionary<string, object>);
                 }
             }
         }

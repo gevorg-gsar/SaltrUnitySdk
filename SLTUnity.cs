@@ -428,12 +428,12 @@ namespace Saltr.UnitySdk
             foreach (SLTFeature feature in _developerFeatures.Values)
             {
                 Dictionary<string, object> featureDictionary = feature.ToDictionary();
-                featureDictionary.RemoveEmptyOrNull();
+                featureDictionary.RemoveEmptyOrNullEntries();
                 featureList.Add(featureDictionary);
             }
 
             args.DeveloperFeatures = featureList;
-            args.RawData.RemoveEmptyOrNull();
+            args.RawData.RemoveEmptyOrNullEntries();
             urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);

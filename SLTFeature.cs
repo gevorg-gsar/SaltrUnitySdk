@@ -89,7 +89,7 @@ namespace Saltr.UnitySdk
 		{
 			var featureDict = new Dictionary<string, object>();
 			featureDict["token"] = _token.ToUpper();
-			_properties.RemoveEmptyOrNull();
+			_properties.RemoveEmptyOrNullEntries();
 			featureDict["value"] = MiniJSON.Json.Serialize(_properties);
 			return featureDict;
         }

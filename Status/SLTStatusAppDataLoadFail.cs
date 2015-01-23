@@ -5,9 +5,10 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Status
 {
-   	internal class SLTStatusAppDataLoadFail : SLTStatus
+   	public class SLTStatusAppDataLoadFail : SLTStatus
     {
-		public SLTStatusAppDataLoadFail(): base(SLTStatusCode.ClientAppDataLoadFail, "[SALTR] Failed to load appData.")
+		public SLTStatusAppDataLoadFail()
+            : base(SLTStatusCode.ClientAppDataLoadFail, "[SALTR] Failed to load appData.")
 		{
 		}
     }

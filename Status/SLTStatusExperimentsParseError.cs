@@ -5,9 +5,10 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Status
 {
-	internal class SLTStatusExperimentsParseError : SLTStatus
+	public class SLTStatusExperimentsParseError : SLTStatus
 	{
-		public SLTStatusExperimentsParseError() : base(SLTStatusCode.ClientExperimentsParseError, "[SALTR] Failed to decode Experiments.")
+		public SLTStatusExperimentsParseError() 
+            : base(SLTStatusCode.ClientExperimentsParseError, "[SALTR] Failed to decode Experiments.")
 		{
 		}
 	}
