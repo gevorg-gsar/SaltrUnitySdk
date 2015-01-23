@@ -52,7 +52,11 @@ namespace Saltr.UnitySdk.Game.Matching
                 {
 
                     IEnumerable<object> coords = (IEnumerable<object>)propertyDict["coords"];
-                    SLTCell cell2 = cells.Retrieve(coords.ElementAt(0).ToIntegerOrZero(), coords.ElementAt(1).ToIntegerOrZero());
+                    int cord1, cord2;
+                    int.TryParse(coords.ElementAt(0).ToString(), out cord1);
+                    int.TryParse(coords.ElementAt(1).ToString(), out cord2);
+
+                    SLTCell cell2 = cells.Retrieve(cord1, cord2);
                     if (cell2 != null)
                         cell2.Properties = propertyDict["value"] as Dictionary<string, object>;
                 }
@@ -63,7 +67,11 @@ namespace Saltr.UnitySdk.Game.Matching
             for (int b = 0; b < blockedCells.Count(); b++)
             {
                 IEnumerable<object> blokedCell = (IEnumerable<object>)blockedCells.ElementAt(b);
-                var cell3 = cells.Retrieve(blokedCell.ElementAt(0).ToIntegerOrZero(), blokedCell.ElementAt(1).ToIntegerOrZero());
+                int col, row;
+                int.TryParse(blokedCell.ElementAt(0).ToString(), out col);
+                int.TryParse(blokedCell.ElementAt(1).ToString(), out row);
+                
+                var cell3 = cells.Retrieve(col, row);
                 if (cell3 != null)
                 {
                     cell3.IsBlocked = true;
@@ -84,13 +92,13 @@ namespace Saltr.UnitySdk.Game.Matching
                 List<SLTCell> chunkCells = new List<SLTCell>();
                 foreach (var cellNode in cellNodes)
                 {
-                    int row = 0;
                     int col = 0;
+                    int row = 0;                    
 
-                    row = ((IEnumerable<object>)cellNode).ElementAt(0).ToIntegerOrZero();
-                    col = ((IEnumerable<object>)cellNode).ElementAt(1).ToIntegerOrZero();
+                    int.TryParse(((IEnumerable<object>)cellNode).ElementAt(0).ToString(), out col);
+                    int.TryParse(((IEnumerable<object>)cellNode).ElementAt(1).ToString(), out row);
 
-                    chunkCells.Add(cells.Retrieve(row, col) as SLTCell);
+                    chunkCells.Add(cells.Retrieve(col, row) as SLTCell);
                 }
 
                 IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode["assets"];
@@ -143,7 +151,12 @@ namespace Saltr.UnitySdk.Game.Matching
                 boardProperties = boardNode["properties"] as Dictionary<string, object>;
             }
 
-            SLTCells cells = new SLTCells(boardNode["cols"].ToIntegerOrZero(), boardNode["rows"].ToIntegerOrZero());
+            int width, height;
+
+            int.TryParse(boardNode["cols"].ToString(), out width);
+            int.TryParse(boardNode["rows"].ToString(), out height);
+
+            SLTCells cells = new SLTCells(width, height);
             InitializeCells(cells, boardNode);
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
             IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode["layers"];
@@ -183,7 +196,12 @@ namespace Saltr.UnitySdk.Game.Matching
                 for (int j = 0; j < cellPositions.Count(); j++)
                 {
                     IEnumerable<object> position = (IEnumerable<object>)cellPositions.ElementAt(j);
-                    SLTCell cell = cells.Retrieve(position.ElementAt(0).ToIntegerOrZero(), position.ElementAt(1).ToIntegerOrZero());
+                    int col,row;
+                    
+                    int.TryParse(position.ElementAt(0).ToString(), out col);
+                    int.TryParse(position.ElementAt(1).ToString(), out row);
+                    
+                    SLTCell cell = cells.Retrieve(col, row);
                     cell.SetAssetInstance(layer.Token, layer.Index, new SLTAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties));
                 }
             }

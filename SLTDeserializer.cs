@@ -148,7 +148,7 @@ namespace Saltr.UnitySdk
                     int packIndex = 0;
                     if (levelPackDictionary.ContainsKey("index"))
                     {
-                        packIndex = levelPackDictionary["index"].ToIntegerOrZero();
+                        int.TryParse(levelPackDictionary["index"].ToString(), out packIndex);
                     }
 
                     List<SLTLevel> levelStructures = new List<SLTLevel>();
@@ -168,13 +168,13 @@ namespace Saltr.UnitySdk
                         int id = 0;
                         if (levelDict.ContainsKey("id"))
                         {
-                            id = levelDict["id"].ToIntegerOrZero();
+                            int.TryParse(levelDict["id"].ToString(), out id);
                         }
 
                         int ind = 0;
                         if (levelDict.ContainsKey("index"))
                         {
-                            ind = levelDict["index"].ToIntegerOrZero();
+                            int.TryParse(levelDict["index"].ToString(), out ind);
                         }
 
                         string url = "";
@@ -186,7 +186,7 @@ namespace Saltr.UnitySdk
                         int version = 0;
                         if (levelDict.ContainsKey("version"))
                         {
-                            version = levelDict["version"].ToIntegerOrZero();
+                            int.TryParse(levelDict["version"].ToString(), out version);
                         }
 
                         // if (levelDict.ContainsKey("index"))

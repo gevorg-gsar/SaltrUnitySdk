@@ -629,7 +629,10 @@ namespace Saltr.UnitySdk
                 }
                 else
                 {
-                    _connectFailCallback(new SLTStatus(response.GetValue<string>("errorCode").ToIntegerOrZero(), response.GetValue<string>("errorMessage")));
+                    int errorCode;
+                    int.TryParse(response.GetValue<string>("errorCode"), out errorCode);
+
+                    _connectFailCallback(new SLTStatus(errorCode, response.GetValue<string>("errorMessage")));
                 }
 
             }
@@ -670,7 +673,10 @@ namespace Saltr.UnitySdk
                     Dictionary<string, object> errorDict = responseObject.GetValue("error") as Dictionary<string, object>;
                     if (errorDict != null)
                     {
-                        if ((SLTStatusCode)errorDict.GetValue("code").ToIntegerOrZero() == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
+                        int errorCode;
+                        int.TryParse(errorDict.GetValue("code").ToString(), out errorCode);
+                        //TODO: change below casting to use Enum.Parse() method.
+                        if ((SLTStatusCode)errorCode == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
                         {
                             RegisterDevice();
                         }

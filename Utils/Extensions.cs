@@ -40,36 +40,6 @@ namespace Saltr.UnitySdk.Utils
             return null;
         }
 
-        /// <summary>
-        /// Tries to convert the the object to an integer. If succesfull returns it otherwise returns the specified value.
-        /// </summary>
-        public static int ToIntegerOr(this object obj, int value)
-        {
-            int x = value;
-            string str = "";
-
-            try
-            {
-                str = obj.ToString();
-
-                x = Int32.Parse(str);
-                return x;
-            }
-
-            catch
-            {
-                return x;
-            }
-        }
-
-        /// <summary>
-        /// Tries to convert the the object to an integer. If succesfull returns it otherwise returns zero.
-        /// </summary>
-        public static int ToIntegerOrZero(this object obj)
-        {
-            return obj.ToIntegerOr(0);
-        }
-
         internal static void RemoveEmptyOrNull(this Dictionary<string, object> dictionary)
         {
             for (int i = dictionary.Keys.Count - 1; i >= 0; --i)
