@@ -26,7 +26,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
             Dictionary<string, object> boards = new Dictionary<string, object>();
             foreach (var boardId in boardNodes.Keys)
             {
-                Dictionary<string, object> boardNode = boardNodes[boardId].ToDictionaryOrNull();
+                Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
                 boards[boardId] = ParseLevelBoard(boardNode, assetMap);
 
             }
@@ -39,7 +39,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
             if (boardNode.ContainsKey("properties"))
             {
-                boardProperties = boardNode["properties"].ToDictionaryOrNull();
+                boardProperties = boardNode["properties"] as Dictionary<string, object>;
             }
 
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
@@ -47,7 +47,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
 
             for (int i = 0; i < layerNodes.Count(); i++)
             {
-                Dictionary<string, object> layerNode = layerNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> layerNode = layerNodes.ElementAt(i) as Dictionary<string, object>;
                 SLT2DBoardLayer layer = ParseLayer(layerNode, i, assetMap);
                 layers.Add(layer);
             }
@@ -73,7 +73,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
         {
             for (int i = 0; i < assetNodes.Count(); i++)
             {
-                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i) as Dictionary<string, object>;
                 float x = assetInstanceNode["x"].ToFloatOrZero();
                 float y = assetInstanceNode["y"].ToFloatOrZero();
 
@@ -95,7 +95,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
         protected override SLTAssetState ParseAssetState(Dictionary<string, object> stateNode)
         {
             string token = stateNode.ContainsKey("token") ? stateNode["token"].ToString() : null;
-            Dictionary<string, object> properties = stateNode.ContainsKey("properties") ? stateNode["properties"].ToDictionaryOrNull() : null;
+            Dictionary<string, object> properties = stateNode.ContainsKey("properties") ? stateNode["properties"] as Dictionary<string, object> : null;
 
             float pivotX = stateNode.ContainsKey("pivotX") ? stateNode["pivotX"].ToFloatOrZero() : 0;
             float pivotY = stateNode.ContainsKey("pivotY") ? stateNode["pivotY"].ToFloatOrZero() : 0;

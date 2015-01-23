@@ -25,10 +25,10 @@ namespace Saltr.UnitySdk.Game.Matching
 
         private static void InitializeCells(SLTCells cells, object boardNode)
         {
-            Dictionary<string, object> boardNodeDict = boardNode.ToDictionaryOrNull();
+            Dictionary<string, object> boardNodeDict = boardNode as Dictionary<string, object>;
 
             IEnumerable<object> blockedCells = boardNodeDict.ContainsKey("blockedCells") ? (IEnumerable<object>)boardNodeDict["blockedCells"] : new List<object>();
-			IEnumerable<object> cellProperties = boardNodeDict.ContainsKey("cellProperties")? (IEnumerable<object>)boardNodeDict["cellProperties"] : new List<object>();
+            IEnumerable<object> cellProperties = boardNodeDict.ContainsKey("cellProperties") ? (IEnumerable<object>)boardNodeDict["cellProperties"] : new List<object>();
             int cols = cells.Width;
             int rows = cells.Height;
 
@@ -45,10 +45,17 @@ namespace Saltr.UnitySdk.Game.Matching
             for (int p = 0; p < cellProperties.Count(); p++)
             {
                 object property = cellProperties.ElementAt(p);
-                IEnumerable<object> coords = (IEnumerable<object>)property.ToDictionaryOrNull()["coords"];
-                SLTCell cell2 = cells.Retrieve(coords.ElementAt(0).ToIntegerOrZero(), coords.ElementAt(1).ToIntegerOrZero());
-                if (cell2 != null)
-                    cell2.Properties = property.ToDictionaryOrNull()["value"].ToDictionaryOrNull();
+
+                Dictionary<string, object> propertyDict = property as Dictionary<string, object>;
+
+                if (propertyDict != null)
+                {
+
+                    IEnumerable<object> coords = (IEnumerable<object>)propertyDict["coords"];
+                    SLTCell cell2 = cells.Retrieve(coords.ElementAt(0).ToIntegerOrZero(), coords.ElementAt(1).ToIntegerOrZero());
+                    if (cell2 != null)
+                        cell2.Properties = propertyDict["value"] as Dictionary<string, object>;
+                }
             }
 
 
@@ -56,7 +63,7 @@ namespace Saltr.UnitySdk.Game.Matching
             for (int b = 0; b < blockedCells.Count(); b++)
             {
                 IEnumerable<object> blokedCell = (IEnumerable<object>)blockedCells.ElementAt(b);
-				var cell3 = cells.Retrieve(blokedCell.ElementAt(0).ToIntegerOrZero(), blokedCell.ElementAt(1).ToIntegerOrZero());
+                var cell3 = cells.Retrieve(blokedCell.ElementAt(0).ToIntegerOrZero(), blokedCell.ElementAt(1).ToIntegerOrZero());
                 if (cell3 != null)
                 {
                     cell3.IsBlocked = true;
@@ -69,7 +76,7 @@ namespace Saltr.UnitySdk.Game.Matching
         {
             for (int i = 0; i < chunkNodes.Count(); i++)
             {
-                Dictionary<string, object> chunkNode = chunkNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> chunkNode = chunkNodes.ElementAt(i) as Dictionary<string, object>;
                 IEnumerable<object> cellNodes = new List<object>();
                 if (chunkNode != null && chunkNode.ContainsKey("cells"))
                     cellNodes = (IEnumerable<object>)chunkNode["cells"];
@@ -80,32 +87,46 @@ namespace Saltr.UnitySdk.Game.Matching
                     int row = 0;
                     int col = 0;
 
-					row = ((IEnumerable<object>)cellNode).ElementAt(0).ToIntegerOrZero();
-					col = ((IEnumerable<object>)cellNode).ElementAt(1).ToIntegerOrZero();
+                    row = ((IEnumerable<object>)cellNode).ElementAt(0).ToIntegerOrZero();
+                    col = ((IEnumerable<object>)cellNode).ElementAt(1).ToIntegerOrZero();
 
-					chunkCells.Add(cells.Retrieve(row, col) as SLTCell);
+                    chunkCells.Add(cells.Retrieve(row, col) as SLTCell);
                 }
 
                 IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode["assets"];
                 List<SLTChunkAssetRule> chunkAssetRules = new List<SLTChunkAssetRule>();
-                foreach (var assetNode in assetNodes)
+                foreach (var assetNodeObj in assetNodes)
                 {
                     string assetId = "";
                     string distribytionType = "";
                     float distributionVale = 0;
                     IEnumerable<object> states = new List<object>();
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("assetId"))
-                        assetId = assetNode.ToDictionaryOrNull()["assetId"].ToString();
+                    var assetNode = assetNodeObj as Dictionary<string, object>;
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("distributionType"))
-                        distribytionType = assetNode.ToDictionaryOrNull()["distributionType"].ToString();
+                    if (assetNode != null)
+                    {
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("distributionValue"))
-                        distributionVale = assetNode.ToDictionaryOrNull()["distributionValue"].ToFloatOrZero();
+                        if (assetNode.ContainsKey("assetId"))
+                        {
+                            assetId = assetNode["assetId"].ToString();
+                        }
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("states"))
-                        states = (IEnumerable<object>)assetNode.ToDictionaryOrNull()["states"];
+                        if (assetNode.ContainsKey("distributionType"))
+                        {
+                            distribytionType = assetNode.ToString();
+                        }
+
+                        if (assetNode.ContainsKey("distributionValue"))
+                        {
+                            distributionVale = assetNode["distributionValue"].ToFloatOrZero();
+                        }
+
+                        if (assetNode.ContainsKey("states"))
+                        {
+                            states = (IEnumerable<object>)assetNode["states"];
+                        }
+                    }
 
                     chunkAssetRules.Add(new SLTChunkAssetRule(assetId, distribytionType, distributionVale, states));
                 }
@@ -119,7 +140,7 @@ namespace Saltr.UnitySdk.Game.Matching
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
             if (boardNode.ContainsKey("properties"))
             {
-                boardProperties = boardNode["properties"].ToDictionaryOrNull();
+                boardProperties = boardNode["properties"] as Dictionary<string, object>;
             }
 
             SLTCells cells = new SLTCells(boardNode["cols"].ToIntegerOrZero(), boardNode["rows"].ToIntegerOrZero());
@@ -128,7 +149,7 @@ namespace Saltr.UnitySdk.Game.Matching
             IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode["layers"];
             for (int i = 0; i < layerNodes.Count(); i++)
             {
-                Dictionary<string, object> layerNode = layerNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> layerNode = layerNodes.ElementAt(i) as Dictionary<string, object>;
                 SLTMatchingBoardLayer layer = ParseLayer(layerNode, i, cells, assetMap);
                 layers.Add(layer);
             }
@@ -139,8 +160,8 @@ namespace Saltr.UnitySdk.Game.Matching
 
         private SLTMatchingBoardLayer ParseLayer(Dictionary<string, object> layerNode, int layerIndex, SLTCells cells, Dictionary<string, object> assetMap)
         {
-			//temporarily checking for 2 names until "layerId" is removed!
-			string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
+            //temporarily checking for 2 names until "layerId" is removed!
+            string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
             SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer(token, layerIndex);
 
             ParseFixedAssets(layer, (IEnumerable<object>)layerNode["fixedAssets"], cells, assetMap);
@@ -154,7 +175,7 @@ namespace Saltr.UnitySdk.Game.Matching
         {
             for (int i = 0; i < assetNodes.Count(); i++)
             {
-                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i) as Dictionary<string, object>;
                 SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
                 IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
                 IEnumerable<object> cellPositions = (IEnumerable<object>)assetInstanceNode["cells"];
@@ -176,7 +197,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
             foreach (var boardId in boardNodes.Keys)
             {
-                Dictionary<string, object> boardNode = boardNodes[boardId].ToDictionaryOrNull();
+                Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
                 boards[boardId] = ParseLevelBoard(boardNode, assetMap);
             }
             return boards;

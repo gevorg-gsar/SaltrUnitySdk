@@ -136,7 +136,7 @@ namespace Saltr.UnitySdk.Game
 
             if (rootNode.ContainsKey("boards"))
             {
-                boardsNode = rootNode["boards"].ToDictionaryOrNull();
+                boardsNode = rootNode["boards"] as Dictionary<string, object>;
 
             }
             else

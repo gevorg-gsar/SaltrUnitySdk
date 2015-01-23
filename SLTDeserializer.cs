@@ -208,7 +208,7 @@ namespace Saltr.UnitySdk
                         }
 
                         //TODO @GSAR: later, leave localIndex only!
-                        levelStructures.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, properties.ToDictionaryOrNull(), version.ToString()));
+                        levelStructures.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, properties as Dictionary<string, object>, version.ToString()));
                     }
 
                     //TODO @GSAR: remove this sort when SALTR confirms correct ordering

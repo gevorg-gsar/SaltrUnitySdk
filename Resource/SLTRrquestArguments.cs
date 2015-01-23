@@ -6,7 +6,7 @@ using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Resource
 {
-   	public class SLTRequestArguments // TODO @gyln: get rid of alll the strings 
+    public class SLTRequestArguments // TODO @gyln: get rid of alll the strings 
     {
         #region Fields
 
@@ -80,13 +80,13 @@ namespace Saltr.UnitySdk.Resource
 
         public SLTBasicProperties BasicProperties
         {
-            get { return new SLTBasicProperties(RawData.GetValue("basicProperties").ToDictionaryOrNull()); }
+            get { return new SLTBasicProperties(RawData.GetValue("basicProperties") as Dictionary<string, object>); }
             set { RawData["basicProperties"] = value.RawData; }
         }
 
         public Dictionary<string, object> CustomProperties
         {
-            get { return RawData.GetValue("customProperties").ToDictionaryOrNull(); }
+            get { return RawData.GetValue("customProperties") as Dictionary<string, object>; }
             set { RawData["customProperties"] = value; }
         }
 
@@ -118,6 +118,6 @@ namespace Saltr.UnitySdk.Resource
         }
 
         #endregion Properties
-       
-  	}
+
+    }
 }

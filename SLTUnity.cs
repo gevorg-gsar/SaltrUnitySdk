@@ -218,7 +218,7 @@ namespace Saltr.UnitySdk
             }
 
             return ticket;
-        } 
+        }
 
         private static SLTResourceTicket GetTicket(string url, Dictionary<string, string> urlVars)
         {
@@ -517,7 +517,7 @@ namespace Saltr.UnitySdk
 
         private void LevelContentLoadSuccessHandler(SLTLevel level, object content)
         {
-            level.UpdateContent(content.ToDictionaryOrNull());
+            level.UpdateContent(content as Dictionary<string, object>);
             _levelContentLoadSuccessCallback();
         }
 
@@ -538,7 +538,7 @@ namespace Saltr.UnitySdk
             if (data.ContainsKey("response"))
             {
                 IEnumerable<object> res = (IEnumerable<object>)data["response"];
-                response = res.FirstOrDefault().ToDictionaryOrNull();
+                response = res.FirstOrDefault() as Dictionary<string, object>;
                 isSuccess = (bool)response["success"]; //.ToString().ToLower() == "true";
             }
             else
@@ -546,7 +546,7 @@ namespace Saltr.UnitySdk
                 //TODO @GSAR: remove later when API is versioned!
                 if (data.ContainsKey("responseData"))
                 {
-                    response = data["responseData"].ToDictionaryOrNull();
+                    response = data["responseData"] as Dictionary<string, object>;
                 }
 
                 isSuccess = (data.ContainsKey("status") && data["status"].ToString() == SLTConstants.ResultSuccess);
@@ -646,33 +646,43 @@ namespace Saltr.UnitySdk
                 return;
             }
 
-            IEnumerable<object> response = (IEnumerable<object>)data.ToDictionaryOrNull().GetValue("response");
-            if (response == null)
+            var dataDict = data as Dictionary<string, object>;
+            if (dataDict != null)
             {
-                Debug.Log("[Saltr] Dev feature Sync's response is null.");
-                return;
-            }
-
-            if (response.Count() <= 0)
-            {
-                Debug.Log("[Saltr] Dev feature Sync response's length is <= 0.");
-                return;
-            }
-
-            Dictionary<string, object> responseObject = response.ElementAt(0).ToDictionaryOrNull();
-
-            if ((bool)responseObject.GetValue("success") == false)
-            {
-                if ((SLTStatusCode)responseObject.GetValue("error").ToDictionaryOrNull().GetValue("code").ToIntegerOrZero() == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
+                IEnumerable<object> response = (IEnumerable<object>)dataDict.GetValue("response");
+                if (response == null)
                 {
-                    RegisterDevice();
+                    Debug.Log("[Saltr] Dev feature Sync's response is null.");
+                    return;
                 }
-                Debug.Log("[Saltr] Sync error: " + responseObject.GetValue("error").ToDictionaryOrNull().GetValue<string>("message"));
-            }
-            else
-            {
-                Debug.Log("[Saltr] Dev feature Sync is complete.");
-                _isSynced = true;
+
+                if (response.Count() <= 0)
+                {
+                    Debug.Log("[Saltr] Dev feature Sync response's length is <= 0.");
+                    return;
+                }
+
+                Dictionary<string, object> responseObject = response.ElementAt(0) as Dictionary<string, object>;
+
+                if ((bool)responseObject.GetValue("success") == false)
+                {
+
+                    Dictionary<string, object> errorDict = responseObject.GetValue("error") as Dictionary<string, object>;
+                    if (errorDict != null)
+                    {
+                        if ((SLTStatusCode)errorDict.GetValue("code").ToIntegerOrZero() == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
+                        {
+                            RegisterDevice();
+                        }
+
+                        Debug.Log("[Saltr] Sync error: " + errorDict.GetValue<string>("message"));
+                    }
+                }
+                else
+                {
+                    Debug.Log("[Saltr] Dev feature Sync is complete.");
+                    _isSynced = true;
+                }
             }
         }
 
@@ -684,12 +694,12 @@ namespace Saltr.UnitySdk
         private void AddDeviceSuccessHandler(SLTResource resource)
         {
             Debug.Log("[Saltr] Dev adding new device is complete.");
-            Dictionary<string, object> data = resource.Data.ToDictionaryOrNull();
+            Dictionary<string, object> data = resource.Data as Dictionary<string, object>;
             bool isSuccess = false;
             Dictionary<string, object> response;
             if (data.ContainsKey("response"))
             {
-                response = ((IEnumerable<object>)(data["response"])).ElementAt(0).ToDictionaryOrNull();
+                response = ((IEnumerable<object>)(data["response"])).ElementAt(0) as Dictionary<string, object>;
                 isSuccess = (bool)response.GetValue("success");
                 if (isSuccess)
                 {
@@ -698,7 +708,11 @@ namespace Saltr.UnitySdk
                 }
                 else
                 {
-                    _wrapper.SetStatus(response.GetValue("error").ToDictionaryOrNull().GetValue<string>("message"));
+                    Dictionary<string, object> errorDict = response.GetValue("error") as Dictionary<string, object>;
+                    if (errorDict != null)
+                    {
+                        _wrapper.SetStatus(errorDict.GetValue<string>("message"));
+                    }
                 }
             }
             else
@@ -798,7 +812,7 @@ namespace Saltr.UnitySdk
         {
             if (_activeFeatures.ContainsKey(token))
             {
-                return (_activeFeatures[token]).Properties.ToDictionaryOrNull();
+                return (_activeFeatures[token]).Properties as Dictionary<string, object>;
             }
             else
                 if (_developerFeatures.ContainsKey(token))
@@ -806,7 +820,7 @@ namespace Saltr.UnitySdk
                     SLTFeature devFeature = _developerFeatures[token];
                     if (devFeature != null && devFeature.Required)
                     {
-                        return devFeature.Properties.ToDictionaryOrNull();
+                        return devFeature.Properties as Dictionary<string, object>;
                     }
                 }
 
@@ -832,7 +846,7 @@ namespace Saltr.UnitySdk
             {
                 path = path == null ? SLTConstants.LocalLevelPackageUrl : path;
                 object applicationData = _repository.GetObjectFromApplication(path);
-                _levelPacks = SLTDeserializer.DecodeLevels(applicationData.ToDictionaryOrNull());
+                _levelPacks = SLTDeserializer.DecodeLevels(applicationData as Dictionary<string, object>);
             }
             else
             {
@@ -914,8 +928,8 @@ namespace Saltr.UnitySdk
             {
                 if (cachedData != null)
                 {
-                    _activeFeatures = SLTDeserializer.DecodeFeatures(cachedData.ToDictionaryOrNull());
-                    _experiments = SLTDeserializer.DecodeExperiments(cachedData.ToDictionaryOrNull());
+                    _activeFeatures = SLTDeserializer.DecodeFeatures(cachedData as Dictionary<string, object>);
+                    _experiments = SLTDeserializer.DecodeExperiments(cachedData as Dictionary<string, object>);
                 }
             }
             _isStarted = true;
