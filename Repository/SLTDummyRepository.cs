@@ -4,43 +4,58 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using UnityEngine;
+
 namespace Saltr.UnitySdk.Repository
 {
-  internal class SLTDummyRepository : ISLTRepository
+    public class SLTDummyRepository : ISLTRepository
     {
+        #region Ctor
 
         public SLTDummyRepository()
         {
         }
 
+        #endregion Ctor
+
+        #region Business Methods
+
+        //TODO: Gor Implement methods below.
+        
         public void CacheObject(string name, string version, object obj)
         {
-
+            
         }
 
         public object GetObjectFromApplication(string fileName)
         {
-			return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
+            return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
         }
 
         public object GetObjectFromCache(string fileName)
         {
-			return null;
+            return null;
         }
 
         public object GetObjectFromStorage(string name)
         {
-			return null;
+            return null;
         }
 
         public string GetObjectVersion(string name)
         {
-			return "";
+            return "";
         }
 
         public void SaveObject(string name, object obj)
         {
-            
+
         }
+        #endregion Business Methods
+
+        
+
+        
+
+        
     }
 }
