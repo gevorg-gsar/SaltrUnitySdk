@@ -9,10 +9,17 @@ namespace Saltr.UnitySdk.Resource
 {
     public class SLTResourceTicket
     {
-        private string _url;
-        private Dictionary<string,string> _variables;
+        #region Fields
 
+        private int _fails;
         private int _maxAttempts;
+        private int _dropTimeout;
+        private string _url;
+        private Dictionary<string, string> _variables;
+
+        #endregion  Fields
+
+        #region Properties
 
         public int MaxAttempts
         {
@@ -20,51 +27,63 @@ namespace Saltr.UnitySdk.Resource
             set { _maxAttempts = value; }
         }
 
-        private int _fails;
         public int Fails
         {
             get { return _fails; }
             set { _fails = value; }
         }
 
-        private int _dropTimeout;
         public int DropTimeout
         {
             get { return _dropTimeout; }
             set { _dropTimeout = value; }
         }
-		
 
-       	public Dictionary<string,string> GetUrlVars()
+        public int IdleTimeout { get; set; }
+
+        public string Method { get; set; }
+
+        public Dictionary<string, string> GetUrlVars()
         {
             return _variables;
         }
 
-        public SLTResourceTicket(string url, Dictionary<string,string> urlVars)
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTResourceTicket(string url, Dictionary<string, string> urlVars)
         {
             // TODO: Complete member initialization
             this._url = url;
             this._variables = urlVars;
         }
 
-        public int IdleTimeout { get; set; }
-        public string Method { get; set; }
+        #endregion Ctor
 
+        #region Business Mehods
 
-        internal string GetURLRequest()
+        public string GetURLRequest()
         {
             string requestUrl = _url;
-			char seperator = '?';
-			if(_variables != null)
-				foreach (string key in _variables.Keys)
-	            {
-	                requestUrl += seperator;
-					requestUrl += key + "=" + WWW.EscapeURL(_variables[key]);	
-					if('?' == seperator)
-						seperator = '&';
-	            }
+            char seperator = '?';
+            if (_variables != null)
+            { 
+                foreach (string key in _variables.Keys)
+                {
+                    requestUrl += seperator;
+                    requestUrl += key + "=" + WWW.EscapeURL(_variables[key]);
+                    if ('?' == seperator)
+                    {
+                        seperator = '&';
+                    }
+                }
+            }
 
             return requestUrl;
         }
+
+        #endregion  Business Mehods
+        
     }
 }

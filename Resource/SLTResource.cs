@@ -14,7 +14,25 @@ namespace Saltr.UnitySdk.Resource
 {
     public class SLTResource
     {
+        #region Fields
+
         private string _id;
+        private bool _isLoaded;
+        private SLTResourceTicket _ticket;
+
+        protected int _fails;
+        protected int _maxAttempts;
+        protected int _dropTimeout;
+        protected int _httpStatus;
+        protected List<object> _responseHeaders = new List<object>();
+
+        protected Action<SLTResource> _onSuccess;
+        protected Action<SLTResource> _onFail;
+        //        protected Action _onProgress;
+
+        #endregion Fields
+
+        #region Properties
 
         protected string Id
         {
@@ -22,15 +40,11 @@ namespace Saltr.UnitySdk.Resource
             set { _id = value; }
         }
 
-        private bool _isLoaded;
-
         public bool IsLoaded
         {
             get { return _isLoaded; }
             set { _isLoaded = value; }
         }
-
-        private SLTResourceTicket _ticket;
 
         public SLTResourceTicket Ticket
         {
@@ -38,22 +52,16 @@ namespace Saltr.UnitySdk.Resource
             set { _ticket = value; }
         }
 
-        protected int _fails;
+        public Dictionary<string, object> Data { set; get; }
 
-        protected int _maxAttempts;
-        protected int _dropTimeout;
-        protected int _httpStatus;
-        protected List<object> _responseHeaders = new List<object>();
+        #endregion Properties
 
+        #region Ctor
 
-        protected Action<SLTResource> _onSuccess;
-//        protected Action _onProgress;
-        private Action<SLTResource> _onFail;
-
-        public SLTResource(string Id, SLTResourceTicket Ticket, Action<SLTResource> onSuccess, Action<SLTResource> onFail)
+        public SLTResource(string id, SLTResourceTicket ticket, Action<SLTResource> onSuccess, Action<SLTResource> onFail)
         {
-            this._id = Id;
-            this._ticket = Ticket;
+            this._id = id;
+            this._ticket = ticket;
             this._onSuccess = onSuccess;
             this._onFail = onFail;
 
@@ -63,14 +71,9 @@ namespace Saltr.UnitySdk.Resource
             _httpStatus = -1;
         }
 
+        #endregion Ctor
 
-        public void IOErrorHandler()
-        {
-            if (_fails == _maxAttempts)
-                _onFail(this);
-            else
-                this.Load();
-        }
+        #region Business Methods
 
         public void Load()
         {
@@ -78,22 +81,37 @@ namespace Saltr.UnitySdk.Resource
             GameObject go = GameObject.Find(SLTUnity.SALTR_GAME_OBJECT_NAME);
             NetworkWrapper wrapper = (NetworkWrapper)go.GetComponent(typeof(NetworkWrapper));
             if (Ticket.Method == "post")
+            {
                 //post
-                wrapper.POST(Ticket.GetURLRequest(), Ticket.GetUrlVars(), _onSuccess , _onFail, this);
-
+                wrapper.POST(Ticket.GetURLRequest(), Ticket.GetUrlVars(), _onSuccess, _onFail, this);
+            }
             else
+            {
                 wrapper.GET(_ticket.GetURLRequest(), _onSuccess, _onFail, this);
+            }
         }
 
-
-        internal void Dispose()
+        public void Dispose()
         {
         }
 
-        public Dictionary<string, object> Data
+        #endregion Business Methods
+
+        #region Event Handlers
+
+        public void IOErrorHandler()
         {
-            set;
-            get;
+            if (_fails == _maxAttempts)
+            {
+                _onFail(this);
+            }
+            else
+            {
+                this.Load();
+            }
         }
+
+        #endregion Event Handlers
+
     }
 }
