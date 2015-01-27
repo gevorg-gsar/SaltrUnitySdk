@@ -5,35 +5,42 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game
 {
-	/// <summary>
-	/// Represents a state of an asset.
-	/// </summary>
-   public class SLTAssetState
-   {
-		string _token;
-		Dictionary<string, object> _properties;
+    /// <summary>
+    /// Represents a state of an asset.
+    /// </summary>
+    public class SLTAssetState
+    {
+        #region Properties
 
-     	internal SLTAssetState(string token, Dictionary<string,object> properties)
-       	{
-           _token = token;
-           _properties = properties;
-       	}
+        /// <summary>
+        /// Gets the token, a unique identifier for each state of an asset.
+        /// </summary>
+        public string Token
+        {
+            get;
+            private set;
+        }
 
-		/// <summary>
-		/// Gets the token, a unique identifier for each state of an asset.
-		/// </summary>
-		public string Token
-		{
-			get{return _token;}
-		}
+        /// <summary>
+        /// Gets the properties, associated with the state.
+        /// </summary>
+        public Dictionary<string, object> Properties
+        {
+            get;
+            private set;
+        }
 
-		/// <summary>
-		/// Gets the properties, associated with the state.
-		/// </summary>
-		public Dictionary<string,object> Properties
-		{
-			get{return _properties;}
-		}
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTAssetState(string token, Dictionary<string, object> properties)
+        {
+            Token = token;
+            Properties = properties;
+        }
+
+        #endregion Ctor
 
     }
 }
