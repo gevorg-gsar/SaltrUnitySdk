@@ -110,9 +110,9 @@ namespace Saltr.UnitySdk.Game.Matching
                 foreach (var assetNodeObj in assetNodes)
                 {
                     string assetId = "";
-                    string distribytionType = "";
                     float distributionVale = 0;
                     IEnumerable<object> states = new List<object>();
+                    ChunkAssetRuleDistributionType distribytionType = ChunkAssetRuleDistributionType.Unknown;
 
                     var assetNode = assetNodeObj as Dictionary<string, object>;
 
@@ -126,7 +126,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
                         if (assetNode.ContainsKey("distributionType"))
                         {
-                            distribytionType = assetNode.ToString();
+                            distribytionType = (ChunkAssetRuleDistributionType)Enum.Parse(typeof(ChunkAssetRuleDistributionType), assetNode.ToString(), true);
                         }
 
                         if (assetNode.ContainsKey("distributionValue"))

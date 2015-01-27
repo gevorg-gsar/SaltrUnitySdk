@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
-    internal class SLTChunkAssetRule
+    public class SLTChunkAssetRule
     {
         private string _assetId;
 		private IEnumerable<object> _stateIds;
-        private string _distributionType;
+        private ChunkAssetRuleDistributionType _distributionType;
         private float _distributionValue;
 
         public string AssetId
@@ -22,7 +22,7 @@ namespace Saltr.UnitySdk.Game.Matching
             get { return _stateIds; }
         }
 
-        public string DistributionType
+        public ChunkAssetRuleDistributionType DistributionType
         {
             get { return _distributionType; }
         }
@@ -32,12 +32,20 @@ namespace Saltr.UnitySdk.Game.Matching
             get { return _distributionValue; }
         }
 
-        public SLTChunkAssetRule(string assetId, string distributionType, float distributionValue, IEnumerable<object> stateIds)
+        public SLTChunkAssetRule(string assetId, ChunkAssetRuleDistributionType distributionType, float distributionValue, IEnumerable<object> stateIds)
         {
             _assetId = assetId;
             _distributionType = distributionType;
             _distributionValue = distributionValue;
             _stateIds = stateIds;
         }
+    }
+
+    public enum ChunkAssetRuleDistributionType
+    {
+        Unknown = 0,
+        Count,
+        Ratio,
+        Random
     }
 }
