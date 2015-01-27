@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Saltr.UnitySdk.Utils;
+using System;
 
 namespace Saltr.UnitySdk.Game.Canvas2D
 {
@@ -10,27 +11,37 @@ namespace Saltr.UnitySdk.Game.Canvas2D
     {
         private static SLT2DLevelParser _instance;
 
-        public static SLT2DLevelParser GetInstance()
+        public static SLT2DLevelParser Instance
         {
-            if (_instance == null)
+            get
             {
-                _instance = new SLT2DLevelParser();
+                if (_instance == null)
+                {
+                    _instance = new SLT2DLevelParser();
+                }
+                return _instance;
             }
-            return _instance;
         }
-        
+
         public override System.Collections.Generic.Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();
-            foreach (var boardId in boardNodes.Keys)
+            try
             {
-                Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
-                boards[boardId] = ParseLevelBoard(boardNode, assetMap);
+                foreach (var boardId in boardNodes.Keys)
+                {
+                    Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
+                    boards[boardId] = ParseLevelBoard(boardNode, assetMap);
 
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
             }
             return boards;
         }
-        
+
         private SLT2DBoard ParseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
@@ -75,7 +86,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
             return layer;
 
         }
-        
+
         private void ParseAssetInstances(SLT2DBoardLayer layer, IEnumerable<object> assetNodes, Dictionary<string, object> assetMap)
         {
             for (int i = 0; i < assetNodes.Count(); i++)

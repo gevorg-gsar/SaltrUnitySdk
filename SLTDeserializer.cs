@@ -212,7 +212,7 @@ namespace Saltr.UnitySdk
                     }
 
                     //TODO @GSAR: remove this sort when SALTR confirms correct ordering
-                    levelStructures.Sort(new SLTLevel.SortByIndex());
+                    levelStructures.Sort(new LevelSortByIndexComparer());
                     //levelStructures.Sort(new SLTLevel.SortByIndex());
                     SLTLevelPack levelPack = new SLTLevelPack(token, packIndex, levelStructures);
                     levelPacks.Add(levelPack);
@@ -220,7 +220,7 @@ namespace Saltr.UnitySdk
                 }
             }
             //TODO @GSAR: remove this sort when SALTR confirms correct ordering
-            levelPacks.Sort(new SLTLevelPack.SortByIndex());
+            levelPacks.Sort(new LevelPackSortByIndexComparer());
             return levelPacks;
         }
 

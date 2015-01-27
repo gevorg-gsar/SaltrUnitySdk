@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Saltr.UnitySdk.Utils;
+using System;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
@@ -13,13 +14,16 @@ namespace Saltr.UnitySdk.Game.Matching
 
         private SLTMatchingLevelParser() { }
 
-        public static SLTMatchingLevelParser getInstance()
+        public static SLTMatchingLevelParser Instance
         {
-            if (INSTANCE == null)
+            get
             {
-                INSTANCE = new SLTMatchingLevelParser();
+                if (INSTANCE == null)
+                {
+                    INSTANCE = new SLTMatchingLevelParser();
+                }
+                return INSTANCE;
             }
-            return INSTANCE;
         }
 
 
@@ -70,7 +74,7 @@ namespace Saltr.UnitySdk.Game.Matching
                 int col, row;
                 int.TryParse(blokedCell.ElementAt(0).ToString(), out col);
                 int.TryParse(blokedCell.ElementAt(1).ToString(), out row);
-                
+
                 var cell3 = cells.Retrieve(col, row);
                 if (cell3 != null)
                 {
@@ -93,7 +97,7 @@ namespace Saltr.UnitySdk.Game.Matching
                 foreach (var cellNode in cellNodes)
                 {
                     int col = 0;
-                    int row = 0;                    
+                    int row = 0;
 
                     int.TryParse(((IEnumerable<object>)cellNode).ElementAt(0).ToString(), out col);
                     int.TryParse(((IEnumerable<object>)cellNode).ElementAt(1).ToString(), out row);
@@ -183,7 +187,6 @@ namespace Saltr.UnitySdk.Game.Matching
             return layer;
         }
 
-
         private void ParseFixedAssets(SLTMatchingBoardLayer layer, IEnumerable<object> assetNodes, SLTCells cells, Dictionary<string, object> assetMap)
         {
             for (int i = 0; i < assetNodes.Count(); i++)
@@ -196,28 +199,33 @@ namespace Saltr.UnitySdk.Game.Matching
                 for (int j = 0; j < cellPositions.Count(); j++)
                 {
                     IEnumerable<object> position = (IEnumerable<object>)cellPositions.ElementAt(j);
-                    int col,row;
-                    
+                    int col, row;
+
                     int.TryParse(position.ElementAt(0).ToString(), out col);
                     int.TryParse(position.ElementAt(1).ToString(), out row);
-                    
+
                     SLTCell cell = cells.Retrieve(col, row);
                     cell.SetAssetInstance(layer.Token, layer.Index, new SLTAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties));
                 }
             }
         }
-
-
-
+        
         public override Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();
-
-            foreach (var boardId in boardNodes.Keys)
+            try
             {
-                Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
-                boards[boardId] = ParseLevelBoard(boardNode, assetMap);
+                foreach (var boardId in boardNodes.Keys)
+                {
+                    Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
+                    boards[boardId] = ParseLevelBoard(boardNode, assetMap);
+                }
             }
+            catch (Exception e)
+            {
+                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
+            }
+
             return boards;
         }
 

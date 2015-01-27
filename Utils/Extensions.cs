@@ -46,7 +46,7 @@ namespace Saltr.UnitySdk.Utils
             {
                 string key = dictionary.Keys.ElementAt(i);
                 object value = dictionary[key];
-                if (value == null || (value as String == String.Empty))
+                if (value == null || (value as string == string.Empty))
                 {
                     dictionary.Remove(key);
                 }
