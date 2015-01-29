@@ -5,19 +5,27 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
-    internal class SLTCompositeInstance : SLTAssetInstance
+    public class SLTCompositeInstance : SLTAssetInstance
     {
-        private IEnumerable<object> _cells;
+        #region Properties
 
         public IEnumerable<object> Cells
         {
-            get { return _cells; }
+            get;
+            private set;
         }
+
+        #endregion Properties
+
+        #region Ctor
 
         public SLTCompositeInstance(string token, List<SLTAssetState> stateIds, object properties, IEnumerable<object> cells)
             : base(token, stateIds, properties)
         {
-            _cells = cells;
+            Cells = cells;
         }
+
+        #endregion Ctor
+        
     }
 }

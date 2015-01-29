@@ -62,7 +62,7 @@ namespace Saltr.UnitySdk.Game.Matching
                 {
                     chunkAssetRule = randomChunkAssetRules[i];
                     count = (i == lastChunkAssetIndex ? _availableCells.Count : (int)RandomWithin(minAssetCount, maxAssetCount));
-                    GenerateAssetInstances(count, chunkAssetRule.AssetId, chunkAssetRule.StateId);
+                    GenerateAssetInstances(count, chunkAssetRule.AssetId, chunkAssetRule.StateIds);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
                     fractionAssets.Add(fractObject);
 
-                    GenerateAssetInstances(count, assetRule.AssetId, assetRule.StateId);
+                    GenerateAssetInstances(count, assetRule.AssetId, assetRule.StateIds);
                 }
 
                 fractionAssets.Sort(new TempFractionComparer());
@@ -107,14 +107,14 @@ namespace Saltr.UnitySdk.Game.Matching
                 //TODO: Gor review why fractionAssets are iterated availableCellsNum times. 
                 for (int i = 0; i < availableCellsNum; i++)
                 {
-                    GenerateAssetInstances(1, fractionAssets[i].AssetRule.AssetId, fractionAssets[i].AssetRule.StateId);
+                    GenerateAssetInstances(1, fractionAssets[i].AssetRule.AssetId, fractionAssets[i].AssetRule.StateIds);
                 }
             }
         }
 
         private void GenerateAssetInstancesByCount(List<SLTChunkAssetRule> countChunkAssetRules)
         {
-            countChunkAssetRules.ForEach(assetRule => GenerateAssetInstances(assetRule.DistributionValue, assetRule.AssetId, assetRule.StateId));
+            countChunkAssetRules.ForEach(assetRule => GenerateAssetInstances(assetRule.DistributionValue, assetRule.AssetId, assetRule.StateIds));
         }
 
         private void GenerateAssetInstances(float count, string assetId, IEnumerable<object> stateIds)

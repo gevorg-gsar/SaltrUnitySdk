@@ -8,9 +8,19 @@ using System;
 namespace Saltr.UnitySdk.Game.Matching
 {
 
-    internal class SLTMatchingLevelParser : SLTLevelParser
+    public sealed class SLTMatchingLevelParser : SLTLevelParser
     {
-        private static SLTMatchingLevelParser INSTANCE = null;
+        #region Static Fields
+
+        private static readonly SLTMatchingLevelParser _instance = new SLTMatchingLevelParser();
+
+        #endregion Static Fields
+
+        #region Ctor
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static SLTMatchingLevelParser() { }
 
         private SLTMatchingLevelParser() { }
 
@@ -18,14 +28,13 @@ namespace Saltr.UnitySdk.Game.Matching
         {
             get
             {
-                if (INSTANCE == null)
-                {
-                    INSTANCE = new SLTMatchingLevelParser();
-                }
-                return INSTANCE;
+                return _instance;
             }
         }
 
+        #endregion Ctor
+
+        #region Internal Methods
 
         private static void InitializeCells(SLTCells cells, object boardNode)
         {
@@ -46,52 +55,52 @@ namespace Saltr.UnitySdk.Game.Matching
             }
 
             //assigning cell properties
-            for (int p = 0; p < cellProperties.Count(); p++)
+            foreach (var property in cellProperties)
             {
-                object property = cellProperties.ElementAt(p);
-
                 Dictionary<string, object> propertyDict = property as Dictionary<string, object>;
 
                 if (propertyDict != null)
                 {
-
                     IEnumerable<object> coords = (IEnumerable<object>)propertyDict["coords"];
                     int cord1, cord2;
                     int.TryParse(coords.ElementAt(0).ToString(), out cord1);
                     int.TryParse(coords.ElementAt(1).ToString(), out cord2);
 
-                    SLTCell cell2 = cells.Retrieve(cord1, cord2);
-                    if (cell2 != null)
-                        cell2.Properties = propertyDict["value"] as Dictionary<string, object>;
+                    SLTCell cellToFill = cells.Retrieve(cord1, cord2);
+                    if (cellToFill != null)
+                    {
+                        cellToFill.Properties = propertyDict["value"] as Dictionary<string, object>;
+                    }
                 }
             }
 
-
             //blocking cells
-            for (int b = 0; b < blockedCells.Count(); b++)
+            foreach (var blockedCellObj in blockedCells)
             {
-                IEnumerable<object> blokedCell = (IEnumerable<object>)blockedCells.ElementAt(b);
+                IEnumerable<object> blockedCell = (IEnumerable<object>)blockedCellObj;
                 int col, row;
-                int.TryParse(blokedCell.ElementAt(0).ToString(), out col);
-                int.TryParse(blokedCell.ElementAt(1).ToString(), out row);
+                int.TryParse(blockedCell.ElementAt(0).ToString(), out col);
+                int.TryParse(blockedCell.ElementAt(1).ToString(), out row);
 
-                var cell3 = cells.Retrieve(col, row);
-                if (cell3 != null)
+                var cellToBlock = cells.Retrieve(col, row);
+                if (cellToBlock != null)
                 {
-                    cell3.IsBlocked = true;
+                    cellToBlock.IsBlocked = true;
                 }
             }
         }
 
-
         private static void ParseLayerChunks(SLTMatchingBoardLayer layer, IEnumerable<object> chunkNodes, SLTCells cells, Dictionary<string, object> assetMap)
         {
-            for (int i = 0; i < chunkNodes.Count(); i++)
+            foreach (var chunkNodeObj in chunkNodes)
             {
-                Dictionary<string, object> chunkNode = chunkNodes.ElementAt(i) as Dictionary<string, object>;
+                Dictionary<string, object> chunkNode = chunkNodeObj as Dictionary<string, object>;
+
                 IEnumerable<object> cellNodes = new List<object>();
                 if (chunkNode != null && chunkNode.ContainsKey("cells"))
+                {
                     cellNodes = (IEnumerable<object>)chunkNode["cells"];
+                }
 
                 List<SLTCell> chunkCells = new List<SLTCell>();
                 foreach (var cellNode in cellNodes)
@@ -118,7 +127,6 @@ namespace Saltr.UnitySdk.Game.Matching
 
                     if (assetNode != null)
                     {
-
                         if (assetNode.ContainsKey("assetId"))
                         {
                             assetId = assetNode["assetId"].ToString();
@@ -142,10 +150,11 @@ namespace Saltr.UnitySdk.Game.Matching
 
                     chunkAssetRules.Add(new SLTChunkAssetRule(assetId, distribytionType, distributionVale, states));
                 }
+
                 layer.AddChunk(new SLTChunk(layer.Token, layer.Index, chunkCells, chunkAssetRules, assetMap));
+
             }
         }
-
 
         private SLTMatchingBoard ParseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
@@ -156,7 +165,6 @@ namespace Saltr.UnitySdk.Game.Matching
             }
 
             int width, height;
-
             int.TryParse(boardNode["cols"].ToString(), out width);
             int.TryParse(boardNode["rows"].ToString(), out height);
 
@@ -164,6 +172,7 @@ namespace Saltr.UnitySdk.Game.Matching
             InitializeCells(cells, boardNode);
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
             IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode["layers"];
+
             for (int i = 0; i < layerNodes.Count(); i++)
             {
                 Dictionary<string, object> layerNode = layerNodes.ElementAt(i) as Dictionary<string, object>;
@@ -173,7 +182,6 @@ namespace Saltr.UnitySdk.Game.Matching
 
             return new SLTMatchingBoard(cells, layers, boardProperties);
         }
-
 
         private SLTMatchingBoardLayer ParseLayer(Dictionary<string, object> layerNode, int layerIndex, SLTCells cells, Dictionary<string, object> assetMap)
         {
@@ -189,18 +197,18 @@ namespace Saltr.UnitySdk.Game.Matching
 
         private void ParseFixedAssets(SLTMatchingBoardLayer layer, IEnumerable<object> assetNodes, SLTCells cells, Dictionary<string, object> assetMap)
         {
-            for (int i = 0; i < assetNodes.Count(); i++)
+            foreach (var assetNodeObj in assetNodes)
             {
-                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i) as Dictionary<string, object>;
+                Dictionary<string, object> assetInstanceNode = assetNodeObj as Dictionary<string, object>;
                 SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
                 IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
                 IEnumerable<object> cellPositions = (IEnumerable<object>)assetInstanceNode["cells"];
 
-                for (int j = 0; j < cellPositions.Count(); j++)
+                foreach (var cellPositionObj in cellPositions)
                 {
-                    IEnumerable<object> position = (IEnumerable<object>)cellPositions.ElementAt(j);
-                    int col, row;
+                    IEnumerable<object> position = cellPositionObj as IEnumerable<object>;
 
+                    int col, row;
                     int.TryParse(position.ElementAt(0).ToString(), out col);
                     int.TryParse(position.ElementAt(1).ToString(), out row);
 
@@ -209,7 +217,11 @@ namespace Saltr.UnitySdk.Game.Matching
                 }
             }
         }
-        
+
+        #endregion  Internal Methods
+
+        #region Business Methods
+
         public override Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();
@@ -229,6 +241,7 @@ namespace Saltr.UnitySdk.Game.Matching
             return boards;
         }
 
+        #endregion Business Methods
 
     }
 }

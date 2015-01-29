@@ -7,38 +7,46 @@ namespace Saltr.UnitySdk.Game.Matching
 {
     public class SLTChunkAssetRule
     {
-        private string _assetId;
-		private IEnumerable<object> _stateIds;
-        private ChunkAssetRuleDistributionType _distributionType;
-        private float _distributionValue;
+        #region Properties
 
         public string AssetId
         {
-            get { return _assetId; }
+            get;
+            private set;
         }
 
-		public IEnumerable<object> StateId
+        public IEnumerable<object> StateIds
         {
-            get { return _stateIds; }
+            get;
+            private set;
+        }
+
+        public float DistributionValue
+        {
+            get;
+            private set;
         }
 
         public ChunkAssetRuleDistributionType DistributionType
         {
-            get { return _distributionType; }
+            get;
+            private set;
         }
-        
-        public float DistributionValue
-        {
-            get { return _distributionValue; }
-        }
+
+        #endregion Properties
+
+        #region Ctor
 
         public SLTChunkAssetRule(string assetId, ChunkAssetRuleDistributionType distributionType, float distributionValue, IEnumerable<object> stateIds)
         {
-            _assetId = assetId;
-            _distributionType = distributionType;
-            _distributionValue = distributionValue;
-            _stateIds = stateIds;
+            AssetId = assetId;
+            DistributionType = distributionType;
+            DistributionValue = distributionValue;
+            StateIds = stateIds;
         }
+
+        #endregion Ctor
+        
     }
 
     public enum ChunkAssetRuleDistributionType
