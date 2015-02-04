@@ -43,7 +43,7 @@ namespace Saltr.UnitySdk.Repository
 
         public string GetObjectVersion(string name)
         {
-            return "";
+            return string.Empty;
         }
 
         public void SaveObject(string name, object obj)

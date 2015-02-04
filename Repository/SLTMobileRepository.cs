@@ -39,7 +39,7 @@ namespace Saltr.UnitySdk.Repository
             string filePath = _cacheDirectory + "/" + name;
             saveInternal(filePath, objectToSave);
 
-            filePath = _cacheDirectory + "/" + name.Replace(".", "") + "_VERSION_";
+            filePath = _cacheDirectory + "/" + name.Replace(".", string.Empty) + "_VERSION_";
             saveInternal(filePath, new { _VERSION_ = version });
         }
 
@@ -70,7 +70,7 @@ namespace Saltr.UnitySdk.Repository
 
         public string GetObjectVersion(string name)
         {
-            string file = _cacheDirectory + "/" + name.Replace(".", "") + "_VERSION_";
+            string file = _cacheDirectory + "/" + name.Replace(".", string.Empty) + "_VERSION_";
             object obj = getIntenrnal(new FileInfo(file));
             Dictionary<string, object> dict = (Dictionary<string, object>)obj;
 
@@ -79,7 +79,7 @@ namespace Saltr.UnitySdk.Repository
                 return dict["_VERSION_"].ToString();
             }
 
-            return "";
+            return string.Empty;
         }
 
         public void SaveObject(string name, object objectToSave)

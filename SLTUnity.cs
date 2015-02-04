@@ -466,7 +466,7 @@ namespace Saltr.UnitySdk
             {
                 case RuntimePlatform.IPhonePlayer:
                     deviceModel = Util.GetHumanReadableDeviceModel(SystemInfo.deviceModel);
-                    os = SystemInfo.operatingSystem.Replace("Phone ", "");
+                    os = SystemInfo.operatingSystem.Replace("Phone ", string.Empty);
                     break;
                 case RuntimePlatform.Android:
                     deviceModel = SystemInfo.deviceModel;
@@ -489,7 +489,7 @@ namespace Saltr.UnitySdk
             args.Source = deviceModel;
             args.OS = os;
 
-            if (email != null && email != "")
+            if (!string.IsNullOrEmpty(email))
             {
                 args.Email = email;
             }

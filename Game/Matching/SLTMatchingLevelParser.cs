@@ -118,7 +118,7 @@ namespace Saltr.UnitySdk.Game.Matching
                 List<SLTChunkAssetRule> chunkAssetRules = new List<SLTChunkAssetRule>();
                 foreach (var assetNodeObj in assetNodes)
                 {
-                    string assetId = "";
+                    string assetId = string.Empty;
                     float distributionVale = 0;
                     IEnumerable<object> states = new List<object>();
                     ChunkAssetRuleDistributionType distribytionType = ChunkAssetRuleDistributionType.Unknown;

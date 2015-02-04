@@ -40,8 +40,8 @@ namespace Saltr.UnitySdk
                 {
                     Dictionary<string, object> experimentDictionary = (Dictionary<string, object>)experimentDictionaryObj;
 
-                    string token = "";
-                    string partition = "";
+                    string token = string.Empty;
+                    string partition = string.Empty;
                     SLTExperimentType experimentType = SLTExperimentType.Unknown;
                     IEnumerable<object> customEvents = null;
 
@@ -80,7 +80,7 @@ namespace Saltr.UnitySdk
                 foreach (var featureDictionary in featureDictionaryList)
                 {
                     Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
-                    string tokken = "";
+                    string tokken = string.Empty;
                     if (featureNod.ContainsKey("token"))
                     {
                         tokken = featureNod["token"].ToString();
@@ -139,7 +139,7 @@ namespace Saltr.UnitySdk
                 {
                     Dictionary<string, object> levelPackDictionary = (Dictionary<string, object>)LevelPackDictionaryObj;
 
-                    string token = "";
+                    string token = string.Empty;
                     if (levelPackDictionary.ContainsKey("token"))
                     {
                         token = (string)levelPackDictionary["token"];
@@ -177,7 +177,7 @@ namespace Saltr.UnitySdk
                             int.TryParse(levelDict["index"].ToString(), out ind);
                         }
 
-                        string url = "";
+                        string url = string.Empty;
                         if (levelDict.ContainsKey("url"))
                         {
                             url = levelDict["url"].ToString();

@@ -19,13 +19,13 @@ namespace Saltr.UnitySdk.Utils
         private SLTUnity _saltr;
 
         [SerializeField]
-        private string _clientKey = "";
+        private string _clientKey = string.Empty;
 
         [SerializeField]
-        private string _deviceId = "";
+        private string _deviceId = string.Empty;
 
         [SerializeField]
-        private string _socialId = "";
+        private string _socialId = string.Empty;
 
         [SerializeField]
         private bool _isDevMode = false;
@@ -61,7 +61,7 @@ namespace Saltr.UnitySdk.Utils
         [System.Serializable]
         public class FeatureEntry
         {
-            public string token = "";
+            public string token = string.Empty;
             public PropertyEntry[] properties = null;
             public bool required = false;
         }
@@ -69,8 +69,8 @@ namespace Saltr.UnitySdk.Utils
         [System.Serializable]
         public class PropertyEntry
         {
-            public string key = "";
-            public string value = "";
+            public string key = string.Empty;
+            public string value = string.Empty;
         }
 
         #endregion Nested Classes
@@ -107,7 +107,7 @@ namespace Saltr.UnitySdk.Utils
                 return;
 
             gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
-            _deviceId = _deviceId != "" ? _deviceId : SystemInfo.deviceUniqueIdentifier;
+            _deviceId = _deviceId != string.Empty ? _deviceId : SystemInfo.deviceUniqueIdentifier;
             _saltr = new SLTUnity(_clientKey, _deviceId, _useCache);
             _saltr.SocialId = _socialId;
             _saltr.IsDevMode = _isDevMode;
@@ -151,7 +151,7 @@ namespace Saltr.UnitySdk.Utils
         private string _defaultEmail = "example@mail.com";
 
         //	string _deviceName = "";
-        private string _email = "";
+        private string _email = string.Empty;
         private string _status = "idle";
 
         private bool _loading = false;
@@ -214,11 +214,17 @@ namespace Saltr.UnitySdk.Utils
                 {
                     if (GUI.GetNameOfFocusedControl() == "email_field")
                     {
-                        if (_email == _defaultEmail) _email = "";
+                        if (_email == _defaultEmail)
+                        {
+                            _email = string.Empty;
+                        }
                     }
                     else
                     {
-                        if (_email == "") _email = _defaultEmail;
+                        if (_email == string.Empty)
+                        {
+                            _email = _defaultEmail;
+                        }
                     }
                 }
 
