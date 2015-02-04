@@ -33,9 +33,9 @@ namespace Saltr.UnitySdk
                 return null;
             }
 
-            if (rootDictionary.ContainsKey("experiments"))
+            if (rootDictionary.ContainsKey(SLTConstants.Experiments))
             {
-                IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary["experiments"];
+                IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary[SLTConstants.Experiments];
                 foreach (var experimentDictionaryObj in experimentDictionaryList)
                 {
                     Dictionary<string, object> experimentDictionary = (Dictionary<string, object>)experimentDictionaryObj;
@@ -45,17 +45,17 @@ namespace Saltr.UnitySdk
                     SLTExperimentType experimentType = SLTExperimentType.Unknown;
                     IEnumerable<object> customEvents = null;
 
-                    if (experimentDictionary.ContainsKey("token"))
-                        token = experimentDictionary["token"].ToString();
+                    if (experimentDictionary.ContainsKey(SLTConstants.Token))
+                        token = experimentDictionary[SLTConstants.Token].ToString();
 
-                    if (experimentDictionary.ContainsKey("partition"))
-                        partition = experimentDictionary["partition"].ToString();
+                    if (experimentDictionary.ContainsKey(SLTConstants.Partition))
+                        partition = experimentDictionary[SLTConstants.Partition].ToString();
 
-                    if (experimentDictionary.ContainsKey("type"))
-                        experimentType = (SLTExperimentType)Enum.Parse(typeof(SLTExperimentType), experimentDictionary["type"].ToString(), true);
+                    if (experimentDictionary.ContainsKey(SLTConstants.Type))
+                        experimentType = (SLTExperimentType)Enum.Parse(typeof(SLTExperimentType), experimentDictionary[SLTConstants.Type].ToString(), true);
 
-                    if (experimentDictionary.ContainsKey("customEventList"))
-                        customEvents = (IEnumerable<object>)experimentDictionary["customEventList"];
+                    if (experimentDictionary.ContainsKey(SLTConstants.CustomEventList))
+                        customEvents = (IEnumerable<object>)experimentDictionary[SLTConstants.CustomEventList];
 
                     SLTExperiment experimentInfo = new SLTExperiment(token, partition, experimentType, customEvents);
                     experiments.Add(experimentInfo);

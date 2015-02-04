@@ -276,8 +276,8 @@ namespace Saltr.UnitySdk
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
 
-            urlVars["cmd"] = SLTConstants.ActionGetAppData; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConstants.ActionGetAppData;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionGetAppData; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionGetAppData;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -285,9 +285,13 @@ namespace Saltr.UnitySdk
             args.Client = CLIENT;
 
             if (_deviceId != null)
+            {
                 args.DeviceId = _deviceId;
+            }
             else
-                throw new Exception("Field 'deviceId' is required.");
+            { 
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
 
             if (_socialId != null)
             {
@@ -304,10 +308,10 @@ namespace Saltr.UnitySdk
                 args.CustomProperties = customProperties;
             }
 
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
-            return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
+            return new SLTResource(SLTConstants.ResourceIdSaltrAppConfig, ticket, loadSuccessCallback, loadFailCallback);
         }
 
         private object LoadLevelContentInternally(SLTLevel level)
@@ -375,8 +379,7 @@ namespace Saltr.UnitySdk
                 SLTResource.Dispose();
             };
 
-
-            SLTResource resource = new SLTResource("saltr", ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdSaltr, ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
             resource.Load();
         }
 
@@ -398,8 +401,8 @@ namespace Saltr.UnitySdk
         private void Sync()
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConstants.ActionDevSyncData; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConstants.ActionDevSyncData;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionDevSyncData; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevSyncData;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -407,16 +410,16 @@ namespace Saltr.UnitySdk
             args.ClientKey = _clientKey;
             args.IsDevMode = _isDevMode;
 
-            urlVars["devMode"] = _isDevMode.ToString();
+            urlVars[SLTConstants.UrlParamDevMode] = _isDevMode.ToString();
 
             if (_deviceId != null)
             {
                 args.DeviceId = _deviceId;
-                urlVars["deviceId"] = _deviceId;
+                urlVars[SLTConstants.DeviceId] = _deviceId;
             }
             else
             {
-                throw new Exception("Field 'deviceId' is required.");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
             if (_socialId != null)
@@ -434,18 +437,18 @@ namespace Saltr.UnitySdk
 
             args.DeveloperFeatures = featureList;
             args.RawData.RemoveEmptyOrNullEntries();
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
-            SLTResource resource = new SLTResource("syncFeatures", ticket, SyncSuccessHandler, SyncFailHandler);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdSyncFeatures, ticket, SyncSuccessHandler, SyncFailHandler);
             resource.Load();
         }
 
         private void AddDeviceToSaltr(string email)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["action"] = SLTConstants.ActionDevRegisterDevice;
-            urlVars["clientKey"] = _clientKey;
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevRegisterDevice;
+            urlVars[SLTConstants.UrlParamClientKey] = _clientKey;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -457,11 +460,12 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception("Field 'deviceId' is required");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
-            string deviceModel = "Unknown";
-            string os = "Unknown";
+            string deviceModel = SLTConstants.Unknown;
+            string os = SLTConstants.Unknown;
+
             switch (Application.platform)
             {
                 case RuntimePlatform.IPhonePlayer:
@@ -495,13 +499,13 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception("Email is required.");
+                throw new Exception(ExceptionConstants.EmailIsRequired);
             }
 
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars);
-            SLTResource resource = new SLTResource("addDevice", ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdAddDevice, ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
             resource.Load();
         }
 
@@ -535,21 +539,21 @@ namespace Saltr.UnitySdk
             bool isSuccess = false;
             Dictionary<string, object> response = new Dictionary<string, object>();
 
-            if (data.ContainsKey("response"))
+            if (data.ContainsKey(SLTConstants.Response))
             {
-                IEnumerable<object> res = (IEnumerable<object>)data["response"];
+                IEnumerable<object> res = (IEnumerable<object>)data[SLTConstants.Response];
                 response = res.FirstOrDefault() as Dictionary<string, object>;
-                isSuccess = (bool)response["success"]; //.ToString().ToLower() == "true";
+                isSuccess = (bool)response[SLTConstants.Success]; //.ToString().ToLower() == "true";
             }
             else
             {
                 //TODO @GSAR: remove later when API is versioned!
-                if (data.ContainsKey("responseData"))
+                if (data.ContainsKey(SLTConstants.ResponseData))
                 {
-                    response = data["responseData"] as Dictionary<string, object>;
+                    response = data[SLTConstants.ResponseData] as Dictionary<string, object>;
                 }
 
-                isSuccess = (data.ContainsKey("status") && data["status"].ToString() == SLTConstants.ResultSuccess);
+                isSuccess = (data.ContainsKey(SLTConstants.Status) && data[SLTConstants.Status].ToString() == SLTConstants.ResultSuccess);
             }
 
             _isLoading = false;
@@ -561,9 +565,9 @@ namespace Saltr.UnitySdk
                     Sync();
                 }
 
-                if (response.ContainsKey("levelType"))
+                if (response.ContainsKey(SLTConstants.LevelType))
                 {
-                    _levelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), response["levelType"].ToString(), true);
+                    _levelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), response[SLTConstants.LevelType].ToString(), true);
                 }
 
                 Dictionary<string, SLTFeature> saltrFeatures = new Dictionary<string, SLTFeature>();
@@ -623,16 +627,16 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                if (response.ContainsKey("error"))
+                if (response.ContainsKey(SLTConstants.Error))
                 {
-                    _connectFailCallback(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>("error").GetValue<string>("code")), response.GetValue<Dictionary<string, object>>("error").GetValue<string>("message")));
+                    _connectFailCallback(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Code)), response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Message)));
                 }
                 else
                 {
                     int errorCode;
-                    int.TryParse(response.GetValue<string>("errorCode"), out errorCode);
+                    int.TryParse(response.GetValue<string>(SLTConstants.ErrorCode), out errorCode);
 
-                    _connectFailCallback(new SLTStatus(errorCode, response.GetValue<string>("errorMessage")));
+                    _connectFailCallback(new SLTStatus(errorCode, response.GetValue<string>(SLTConstants.ErrorMessage)));
                 }
 
             }
@@ -652,7 +656,7 @@ namespace Saltr.UnitySdk
             var dataDict = data as Dictionary<string, object>;
             if (dataDict != null)
             {
-                IEnumerable<object> response = (IEnumerable<object>)dataDict.GetValue("response");
+                IEnumerable<object> response = (IEnumerable<object>)dataDict.GetValue(SLTConstants.Response);
                 if (response == null)
                 {
                     Debug.Log("[Saltr] Dev feature Sync's response is null.");
@@ -667,21 +671,21 @@ namespace Saltr.UnitySdk
 
                 Dictionary<string, object> responseObject = response.ElementAt(0) as Dictionary<string, object>;
 
-                if ((bool)responseObject.GetValue("success") == false)
+                if ((bool)responseObject.GetValue(SLTConstants.Success) == false)
                 {
 
-                    Dictionary<string, object> errorDict = responseObject.GetValue("error") as Dictionary<string, object>;
+                    Dictionary<string, object> errorDict = responseObject.GetValue(SLTConstants.Error) as Dictionary<string, object>;
                     if (errorDict != null)
                     {
                         int errorCode;
-                        int.TryParse(errorDict.GetValue("code").ToString(), out errorCode);
+                        int.TryParse(errorDict.GetValue(SLTConstants.Code).ToString(), out errorCode);
                         //TODO: change below casting to use Enum.Parse() method.
                         if ((SLTStatusCode)errorCode == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
                         {
                             RegisterDevice();
                         }
 
-                        Debug.Log("[Saltr] Sync error: " + errorDict.GetValue<string>("message"));
+                        Debug.Log("[Saltr] Sync error: " + errorDict.GetValue<string>(SLTConstants.Message));
                     }
                 }
                 else
@@ -703,21 +707,21 @@ namespace Saltr.UnitySdk
             Dictionary<string, object> data = resource.Data as Dictionary<string, object>;
             bool isSuccess = false;
             Dictionary<string, object> response;
-            if (data.ContainsKey("response"))
+            if (data.ContainsKey(SLTConstants.Response))
             {
-                response = ((IEnumerable<object>)(data["response"])).ElementAt(0) as Dictionary<string, object>;
-                isSuccess = (bool)response.GetValue("success");
+                response = ((IEnumerable<object>)(data[SLTConstants.Response])).ElementAt(0) as Dictionary<string, object>;
+                isSuccess = (bool)response.GetValue(SLTConstants.Success);
                 if (isSuccess)
                 {
-                    _wrapper.SetStatus("Success");
+                    _wrapper.SetStatus(SLTConstants.Success);
                     Sync();
                 }
                 else
                 {
-                    Dictionary<string, object> errorDict = response.GetValue("error") as Dictionary<string, object>;
+                    Dictionary<string, object> errorDict = response.GetValue(SLTConstants.Error) as Dictionary<string, object>;
                     if (errorDict != null)
                     {
-                        _wrapper.SetStatus(errorDict.GetValue<string>("message"));
+                        _wrapper.SetStatus(errorDict.GetValue<string>(SLTConstants.Message));
                     }
                 }
             }
@@ -730,7 +734,7 @@ namespace Saltr.UnitySdk
         private void AddDeviceFailHandler(SLTResource resource)
         {
             Debug.Log("[Saltr] Dev adding new device has failed.");
-            _wrapper.SetStatus("Failed");
+            _wrapper.SetStatus(SLTConstants.Failed);
         }
 
         private void AppDataLoadFailCallback(SLTResource resource)
@@ -909,7 +913,7 @@ namespace Saltr.UnitySdk
         {
             if (_deviceId == null)
             {
-                throw new Exception("deviceId field is required and can't be null.");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
             if (_developerFeatures.Count == 0 && !_useNoFeatures)
@@ -1048,8 +1052,8 @@ namespace Saltr.UnitySdk
             }
 
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConstants.ActionAddProperties; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConstants.ActionAddProperties;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionAddProperties; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionAddProperties;
 
             SLTRequestArguments args = new SLTRequestArguments()
             {
@@ -1064,7 +1068,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception("Field 'deviceId' is a required.");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
             if (_socialId != null)
@@ -1084,21 +1088,21 @@ namespace Saltr.UnitySdk
 
             Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
             {
-                Debug.Log("success");
+                Debug.Log(SLTConstants.Success);
                 Dictionary<string, object> data = res.Data;
                 res.Dispose();
             };
 
             Action<SLTResource> propertyAddFail = delegate(SLTResource res)
             {
-                Debug.Log("error");
+                Debug.Log(SLTConstants.Error);
                 res.Dispose();
             };
 
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
-            SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdProperty, ticket, propertyAddSuccess, propertyAddFail);
             resource.Load();
         }
 

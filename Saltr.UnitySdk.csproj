@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ExceptionConstants.cs" />
     <Compile Include="Game\LevelSortByIndexComparer.cs" />
     <Compile Include="Game\LevelPackSortByIndexComparer.cs" />
     <Compile Include="Game\SLTLevelParserFactory.cs" />

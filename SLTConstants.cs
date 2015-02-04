@@ -30,5 +30,53 @@ namespace Saltr.UnitySdk
 
 		public const string ResultSuccess = "SUCCEED";
 		public const string ResultError = "ERROR";
+
+        public const string Age = "age";
+        public const string Gender = "gender";
+        public const string Locale = "locale";
+        public const string Region = "region";
+        public const string City = "city";
+        public const string Country = "country";
+        public const string Location = "location";
+        public const string AppVersion = "appVersion";
+        public const string DeviceName = "deviceName";
+        public const string DeviceType = "deviceType";
+        public const string SystemName = "systemName";
+        public const string SystemVersion = "systemVersion";        
+        public const string BrowserName = "browserName";
+        public const string BrowserVersion = "browserVersion";
+        
+        
+        public const string DeviceId = "deviceId";
+        public const string Unknown = "Unknown";
+        public const string Code = "code";
+        public const string Type = "type";
+        public const string Value = "value";
+        public const string Error = "error";
+        public const string Token = "token";
+        public const string Status = "status";
+        public const string Failed = "failed";
+        public const string Success = "success";
+        public const string Message = "message";
+        public const string Response = "response";
+        public const string LevelType = "levelType";
+        public const string ErrorCode = "errorCode";
+        public const string Partition = "partition";
+        public const string Experiments = "experiments";
+        public const string ErrorMessage = "errorMessage";
+        public const string ResponseData = "responseData";
+        public const string CustomEventList = "customEventList";
+        
+        public const string UrlParamCommand = "cmd";
+        public const string UrlParamAction = "action";
+        public const string UrlParamArguments = "args";
+        public const string UrlParamDevMode = "devMode";
+        public const string UrlParamClientKey = "clientKey";
+
+        public const string ResourceIdSaltr = "saltr";
+        public const string ResourceIdProperty = "property";
+        public const string ResourceIdAddDevice = "addDevice";
+        public const string ResourceIdSyncFeatures = "syncFeatures";
+        public const string ResourceIdSaltrAppConfig = "saltAppConfig";        
     }
 }

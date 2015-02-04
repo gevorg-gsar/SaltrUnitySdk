@@ -30,8 +30,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string Age
         {
-            get { return RawData.GetValue<string>("age"); }
-            set { RawData["age"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Age); }
+            set { RawData[SLTConstants.Age] = value; }
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string Gender
         {
-            get { return RawData.GetValue<string>("gender"); }
-            set { RawData["gender"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Gender); }
+            set { RawData[SLTConstants.Gender] = value; }
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string AppVersion
         {
-            get { return RawData.GetValue<string>("appVersion"); }
-            set { RawData["appVersion"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.AppVersion); }
+            set { RawData[SLTConstants.AppVersion] = value; }
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string SystemName
         {
-            get { return RawData.GetValue<string>("systemName"); }
-            set { RawData["systemName"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.SystemName); }
+            set { RawData[SLTConstants.SystemName] = value; }
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string SystemVersion
         {
-            get { return RawData.GetValue<string>("systemVersion"); }
-            set { RawData["systemVersion"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.SystemVersion); }
+            set { RawData[SLTConstants.SystemVersion] = value; }
         }
 
         /// <summary>
@@ -76,8 +76,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string BrowserName
         {
-            get { return RawData.GetValue<string>("browserName"); }
-            set { RawData["browserName"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.BrowserName); }
+            set { RawData[SLTConstants.BrowserName] = value; }
         }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string BrowserVersion
         {
-            get { return RawData.GetValue<string>("browserVersion"); }
-            set { RawData["browserVersion"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.BrowserVersion); }
+            set { RawData[SLTConstants.BrowserVersion] = value; }
         }
 
         /// <summary>
@@ -94,8 +94,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string DeviceName
         {
-            get { return RawData.GetValue<string>("deviceName"); }
-            set { RawData["deviceName"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.DeviceName); }
+            set { RawData[SLTConstants.DeviceName] = value; }
         }
 
         /// <summary>
@@ -103,8 +103,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string DeviceType
         {
-            get { return RawData.GetValue<string>("deviceType"); }
-            set { RawData["deviceType"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.DeviceType); }
+            set { RawData[SLTConstants.DeviceType] = value; }
         }
 
         /// <summary>
@@ -112,18 +112,18 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string Locale
         {
-            get { return RawData.GetValue<string>("locale"); }
-            set { RawData["locale"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Locale); }
+            set { RawData[SLTConstants.Locale] = value; }
         }
 
         /// <summary>
         /// The country the user is in, specified by ISO 2-letter code. E.g. US for United States. 
         /// Set to (locate) to detect the country based on the IP address of the caller.
         /// </summary>
-        public string Contry
+        public string Country
         {
-            get { return RawData.GetValue<string>("contry"); }
-            set { RawData["contry"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Country); }
+            set { RawData[SLTConstants.Country] = value; }
         }
 
         /// <summary>
@@ -132,8 +132,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string Region
         {
-            get { return RawData.GetValue<string>("region"); }
-            set { RawData["region"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Region); }
+            set { RawData[SLTConstants.Region] = value; }
         }
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string City
         {
-            get { return RawData.GetValue<string>("city"); }
-            set { RawData["city"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.City); }
+            set { RawData[SLTConstants.City] = value; }
         }
 
         /// <summary>
@@ -152,8 +152,8 @@ namespace Saltr.UnitySdk
         /// </summary>
         public string Location
         {
-            get { return RawData.GetValue<string>("location"); }
-            set { RawData["location"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Location); }
+            set { RawData[SLTConstants.Location] = value; }
         }
 
         #endregion Properties
