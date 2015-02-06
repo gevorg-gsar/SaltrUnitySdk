@@ -59,6 +59,11 @@ namespace Saltr.UnitySdk
         public const string ApiVersion = "apiVersion";
         public const string Unknown = "Unknown";
         public const string Assets = "assets";
+        public const string X = "x";
+        public const string Y = "y";
+        public const string PivotX = "pivotX";
+        public const string PivotY = "pivotY";
+        public const string Rotation = "rotation";
         public const string Code = "code";
         public const string Type = "type";
         public const string Cols = "cols";

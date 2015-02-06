@@ -88,12 +88,12 @@ namespace Saltr.UnitySdk.Game.Canvas2D
                 float y;
                 float rotation;
 
-                float.TryParse(assetInstanceNode["x"].ToString(), out x);
-                float.TryParse(assetInstanceNode["y"].ToString(), out y);
-                float.TryParse(assetInstanceNode["rotation"].ToString(), out rotation);
+                float.TryParse(assetInstanceNode[SLTConstants.X].ToString(), out x);
+                float.TryParse(assetInstanceNode[SLTConstants.Y].ToString(), out y);
+                float.TryParse(assetInstanceNode[SLTConstants.Rotation].ToString(), out rotation);
 
-                SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
-                IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
+                SLTAsset asset = assetMap[assetInstanceNode[SLTConstants.AssetId].ToString()] as SLTAsset;
+                IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode[SLTConstants.States];
 
                 layer.AddAssetInstance(new SLT2DAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties, x, y, rotation));
             }
@@ -124,20 +124,20 @@ namespace Saltr.UnitySdk.Game.Canvas2D
 
         protected override SLTAssetState ParseAssetState(Dictionary<string, object> stateNode)
         {
-            string token = stateNode.ContainsKey("token") ? stateNode["token"].ToString() : null;
-            Dictionary<string, object> properties = stateNode.ContainsKey("properties") ? stateNode["properties"] as Dictionary<string, object> : null;
+            string token = stateNode.ContainsKey(SLTConstants.Token) ? stateNode[SLTConstants.Token].ToString() : null;
+            Dictionary<string, object> properties = stateNode.ContainsKey(SLTConstants.Properties) ? stateNode[SLTConstants.Properties] as Dictionary<string, object> : null;
 
             float pivotX = 0;
             float pivotY = 0;
 
-            if (stateNode.ContainsKey("pivotX"))
+            if (stateNode.ContainsKey(SLTConstants.PivotX))
             {
-                float.TryParse(stateNode["pivotX"].ToString(), out pivotX);
+                float.TryParse(stateNode[SLTConstants.PivotX].ToString(), out pivotX);
             }
 
-            if (stateNode.ContainsKey("pivotY"))
+            if (stateNode.ContainsKey(SLTConstants.PivotY))
             {
-                float.TryParse(stateNode["pivotY"].ToString(), out pivotY);
+                float.TryParse(stateNode[SLTConstants.PivotY].ToString(), out pivotY);
             }
 
             return new SLT2DAssetState(token, properties, pivotX, pivotY);
