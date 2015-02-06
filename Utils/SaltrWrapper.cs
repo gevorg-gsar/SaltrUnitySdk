@@ -152,7 +152,7 @@ namespace Saltr.UnitySdk.Utils
 
         //	string _deviceName = "";
         private string _email = string.Empty;
-        private string _status = "idle";
+        private string _status = SLTConstants.StatusIdle;
 
         private bool _loading = false;
         private bool _showDeviceRegistationDialog = false;
@@ -169,12 +169,12 @@ namespace Saltr.UnitySdk.Utils
 
                 GUILayout.BeginArea(new Rect((Screen.width - _mainAreaWidth) / 2, (Screen.height - _mainAreaHeight) / 2, _mainAreaWidth, _mainAreaHeight));
 
-                GUILayout.BeginVertical("box");
-                GUILayout.Label("Register Device with SALTR");
+                GUILayout.BeginVertical(SLTConstants.GuiBox);
+                GUILayout.Label(SLTConstants.GuiRegisterDeviceWithSaltr);
 
                 GUILayout.BeginHorizontal();
                 //					GUILayout.Label("Email");
-                GUI.SetNextControlName("email_field");
+                GUI.SetNextControlName(SLTConstants.GuiEmailField);
                 _email = GUILayout.TextField(_email, 256, GUILayout.Width(242));
                 GUILayout.EndHorizontal();
 
@@ -183,25 +183,25 @@ namespace Saltr.UnitySdk.Utils
                 //					_deviceName = GUILayout.TextField(_deviceName, 256,  GUILayout.Width(150));
                 //				GUILayout.EndHorizontal();
 
-                if (_status != "idle")
+                if (_status != SLTConstants.StatusIdle)
                     GUILayout.Label("Status:  " + _status);
 
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Close") && !_loading)
+                if (GUILayout.Button(SLTConstants.GuiClose) && !_loading)
                 {
                     HideDeviceRegistationDialog();
                 }
-                if (GUILayout.Button("Submit") && !_loading)
+                if (GUILayout.Button(SLTConstants.GuiSubmit) && !_loading)
                 {
                     if (Util.IsValidEmail(_email))
                     {
                         _deviceRegistationDialogCallback(_email);
-                        _status = "Loading...";
+                        _status = SLTConstants.StatusLoading;
                         _loading = true;
                     }
                     else
                     {
-                        _status = "Invalid email!";
+                        _status = SLTConstants.StatusInvalidEmail;
                     }
                 }
                 GUILayout.EndHorizontal();
@@ -212,7 +212,7 @@ namespace Saltr.UnitySdk.Utils
 
                 if (UnityEngine.Event.current.type == EventType.Repaint)
                 {
-                    if (GUI.GetNameOfFocusedControl() == "email_field")
+                    if (GUI.GetNameOfFocusedControl() == SLTConstants.GuiEmailField)
                     {
                         if (_email == _defaultEmail)
                         {

@@ -77,6 +77,17 @@ namespace Saltr.UnitySdk
         public const string ResourceIdProperty = "property";
         public const string ResourceIdAddDevice = "addDevice";
         public const string ResourceIdSyncFeatures = "syncFeatures";
-        public const string ResourceIdSaltrAppConfig = "saltAppConfig";        
+        public const string ResourceIdSaltrAppConfig = "saltAppConfig";
+
+        public const string StatusIdle = "idle";
+        public const string StatusLoading = "Loading...";
+        public const string StatusInvalidEmail = "Invalid email!";
+
+        public const string GuiBox = "box";
+        public const string GuiClose = "Close";
+        public const string GuiSubmit = "Submit";
+        public const string GuiEmailField = "email_field";
+
+        public const string GuiRegisterDeviceWithSaltr = "Register Device with SALTR";
     }
 }
