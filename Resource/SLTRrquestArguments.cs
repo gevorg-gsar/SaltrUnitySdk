@@ -38,83 +38,75 @@ namespace Saltr.UnitySdk.Resource
 
         public string DeviceId
         {
-            get { return RawData.GetValue<string>("deviceId"); }
-            set { RawData["deviceId"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.DeviceId); }
+            set { RawData[SLTConstants.DeviceId] = value; }
         }
 
         public string SocialId
         {
-            get { return RawData.GetValue<string>("socialId"); }
-            set { RawData["socialId"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.SocialId); }
+            set { RawData[SLTConstants.SocialId] = value; }
         }
-
-        //       	public string socialNetwork;
 
         public string ClientKey
         {
-            get { return RawData.GetValue<string>("clientKey"); }
-            set { RawData["clientKey"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.UrlParamClientKey); }
+            set { RawData[SLTConstants.UrlParamClientKey] = value; }
         }
-
-        //       	public string appVersion;
 
         public List<object> DeveloperFeatures
         {
-            get { return RawData.GetValue<List<object>>("developerFeatures"); }
-            set { RawData["developerFeatures"] = value; }
+            get { return RawData.GetValue<List<object>>(SLTConstants.DeveloperFeatures); }
+            set { RawData[SLTConstants.DeveloperFeatures] = value; }
         }
 
         public string ApiVersion
         {
-            get { return RawData.GetValue<string>("apiVersion"); }
-            set { RawData["apiVersion"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.ApiVersion); }
+            set { RawData[SLTConstants.ApiVersion] = value; }
         }
-
-        //       	public string saltrUserId;
 
         public bool IsDevMode
         {
-            get { return (bool)RawData.GetValue("devMode"); }
-            set { RawData["devMode"] = value; }
+            get { return (bool)RawData.GetValue(SLTConstants.UrlParamDevMode); }
+            set { RawData[SLTConstants.UrlParamDevMode] = value; }
         }
 
         public SLTBasicProperties BasicProperties
         {
-            get { return new SLTBasicProperties(RawData.GetValue("basicProperties") as Dictionary<string, object>); }
-            set { RawData["basicProperties"] = value.RawData; }
+            get { return new SLTBasicProperties(RawData.GetValue(SLTConstants.BasicProperties) as Dictionary<string, object>); }
+            set { RawData[SLTConstants.BasicProperties] = value.RawData; }
         }
 
         public Dictionary<string, object> CustomProperties
         {
-            get { return RawData.GetValue("customProperties") as Dictionary<string, object>; }
-            set { RawData["customProperties"] = value; }
+            get { return RawData.GetValue(SLTConstants.CustomProperties) as Dictionary<string, object>; }
+            set { RawData[SLTConstants.CustomProperties] = value; }
         }
 
         // TODO @gyln: make a different class for these? can inherit from a base that will have the common fields
         public string Id
         {
-            get { return RawData.GetValue<string>("id"); }
-            set { RawData["id"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Id); }
+            set { RawData[SLTConstants.Id] = value; }
         }
-
-        //		public string type;
 
         public string Source
         {
-            get { return RawData.GetValue<string>("source"); }
-            set { RawData["source"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Source); }
+            set { RawData[SLTConstants.Source] = value; }
         }
 
         public string OS
         {
-            get { return RawData.GetValue<string>("os"); }
-            set { RawData["os"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.OS); }
+            set { RawData[SLTConstants.OS] = value; }
         }
 
         public string Email
         {
-            get { return RawData.GetValue<string>("email"); }
-            set { RawData["email"] = value; }
+            get { return RawData.GetValue<string>(SLTConstants.Email); }
+            set { RawData[SLTConstants.Email] = value; }
         }
 
         #endregion Properties

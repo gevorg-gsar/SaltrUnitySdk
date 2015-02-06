@@ -9,35 +9,17 @@ namespace Saltr.UnitySdk.Resource
 {
     public class SLTResourceTicket
     {
-        #region Fields
-
-        private int _fails;
-        private int _maxAttempts;
-        private int _dropTimeout;
-        private string _url;
-        private Dictionary<string, string> _variables;
-
-        #endregion  Fields
-
         #region Properties
 
-        public int MaxAttempts
-        {
-            get { return _maxAttempts; }
-            set { _maxAttempts = value; }
-        }
+        public Dictionary<string, string> Variables { get; private set; }
 
-        public int Fails
-        {
-            get { return _fails; }
-            set { _fails = value; }
-        }
+        public string Url { get; private set; }
 
-        public int DropTimeout
-        {
-            get { return _dropTimeout; }
-            set { _dropTimeout = value; }
-        }
+        public int MaxAttempts { get; set; }
+
+        public int Fails { get; set; }
+
+        public int DropTimeout { get; set; }
 
         public int IdleTimeout { get; set; }
 
@@ -45,7 +27,7 @@ namespace Saltr.UnitySdk.Resource
 
         public Dictionary<string, string> GetUrlVars()
         {
-            return _variables;
+            return Variables;
         }
 
         #endregion Properties
@@ -55,8 +37,8 @@ namespace Saltr.UnitySdk.Resource
         public SLTResourceTicket(string url, Dictionary<string, string> urlVars)
         {
             // TODO: Complete member initialization
-            this._url = url;
-            this._variables = urlVars;
+            this.Url = url;
+            this.Variables = urlVars;
         }
 
         #endregion Ctor
@@ -65,14 +47,14 @@ namespace Saltr.UnitySdk.Resource
 
         public string GetURLRequest()
         {
-            string requestUrl = _url;
+            string requestUrl = Url;
             char seperator = '?';
-            if (_variables != null)
-            { 
-                foreach (string key in _variables.Keys)
+            if (Variables != null)
+            {
+                foreach (string key in Variables.Keys)
                 {
                     requestUrl += seperator;
-                    requestUrl += key + "=" + WWW.EscapeURL(_variables[key]);
+                    requestUrl += key + "=" + WWW.EscapeURL(Variables[key]);
                     if ('?' == seperator)
                     {
                         seperator = '&';
@@ -84,6 +66,6 @@ namespace Saltr.UnitySdk.Resource
         }
 
         #endregion  Business Mehods
-        
+
     }
 }
