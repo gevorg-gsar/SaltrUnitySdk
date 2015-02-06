@@ -40,8 +40,8 @@ namespace Saltr.UnitySdk.Game.Matching
         {
             Dictionary<string, object> boardNodeDict = boardNode as Dictionary<string, object>;
 
-            IEnumerable<object> blockedCells = boardNodeDict.ContainsKey("blockedCells") ? (IEnumerable<object>)boardNodeDict["blockedCells"] : new List<object>();
-            IEnumerable<object> cellProperties = boardNodeDict.ContainsKey("cellProperties") ? (IEnumerable<object>)boardNodeDict["cellProperties"] : new List<object>();
+            IEnumerable<object> blockedCells = boardNodeDict.ContainsKey(SLTConstants.BlockedCells) ? (IEnumerable<object>)boardNodeDict[SLTConstants.BlockedCells] : new List<object>();
+            IEnumerable<object> cellProperties = boardNodeDict.ContainsKey(SLTConstants.CellProperties) ? (IEnumerable<object>)boardNodeDict[SLTConstants.CellProperties] : new List<object>();
             int cols = cells.Width;
             int rows = cells.Height;
 
@@ -61,7 +61,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
                 if (propertyDict != null)
                 {
-                    IEnumerable<object> coords = (IEnumerable<object>)propertyDict["coords"];
+                    IEnumerable<object> coords = (IEnumerable<object>)propertyDict[SLTConstants.Coords];
                     int cord1, cord2;
                     int.TryParse(coords.ElementAt(0).ToString(), out cord1);
                     int.TryParse(coords.ElementAt(1).ToString(), out cord2);
@@ -69,7 +69,7 @@ namespace Saltr.UnitySdk.Game.Matching
                     SLTCell cellToFill = cells.Retrieve(cord1, cord2);
                     if (cellToFill != null)
                     {
-                        cellToFill.Properties = propertyDict["value"] as Dictionary<string, object>;
+                        cellToFill.Properties = propertyDict[SLTConstants.Value] as Dictionary<string, object>;
                     }
                 }
             }
@@ -97,9 +97,9 @@ namespace Saltr.UnitySdk.Game.Matching
                 Dictionary<string, object> chunkNode = chunkNodeObj as Dictionary<string, object>;
 
                 IEnumerable<object> cellNodes = new List<object>();
-                if (chunkNode != null && chunkNode.ContainsKey("cells"))
+                if (chunkNode != null && chunkNode.ContainsKey(SLTConstants.Cells))
                 {
-                    cellNodes = (IEnumerable<object>)chunkNode["cells"];
+                    cellNodes = (IEnumerable<object>)chunkNode[SLTConstants.Cells];
                 }
 
                 List<SLTCell> chunkCells = new List<SLTCell>();
@@ -114,7 +114,7 @@ namespace Saltr.UnitySdk.Game.Matching
                     chunkCells.Add(cells.Retrieve(col, row) as SLTCell);
                 }
 
-                IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode["assets"];
+                IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode[SLTConstants.Assets];
                 List<SLTChunkAssetRule> chunkAssetRules = new List<SLTChunkAssetRule>();
                 foreach (var assetNodeObj in assetNodes)
                 {
@@ -127,24 +127,24 @@ namespace Saltr.UnitySdk.Game.Matching
 
                     if (assetNode != null)
                     {
-                        if (assetNode.ContainsKey("assetId"))
+                        if (assetNode.ContainsKey(SLTConstants.AssetId))
                         {
-                            assetId = assetNode["assetId"].ToString();
+                            assetId = assetNode[SLTConstants.AssetId].ToString();
                         }
 
-                        if (assetNode.ContainsKey("distributionType"))
+                        if (assetNode.ContainsKey(SLTConstants.DistributionType))
                         {
                             distribytionType = (ChunkAssetRuleDistributionType)Enum.Parse(typeof(ChunkAssetRuleDistributionType), assetNode.ToString(), true);
                         }
 
-                        if (assetNode.ContainsKey("distributionValue"))
+                        if (assetNode.ContainsKey(SLTConstants.DistributionValue))
                         {
-                            float.TryParse(assetNode["distributionValue"].ToString(), out distributionVale);
+                            float.TryParse(assetNode[SLTConstants.DistributionValue].ToString(), out distributionVale);
                         }
 
-                        if (assetNode.ContainsKey("states"))
+                        if (assetNode.ContainsKey(SLTConstants.States))
                         {
-                            states = (IEnumerable<object>)assetNode["states"];
+                            states = (IEnumerable<object>)assetNode[SLTConstants.States];
                         }
                     }
 
@@ -159,19 +159,19 @@ namespace Saltr.UnitySdk.Game.Matching
         private SLTMatchingBoard ParseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
-            if (boardNode.ContainsKey("properties"))
+            if (boardNode.ContainsKey(SLTConstants.Properties))
             {
-                boardProperties = boardNode["properties"] as Dictionary<string, object>;
+                boardProperties = boardNode[SLTConstants.Properties] as Dictionary<string, object>;
             }
 
             int width, height;
-            int.TryParse(boardNode["cols"].ToString(), out width);
-            int.TryParse(boardNode["rows"].ToString(), out height);
+            int.TryParse(boardNode[SLTConstants.Cols].ToString(), out width);
+            int.TryParse(boardNode[SLTConstants.Rows].ToString(), out height);
 
             SLTCells cells = new SLTCells(width, height);
             InitializeCells(cells, boardNode);
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
-            IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode["layers"];
+            IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode[SLTConstants.Layers];
 
             for (int i = 0; i < layerNodes.Count(); i++)
             {

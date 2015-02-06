@@ -15,8 +15,8 @@ namespace Saltr.UnitySdk.Game
 
         protected virtual SLTAssetState ParseAssetState(Dictionary<string, object> stateNode)
         {
-            string token = stateNode.ContainsKey("token") ? stateNode["token"].ToString() : string.Empty;
-            Dictionary<string, object> properties = stateNode.ContainsKey("properties") ? stateNode["properties"] as Dictionary<string, object> : new Dictionary<string, object>();
+            string token = stateNode.ContainsKey(SLTConstants.Token) ? stateNode[SLTConstants.Token].ToString() : string.Empty;
+            Dictionary<string, object> properties = stateNode.ContainsKey(SLTConstants.Properties) ? stateNode[SLTConstants.Properties] as Dictionary<string, object> : new Dictionary<string, object>();
 
             return new SLTAssetState(token, properties);
         }
@@ -29,9 +29,9 @@ namespace Saltr.UnitySdk.Game
         {
             try
             {
-                if (rootNode.ContainsKey("assets"))
+                if (rootNode.ContainsKey(SLTConstants.Assets))
                 {
-                    Dictionary<string, object> assetsNodes = rootNode["assets"] as Dictionary<string, object>;
+                    Dictionary<string, object> assetsNodes = rootNode[SLTConstants.Assets] as Dictionary<string, object>;
 
                     Dictionary<string, object> assetMap = new Dictionary<string, object>();
                     foreach (var assetId in assetsNodes.Keys)
@@ -56,9 +56,9 @@ namespace Saltr.UnitySdk.Game
         //Parsing assets here
         private SLTAsset ParseAsset(Dictionary<string, object> assetNode)
         {
-            string token = assetNode.ContainsKey("token") ? assetNode["token"].ToString() : string.Empty;
-            object properties = assetNode.ContainsKey("properties") ? assetNode["properties"] : null;
-            Dictionary<string, object> states = assetNode.ContainsKey("states") ? ParseAssetStates(assetNode["states"] as Dictionary<string, object>) : new Dictionary<string, object>();
+            string token = assetNode.ContainsKey(SLTConstants.Token) ? assetNode[SLTConstants.Token].ToString() : string.Empty;
+            object properties = assetNode.ContainsKey(SLTConstants.Properties) ? assetNode[SLTConstants.Properties] : null;
+            Dictionary<string, object> states = assetNode.ContainsKey(SLTConstants.States) ? ParseAssetStates(assetNode[SLTConstants.States] as Dictionary<string, object>) : new Dictionary<string, object>();
             return new SLTAsset(token, properties, states);
         }
 

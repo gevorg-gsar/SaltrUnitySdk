@@ -12,8 +12,7 @@ namespace Saltr.UnitySdk.Game.Matching
     {
         public SLTCell[] _rawData;
         private SLTCellsIterator _iterator;
-
-
+        
         #region Properties
 
         /// <summary>

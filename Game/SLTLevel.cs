@@ -133,17 +133,16 @@ namespace Saltr.UnitySdk.Game
                 keys.Add(item);
             }
 
-            if (rootNode.ContainsKey("boards"))
+            if (rootNode.ContainsKey(SLTConstants.Boards))
             {
-                boardsNode = rootNode["boards"] as Dictionary<string, object>;
-
+                boardsNode = rootNode[SLTConstants.Boards] as Dictionary<string, object>;
             }
             else
             {
                 Debug.Log("[SALTR: ERROR] Level content's 'boards' node can not be found.");
             }
 
-            _properties = rootNode["properties"];
+            _properties = rootNode[SLTConstants.Properties];
 
             SLTLevelParser parser = SLTLevelParserFactory.GetParser(_levelType);
             if (parser != null)
