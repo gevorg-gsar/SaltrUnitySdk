@@ -7,8 +7,8 @@ namespace Saltr.UnitySdk.Status
 {
 	public class SLTStatusExperimentsParseError : SLTStatus
 	{
-		public SLTStatusExperimentsParseError() 
-            : base(SLTStatusCode.ClientExperimentsParseError, "[SALTR] Failed to decode Experiments.")
+		public SLTStatusExperimentsParseError()
+            : base(SLTStatusCode.ClientExperimentsParseError, ExceptionConstants.SaltrFailedDecodeExperiments)
 		{
 		}
 	}

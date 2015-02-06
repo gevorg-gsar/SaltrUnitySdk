@@ -142,8 +142,8 @@ namespace Saltr.UnitySdk.Utils
                 this._dropTimeout = 3;
             }
 
-            form.AddField("args", MiniJSON.Json.Serialize(post));
-            form.AddField("cmd", SLTConstants.ActionDevSyncData);
+            form.AddField(SLTConstants.UrlParamArguments, MiniJSON.Json.Serialize(post));
+            form.AddField(SLTConstants.UrlParamCommand, SLTConstants.ActionDevSyncData);
 
 
             //foreach (var item in post.Keys)

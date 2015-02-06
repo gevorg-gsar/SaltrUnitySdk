@@ -8,7 +8,7 @@ namespace Saltr.UnitySdk.Status
 	public class SLTStatusAppDataConcurrentLoadRefused : SLTStatus
 	{
 		public SLTStatusAppDataConcurrentLoadRefused()
-            : base(SLTStatusCode.ClientAppDataConcurrentLoadRefused, "[SALTR] appData load refused. Previous load is not complete")
+            : base(SLTStatusCode.ClientAppDataConcurrentLoadRefused, ExceptionConstants.SaltrAppDataLoadRefused)
 		{
 		}
 	}

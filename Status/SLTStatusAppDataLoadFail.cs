@@ -8,7 +8,7 @@ namespace Saltr.UnitySdk.Status
    	public class SLTStatusAppDataLoadFail : SLTStatus
     {
 		public SLTStatusAppDataLoadFail()
-            : base(SLTStatusCode.ClientAppDataLoadFail, "[SALTR] Failed to load appData.")
+            : base(SLTStatusCode.ClientAppDataLoadFail, ExceptionConstants.SaltrFailedLoadAppData)
 		{
 		}
     }

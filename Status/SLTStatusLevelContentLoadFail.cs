@@ -8,7 +8,7 @@ namespace Saltr.UnitySdk.Status
 	public class SLTStatusLevelContentLoadFail : SLTStatus
     {
 		public SLTStatusLevelContentLoadFail()
-            : base(SLTStatusCode.ClientLevelContentLoadFail, "Level content load has failed.")
+            : base(SLTStatusCode.ClientLevelContentLoadFail, ExceptionConstants.SaltrFailedLoadContent)
 		{
 		}
     }
