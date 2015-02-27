@@ -6,47 +6,55 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game
 {
-	/// <summary>
-	/// The SLTBoard class represents a game board. 
-	/// </summary>
-   	public class SLTBoard
+    /// <summary>
+    /// The SLTBoard class represents a game board. 
+    /// </summary>
+    public class SLTBoard
     {
-        private Dictionary<string, object> _properties;
-        private List<SLTBoardLayer> _layers;
-		
-        internal SLTBoard(List<SLTBoardLayer> layers, Dictionary<string, object> properties)
-        {
-            _properties = properties;
-            _layers = layers;
 
+        #region Properties
+
+        /// <summary>
+        /// Gets the layers of the board.
+        /// </summary>
+        public List<SLTBoardLayer> Layers
+        {
+            get;
+            private set;
         }
 
-		/// <summary>
-		/// Gets the properties associated with the board.
-		/// </summary>
-		public Dictionary<string, object> Properties
-		{
-			get { return _properties; }
-		}
-
-		/// <summary>
-		/// Gets the layers of the board.
-		/// </summary>
-		public List<SLTBoardLayer> Layers
-		{
-			get { return _layers; }
-		}
-
-		/// <summary>
-		/// Regenerates contents of all layers.
-		/// </summary>
-		public void Regenerate()
+        /// <summary>
+        /// Gets the properties associated with the board.
+        /// </summary>
+        public Dictionary<string, object> Properties
         {
-            for (int i = 0; i < _layers.Count; i++)
-            {
-                SLTBoardLayer layer = _layers[i] as SLTBoardLayer;
-                layer.Regenerate();
-            }
+            get;
+            private set;
         }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTBoard(List<SLTBoardLayer> layers, Dictionary<string, object> properties)
+        {
+            Layers = layers;
+            Properties = properties;
+        }
+
+        #endregion
+
+        #region Business Methods
+
+        /// <summary>
+        /// Regenerates contents of all layers.
+        /// </summary>
+        public void Regenerate()
+        {
+            Layers.ForEach(layer => layer.Regenerate());
+        }
+
+        #endregion Business Methods
+
     }
 }

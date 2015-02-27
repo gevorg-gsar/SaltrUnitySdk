@@ -10,30 +10,37 @@ namespace Saltr.UnitySdk.Game
 	/// </summary>
     public class SLTBoardLayer
     {
-        private string _token;
-        private int _index;
+        #region Properties
 
-        internal SLTBoardLayer(string LayerId, int LayerIndex)
-        {
-            _token = LayerId;
-            _index = LayerIndex;
-        }
-
-		/// <summary>
-		/// Gets the token, a unique identifier for the layer within a board.
-		/// </summary>
-        public string Token
-        {
-            get { return _token; }
-        }
-
-		/// <summary>
-		/// Gets the index, layers are ordered by this index within a board.
-		/// </summary>
+        /// <summary>
+        /// Gets the index, layers are ordered by this index within a board.
+        /// </summary>
         public int Index
         {
-            get { return _index; }
+            get;
+            private set;
         }
+
+        /// <summary>
+        /// Gets the token, a unique identifier for the layer within a board.
+        /// </summary>
+        public string Token
+        {
+            get;
+            private set;
+        }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTBoardLayer(string token, int index)
+        {
+            Token = token;
+            Index = index;
+        }       
+
+        #endregion Ctor
 
 		/// <summary>
 		/// Regenerates layer contents. The behavior depends on the type of the layer. See in derived classes.

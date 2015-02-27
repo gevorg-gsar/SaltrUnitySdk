@@ -10,45 +10,48 @@ namespace Saltr.UnitySdk.Game.Matching
 	/// </summary>
     public class SLTMatchingBoard : SLTBoard
     {
+        #region Properties
 
-        private int _rows;
-        
-		/// <summary>
+        /// <summary>
         /// Gets the number of rows.
         /// </summary>
-		public int Rows
+        public int Rows
         {
-            get { return _rows; }
+            get;
+            private set;
         }
 
-        private int _cols;
-
-		/// <summary>
-		/// Gets the number of columns.
-		/// </summary>
+        /// <summary>
+        /// Gets the number of columns.
+        /// </summary>
         public int Cols
         {
-            get { return _cols; }
+            get;
+            private set;
         }
 
-        private SLTCells _cells;
-
-		/// <summary>
-		/// Gets the cells.
-		/// </summary>
+        /// <summary>
+        /// Gets the cells.
+        /// </summary>
         public SLTCells Cells
         {
-            get { return _cells; }
+            get;
+            private set;
         }
 
+        #endregion Properties
 
-        internal SLTMatchingBoard(SLTCells cells, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
+        #region Ctor
+
+        public SLTMatchingBoard(SLTCells cells, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
             : base(layers, properties)
         {
-            _cells = cells;
-            _cols = cells.Width;
-            _rows = cells.Height;
+            Cells = cells;
+            Cols = cells.Width;
+            Rows = cells.Height;
         }
+
+        #endregion Ctor        
 
     }
 }

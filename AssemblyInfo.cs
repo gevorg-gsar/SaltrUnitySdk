@@ -9,7 +9,7 @@ using System.Resources;
 [assembly: AssemblyDescription("Saltr SDK for Unity")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Plexonic")]
-[assembly: AssemblyProduct("saltr-unity-sdk")]
+[assembly: AssemblyProduct("SaltrUnitySdk")]
 [assembly: AssemblyCopyright("Plexonic")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

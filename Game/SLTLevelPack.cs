@@ -11,43 +11,56 @@ namespace Saltr.UnitySdk.Game
 	/// </summary>
     public class SLTLevelPack
     {
+        #region Fields
+
+        private int _index;
         private string _token;
         private List<SLTLevel> _levels;
-        private int _index;
-        
 
-        internal SLTLevelPack(string token, int index, List<SLTLevel> levels)
+        #endregion Fields
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the index of the pack.
+        /// </summary>
+        public int Index
+        {
+            get { return _index; }
+        }
+
+        /// <summary>
+        /// Gets the token, a unique identifier for the pack.
+        /// </summary>
+        public string Token
+        {
+            get { return _token; }
+        }
+
+        /// <summary>
+        /// Gets the list of levels of the pack.
+        /// </summary>
+        public List<SLTLevel> Levels
+        {
+            get { return _levels; }
+        }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTLevelPack(string token, int index, List<SLTLevel> levels)
         {
             _token = token;
             _index = index;
             _levels = levels;
         }
 
-		/// <summary>
-		/// Gets the token, a unique identifier for the pack.
-		/// </summary>
-		public string Token
-		{
-			get { return _token; }
-		}
+        #endregion Ctor
 
-		/// <summary>
-		/// Gets the list of levels of the pack.
-		/// </summary>
-		public List<SLTLevel> Levels
-		{
-			get { return _levels; }
-		}
-
-		/// <summary>
-		/// Gets the index of the pack.
-		/// </summary>
-		public int Index
-		{
-			get { return _index; }
-		}
-
-		/// <summary>
+        #region Business Methods
+        
+        // <summary>
 		/// Returns the token.
 		/// </summary>
         public override string ToString()
@@ -55,7 +68,7 @@ namespace Saltr.UnitySdk.Game
             return _token;
         }
 
-		internal void Dispose()
+		public void Dispose()
 		{
 			// We are NOT disposing levels here as they still can be used by the app (references!).
 			// We let levels to be garbage collected later if not used.
@@ -63,28 +76,7 @@ namespace Saltr.UnitySdk.Game
 			_levels = null;
 		}
 
-        internal class SortByIndex : IComparer<SLTLevelPack>
-        {
-            public int Compare(SLTLevelPack x, SLTLevelPack y)
-            {
-                if (x == null && y != null)
-                    return -1;
-
-                if (x != null && y == null)
-                    return 1;
-
-                if (x == null && y == null)
-                    return 1;
-
-
-                if (x.Index > y.Index)
-                    return 1;
-
-                if (x.Index < y.Index)
-                    return -1;
-                return 1;
-            }
-        }
-
+        #endregion Business Methods
+        
     }
 }

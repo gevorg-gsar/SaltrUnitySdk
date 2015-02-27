@@ -5,56 +5,60 @@ using System.Text;
 using UnityEngine;
 namespace Saltr.UnitySdk.Game.Canvas2D
 {
-	/// <summary>
-	/// Represents an instance of a 2D asset on board
-	/// </summary>
+    /// <summary>
+    /// Represents an instance of a 2D asset on board
+    /// </summary>
     public class SLT2DAssetInstance : SLTAssetInstance
     {
-        private float _x;
-
-		/// <summary>
-		/// Gets the X coordinate.
-		/// </summary>
-        public float x
+        #region Properties
+        
+        /// <summary>
+        /// Gets the X coordinate.
+        /// </summary>
+        public float X
         {
-            get { return _x; }
+            get;
+            private set;
         }
 
-        private float _y;
-
-		/// <summary>
-		/// Gets the Y coordinate.
-		/// </summary>
-        public float y
+        /// <summary>
+        /// Gets the Y coordinate.
+        /// </summary>
+        public float Y
         {
-            get { return _y; }
+            get;
+            private set;
         }
 
-        private float _rotation;
-
-		/// <summary>
-		/// Gets the rotation.
-		/// </summary>
+        /// <summary>
+        /// Gets the rotation.
+        /// </summary>
         public float Rotation
         {
-            get { return _rotation; }
+            get;
+            private set;
         }
 
+        /// <summary>
+        /// Gets the position as a Unity standard vector, for convenience.
+        /// </summary>
+        public Vector2 Position
+        {
+            get { return new Vector2(X, Y); }
+        }
 
-        internal SLT2DAssetInstance(string token, List<SLTAssetState> states, object properties, float x, float y, float rotaition)
+        #endregion Properties
+
+        #region Ctor
+
+        public SLT2DAssetInstance(string token, List<SLTAssetState> states, object properties, float x, float y, float rotaition)
             : base(token, states, properties)
         {
-            _x = x;
-            _y = y;
-            _rotation = rotaition;
-           
+            X = x;
+            Y = y;
+            Rotation = rotaition;
         }
 
-		/// <summary>
-		/// Gets the position as a Unity standard vector, for convenience.
-		/// </summary>
-        public Vector2 Position { 
-			get { return new Vector2(_x, _y); } 
-		}
+        #endregion Ctor
     }
 }

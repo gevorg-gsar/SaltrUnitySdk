@@ -68,7 +68,7 @@ namespace MiniJSON {
 
     /// <summary>
     /// This class encodes and decodes JSON strings.
-    /// Spec. details, see http://www.json.org/
+    /// Spec. details, see http://_www.json.org/
     ///
     /// JSON uses Arrays and Objects. These correspond here to the datatypes IList and IDictionary.
     /// All numbers are parsed to doubles.

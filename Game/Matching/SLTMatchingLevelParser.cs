@@ -3,32 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Saltr.UnitySdk.Utils;
+using System;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
 
-    internal class SLTMatchingLevelParser : SLTLevelParser
+    public sealed class SLTMatchingLevelParser : SLTLevelParser
     {
-        private static SLTMatchingLevelParser INSTANCE = null;
+        #region Static Fields
+
+        private static readonly SLTMatchingLevelParser _instance = new SLTMatchingLevelParser();
+
+        #endregion Static Fields
+
+        #region Ctor
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static SLTMatchingLevelParser() { }
 
         private SLTMatchingLevelParser() { }
 
-        public static SLTMatchingLevelParser getInstance()
+        public static SLTMatchingLevelParser Instance
         {
-            if (INSTANCE == null)
+            get
             {
-                INSTANCE = new SLTMatchingLevelParser();
+                return _instance;
             }
-            return INSTANCE;
         }
 
+        #endregion Ctor
+
+        #region Internal Methods
 
         private static void InitializeCells(SLTCells cells, object boardNode)
         {
-            Dictionary<string, object> boardNodeDict = boardNode.ToDictionaryOrNull();
+            Dictionary<string, object> boardNodeDict = boardNode as Dictionary<string, object>;
 
-            IEnumerable<object> blockedCells = boardNodeDict.ContainsKey("blockedCells") ? (IEnumerable<object>)boardNodeDict["blockedCells"] : new List<object>();
-			IEnumerable<object> cellProperties = boardNodeDict.ContainsKey("cellProperties")? (IEnumerable<object>)boardNodeDict["cellProperties"] : new List<object>();
+            IEnumerable<object> blockedCells = boardNodeDict.ContainsKey(SLTConstants.BlockedCells) ? (IEnumerable<object>)boardNodeDict[SLTConstants.BlockedCells] : new List<object>();
+            IEnumerable<object> cellProperties = boardNodeDict.ContainsKey(SLTConstants.CellProperties) ? (IEnumerable<object>)boardNodeDict[SLTConstants.CellProperties] : new List<object>();
             int cols = cells.Width;
             int rows = cells.Height;
 
@@ -42,93 +55,127 @@ namespace Saltr.UnitySdk.Game.Matching
             }
 
             //assigning cell properties
-            for (int p = 0; p < cellProperties.Count(); p++)
+            foreach (var property in cellProperties)
             {
-                object property = cellProperties.ElementAt(p);
-                IEnumerable<object> coords = (IEnumerable<object>)property.ToDictionaryOrNull()["coords"];
-                SLTCell cell2 = cells.Retrieve(coords.ElementAt(0).ToIntegerOrZero(), coords.ElementAt(1).ToIntegerOrZero());
-                if (cell2 != null)
-                    cell2.Properties = property.ToDictionaryOrNull()["value"].ToDictionaryOrNull();
+                Dictionary<string, object> propertyDict = property as Dictionary<string, object>;
+
+                if (propertyDict != null)
+                {
+                    IEnumerable<object> coords = (IEnumerable<object>)propertyDict[SLTConstants.Coords];
+                    int cord1, cord2;
+                    int.TryParse(coords.ElementAt(0).ToString(), out cord1);
+                    int.TryParse(coords.ElementAt(1).ToString(), out cord2);
+
+                    SLTCell cellToFill = cells.Retrieve(cord1, cord2);
+                    if (cellToFill != null)
+                    {
+                        cellToFill.Properties = propertyDict[SLTConstants.Value] as Dictionary<string, object>;
+                    }
+                }
             }
 
-
             //blocking cells
-            for (int b = 0; b < blockedCells.Count(); b++)
+            foreach (var blockedCellObj in blockedCells)
             {
-                IEnumerable<object> blokedCell = (IEnumerable<object>)blockedCells.ElementAt(b);
-				var cell3 = cells.Retrieve(blokedCell.ElementAt(0).ToIntegerOrZero(), blokedCell.ElementAt(1).ToIntegerOrZero());
-                if (cell3 != null)
+                IEnumerable<object> blockedCell = (IEnumerable<object>)blockedCellObj;
+                int col, row;
+                int.TryParse(blockedCell.ElementAt(0).ToString(), out col);
+                int.TryParse(blockedCell.ElementAt(1).ToString(), out row);
+
+                var cellToBlock = cells.Retrieve(col, row);
+                if (cellToBlock != null)
                 {
-                    cell3.IsBlocked = true;
+                    cellToBlock.IsBlocked = true;
                 }
             }
         }
 
-
         private static void ParseLayerChunks(SLTMatchingBoardLayer layer, IEnumerable<object> chunkNodes, SLTCells cells, Dictionary<string, object> assetMap)
         {
-            for (int i = 0; i < chunkNodes.Count(); i++)
+            foreach (var chunkNodeObj in chunkNodes)
             {
-                Dictionary<string, object> chunkNode = chunkNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> chunkNode = chunkNodeObj as Dictionary<string, object>;
+
                 IEnumerable<object> cellNodes = new List<object>();
-                if (chunkNode != null && chunkNode.ContainsKey("cells"))
-                    cellNodes = (IEnumerable<object>)chunkNode["cells"];
+                if (chunkNode != null && chunkNode.ContainsKey(SLTConstants.Cells))
+                {
+                    cellNodes = (IEnumerable<object>)chunkNode[SLTConstants.Cells];
+                }
 
                 List<SLTCell> chunkCells = new List<SLTCell>();
                 foreach (var cellNode in cellNodes)
                 {
-                    int row = 0;
                     int col = 0;
+                    int row = 0;
 
-					row = ((IEnumerable<object>)cellNode).ElementAt(0).ToIntegerOrZero();
-					col = ((IEnumerable<object>)cellNode).ElementAt(1).ToIntegerOrZero();
+                    int.TryParse(((IEnumerable<object>)cellNode).ElementAt(0).ToString(), out col);
+                    int.TryParse(((IEnumerable<object>)cellNode).ElementAt(1).ToString(), out row);
 
-					chunkCells.Add(cells.Retrieve(row, col) as SLTCell);
+                    chunkCells.Add(cells.Retrieve(col, row) as SLTCell);
                 }
 
-                IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode["assets"];
+                IEnumerable<object> assetNodes = (IEnumerable<object>)chunkNode[SLTConstants.Assets];
                 List<SLTChunkAssetRule> chunkAssetRules = new List<SLTChunkAssetRule>();
-                foreach (var assetNode in assetNodes)
+                foreach (var assetNodeObj in assetNodes)
                 {
-                    string assetId = "";
-                    string distribytionType = "";
+                    string assetId = string.Empty;
                     float distributionVale = 0;
                     IEnumerable<object> states = new List<object>();
+                    ChunkAssetRuleDistributionType distribytionType = ChunkAssetRuleDistributionType.Unknown;
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("assetId"))
-                        assetId = assetNode.ToDictionaryOrNull()["assetId"].ToString();
+                    var assetNode = assetNodeObj as Dictionary<string, object>;
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("distributionType"))
-                        distribytionType = assetNode.ToDictionaryOrNull()["distributionType"].ToString();
+                    if (assetNode != null)
+                    {
+                        if (assetNode.ContainsKey(SLTConstants.AssetId))
+                        {
+                            assetId = assetNode[SLTConstants.AssetId].ToString();
+                        }
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("distributionValue"))
-                        distributionVale = assetNode.ToDictionaryOrNull()["distributionValue"].ToFloatOrZero();
+                        if (assetNode.ContainsKey(SLTConstants.DistributionType))
+                        {
+                            distribytionType = (ChunkAssetRuleDistributionType)Enum.Parse(typeof(ChunkAssetRuleDistributionType), assetNode.ToString(), true);
+                        }
 
-                    if (assetNode.ToDictionaryOrNull() != null && assetNode.ToDictionaryOrNull().ContainsKey("states"))
-                        states = (IEnumerable<object>)assetNode.ToDictionaryOrNull()["states"];
+                        if (assetNode.ContainsKey(SLTConstants.DistributionValue))
+                        {
+                            float.TryParse(assetNode[SLTConstants.DistributionValue].ToString(), out distributionVale);
+                        }
+
+                        if (assetNode.ContainsKey(SLTConstants.States))
+                        {
+                            states = (IEnumerable<object>)assetNode[SLTConstants.States];
+                        }
+                    }
 
                     chunkAssetRules.Add(new SLTChunkAssetRule(assetId, distribytionType, distributionVale, states));
                 }
+
                 layer.AddChunk(new SLTChunk(layer.Token, layer.Index, chunkCells, chunkAssetRules, assetMap));
+
             }
         }
-
 
         private SLTMatchingBoard ParseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
-            if (boardNode.ContainsKey("properties"))
+            if (boardNode.ContainsKey(SLTConstants.Properties))
             {
-                boardProperties = boardNode["properties"].ToDictionaryOrNull();
+                boardProperties = boardNode[SLTConstants.Properties] as Dictionary<string, object>;
             }
 
-            SLTCells cells = new SLTCells(boardNode["cols"].ToIntegerOrZero(), boardNode["rows"].ToIntegerOrZero());
+            int width, height;
+            int.TryParse(boardNode[SLTConstants.Cols].ToString(), out width);
+            int.TryParse(boardNode[SLTConstants.Rows].ToString(), out height);
+
+            SLTCells cells = new SLTCells(width, height);
             InitializeCells(cells, boardNode);
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
-            IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode["layers"];
+            IEnumerable<object> layerNodes = (IEnumerable<object>)boardNode[SLTConstants.Layers];
+
             for (int i = 0; i < layerNodes.Count(); i++)
             {
-                Dictionary<string, object> layerNode = layerNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> layerNode = layerNodes.ElementAt(i) as Dictionary<string, object>;
                 SLTMatchingBoardLayer layer = ParseLayer(layerNode, i, cells, assetMap);
                 layers.Add(layer);
             }
@@ -136,11 +183,10 @@ namespace Saltr.UnitySdk.Game.Matching
             return new SLTMatchingBoard(cells, layers, boardProperties);
         }
 
-
         private SLTMatchingBoardLayer ParseLayer(Dictionary<string, object> layerNode, int layerIndex, SLTCells cells, Dictionary<string, object> assetMap)
         {
-			//temporarily checking for 2 names until "layerId" is removed!
-			string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
+            //temporarily checking for 2 names until "layerId" is removed!
+            string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
             SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer(token, layerIndex);
 
             ParseFixedAssets(layer, (IEnumerable<object>)layerNode["fixedAssets"], cells, assetMap);
@@ -149,39 +195,53 @@ namespace Saltr.UnitySdk.Game.Matching
             return layer;
         }
 
-
         private void ParseFixedAssets(SLTMatchingBoardLayer layer, IEnumerable<object> assetNodes, SLTCells cells, Dictionary<string, object> assetMap)
         {
-            for (int i = 0; i < assetNodes.Count(); i++)
+            foreach (var assetNodeObj in assetNodes)
             {
-                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> assetInstanceNode = assetNodeObj as Dictionary<string, object>;
                 SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
                 IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
                 IEnumerable<object> cellPositions = (IEnumerable<object>)assetInstanceNode["cells"];
 
-                for (int j = 0; j < cellPositions.Count(); j++)
+                foreach (var cellPositionObj in cellPositions)
                 {
-                    IEnumerable<object> position = (IEnumerable<object>)cellPositions.ElementAt(j);
-                    SLTCell cell = cells.Retrieve(position.ElementAt(0).ToIntegerOrZero(), position.ElementAt(1).ToIntegerOrZero());
+                    IEnumerable<object> position = cellPositionObj as IEnumerable<object>;
+
+                    int col, row;
+                    int.TryParse(position.ElementAt(0).ToString(), out col);
+                    int.TryParse(position.ElementAt(1).ToString(), out row);
+
+                    SLTCell cell = cells.Retrieve(col, row);
                     cell.SetAssetInstance(layer.Token, layer.Index, new SLTAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties));
                 }
             }
         }
 
+        #endregion  Internal Methods
 
+        #region Business Methods
 
         public override Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();
-
-            foreach (var boardId in boardNodes.Keys)
+            try
             {
-                Dictionary<string, object> boardNode = boardNodes[boardId].ToDictionaryOrNull();
-                boards[boardId] = ParseLevelBoard(boardNode, assetMap);
+                foreach (var boardId in boardNodes.Keys)
+                {
+                    Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
+                    boards[boardId] = ParseLevelBoard(boardNode, assetMap);
+                }
             }
+            catch (Exception e)
+            {
+                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
+            }
+
             return boards;
         }
 
+        #endregion Business Methods
 
     }
 }

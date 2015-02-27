@@ -9,62 +9,63 @@ namespace Saltr.UnitySdk.Resource
 {
     public class SLTResourceTicket
     {
-        private string _url;
-        private Dictionary<string,string> _variables;
+        #region Properties
 
-        private int _maxAttempts;
+        public Dictionary<string, string> Variables { get; private set; }
 
-        public int MaxAttempts
-        {
-            get { return _maxAttempts; }
-            set { _maxAttempts = value; }
-        }
+        public string Url { get; private set; }
 
-        private int _fails;
-        public int Fails
-        {
-            get { return _fails; }
-            set { _fails = value; }
-        }
+        public int MaxAttempts { get; set; }
 
-        private int _dropTimeout;
-        public int DropTimeout
-        {
-            get { return _dropTimeout; }
-            set { _dropTimeout = value; }
-        }
-		
+        public int Fails { get; set; }
 
-       	public Dictionary<string,string> GetUrlVars()
-        {
-            return _variables;
-        }
-
-        public SLTResourceTicket(string url, Dictionary<string,string> urlVars)
-        {
-            // TODO: Complete member initialization
-            this._url = url;
-            this._variables = urlVars;
-        }
+        public int DropTimeout { get; set; }
 
         public int IdleTimeout { get; set; }
+
         public string Method { get; set; }
 
-
-        internal string GetURLRequest()
+        public Dictionary<string, string> GetUrlVars()
         {
-            string requestUrl = _url;
-			char seperator = '?';
-			if(_variables != null)
-				foreach (string key in _variables.Keys)
-	            {
-	                requestUrl += seperator;
-					requestUrl += key + "=" + WWW.EscapeURL(_variables[key]);	
-					if('?' == seperator)
-						seperator = '&';
-	            }
+            return Variables;
+        }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTResourceTicket(string url, Dictionary<string, string> urlVars)
+        {
+            // TODO: Complete member initialization
+            this.Url = url;
+            this.Variables = urlVars;
+        }
+
+        #endregion Ctor
+
+        #region Business Mehods
+
+        public string GetURLRequest()
+        {
+            string requestUrl = Url;
+            char seperator = '?';
+            if (Variables != null)
+            {
+                foreach (string key in Variables.Keys)
+                {
+                    requestUrl += seperator;
+                    requestUrl += key + "=" + WWW.EscapeURL(Variables[key]);
+                    if ('?' == seperator)
+                    {
+                        seperator = '&';
+                    }
+                }
+            }
 
             return requestUrl;
         }
+
+        #endregion  Business Mehods
+
     }
 }

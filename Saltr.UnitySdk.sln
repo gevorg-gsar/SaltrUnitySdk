@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saltr.UnitySdk", "Saltr.UnitySdk.csproj", "{B6E1A3F6-869B-4659-828D-6FDFC8667287}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saltr.UnitySdk.TestConsole", "..\Saltr.UnitySdk.TestConsole\Saltr.UnitySdk.TestConsole.csproj", "{9B5E55C0-B944-4287-8EAA-C04385F62756}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,6 +14,7 @@ Global
 		Package_Win|Any CPU = Package_Win|Any CPU
 		Release_Mac|Any CPU = Release_Mac|Any CPU
 		Release_Win|Any CPU = Release_Win|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B6E1A3F6-869B-4659-828D-6FDFC8667287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -24,6 +27,20 @@ Global
 		{B6E1A3F6-869B-4659-828D-6FDFC8667287}.Release_Mac|Any CPU.Build.0 = Release_Mac|Any CPU
 		{B6E1A3F6-869B-4659-828D-6FDFC8667287}.Release_Win|Any CPU.ActiveCfg = Release_Win|Any CPU
 		{B6E1A3F6-869B-4659-828D-6FDFC8667287}.Release_Win|Any CPU.Build.0 = Release_Win|Any CPU
+		{B6E1A3F6-869B-4659-828D-6FDFC8667287}.Release|Any CPU.ActiveCfg = Release_Win|Any CPU
+		{B6E1A3F6-869B-4659-828D-6FDFC8667287}.Release|Any CPU.Build.0 = Release_Win|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Package_Mac|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Package_Mac|Any CPU.Build.0 = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Package_Win|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Package_Win|Any CPU.Build.0 = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Release_Mac|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Release_Mac|Any CPU.Build.0 = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Release_Win|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Release_Win|Any CPU.Build.0 = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5E55C0-B944-4287-8EAA-C04385F62756}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

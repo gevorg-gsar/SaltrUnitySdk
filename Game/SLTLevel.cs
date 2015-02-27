@@ -15,33 +15,24 @@ namespace Saltr.UnitySdk.Game
     /// </summary>
     public class SLTLevel
     {
-        protected Dictionary<string, object> _boards;
+        #region Fields
 
         private string _id;
         private int _index;
         private int _localIndex;
         private int _packIndex;
+        private string _version;
         private string _contentUrl;
         private object _properties;
-        private string _version;
+        private bool _isContentReady;
         private SLTLevelType _levelType;
+        private Dictionary<string, object> _assetMap = new Dictionary<string, object>();
 
-        private bool _contentReady;
-        Dictionary<string, object> _assetMap = new Dictionary<string, object>();
+        protected Dictionary<string, object> _boards;
 
-        internal static SLTLevelParser getParser(SLTLevelType levelType)
-        {
-            if (levelType == SLTLevelType.Matching)
-            {
-                return SLTMatchingLevelParser.getInstance();
-            }
-            else if(levelType == SLTLevelType.Canvas2D)
-            {
-                return SLT2DLevelParser.GetInstance();
-            }
+        #endregion Fields
 
-            return null;
-        }
+        #region Properties
 
         /// <summary>
         /// Gets the index of the pack the level is in.
@@ -89,7 +80,7 @@ namespace Saltr.UnitySdk.Game
         /// <value><c>true</c> if content is ready; otherwise, <c>false</c>.</value>
         public bool ContentReady
         {
-            get { return _contentReady; }
+            get { return _isContentReady; }
         }
 
         /// <summary>
@@ -100,7 +91,11 @@ namespace Saltr.UnitySdk.Game
             get { return _version; }
         }
 
-        internal SLTLevel(string id, SLTLevelType levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTLevel(string id, SLTLevelType levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
         {
             _localIndex = localIndex;
             _packIndex = packIndex;
@@ -108,10 +103,14 @@ namespace Saltr.UnitySdk.Game
             _levelType = levelType;
             _index = index;
             _contentUrl = contentUrl;
-            _contentReady = false;
+            _isContentReady = false;
             _properties = properties;
             _version = version;
         }
+
+        #endregion Ctor
+
+        #region Business Methods
 
         /// <summary>
         /// Gets a board by id.
@@ -123,7 +122,7 @@ namespace Saltr.UnitySdk.Game
             return _boards.GetValue<SLTBoard>(id);
         }
 
-        internal void UpdateContent(Dictionary<string, object> rootNode)
+        public void UpdateContent(Dictionary<string, object> rootNode)
         {
             Dictionary<string, object> boardsNode = new Dictionary<string, object>();
 
@@ -131,46 +130,29 @@ namespace Saltr.UnitySdk.Game
             foreach (var item in rootNode.Keys)
             {
                 keys.Add(item);
-
             }
 
-            if (rootNode.ContainsKey("boards"))
+            if (rootNode.ContainsKey(SLTConstants.Boards))
             {
-                boardsNode = rootNode["boards"].ToDictionaryOrNull();
-
+                boardsNode = rootNode[SLTConstants.Boards] as Dictionary<string, object>;
             }
             else
             {
                 Debug.Log("[SALTR: ERROR] Level content's 'boards' node can not be found.");
             }
 
-            _properties = rootNode["properties"];
+            _properties = rootNode[SLTConstants.Properties];
 
-            SLTLevelParser parser = getParser(_levelType);
+            SLTLevelParser parser = SLTLevelParserFactory.GetParser(_levelType);
             if (parser != null)
             {
-                try
-                {
-                    _assetMap = parser.ParseLevelAssets(rootNode);
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("[SALTR: ERROR] Level content asset parsing failed." + e.Message);
-                }
-
-                try
-                {
-                    _boards = parser.ParseLevelContent(boardsNode, _assetMap);
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
-                }
+                _assetMap = parser.ParseLevelAssets(rootNode);
+                _boards = parser.ParseLevelContent(boardsNode, _assetMap);
 
                 if (_boards != null)
                 {
                     RegenerateAllBoards();
-                    _contentReady = true;
+                    _isContentReady = true;
                 }
             }
             else
@@ -178,7 +160,6 @@ namespace Saltr.UnitySdk.Game
                 // no parser was found for current level type
                 new SLTStatusLevelsParserMissing();
             }
-
         }
 
         /// <summary>
@@ -191,7 +172,6 @@ namespace Saltr.UnitySdk.Game
             {
                 SLTBoard board = _boards[boardId] as SLTBoard;
                 board.Regenerate();
-
             }
         }
 
@@ -203,39 +183,15 @@ namespace Saltr.UnitySdk.Game
             foreach (var key in _boards.Keys)
             {
                 if (_boards[key] as SLTBoard == null)
+                { 
                     Debug.Log("castNull");
+                }
 
                 (_boards[key] as SLTBoard).Regenerate();
             }
         }
 
-        internal class SortByIndex : IComparer<SLTLevel>
-        {
-            public int Compare(SLTLevel x, SLTLevel y)
-            {
-                if (x == null && y != null)
-                    return -1;
-
-                if (x != null && y == null)
-                    return 1;
-
-                if (x == null && y == null)
-                    return 1;
-
-
-                if (x.Index > y.Index)
-                    return 1;
-
-                if (x.Index < y.Index)
-                    return -1;
-
-                if (x.Index == y.Index)
-                    return 0;
-
-                return 1;
-            }
-        }
-
+        #endregion Business Methods
     }
 
     public enum SLTLevelType

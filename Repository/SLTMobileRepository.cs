@@ -7,12 +7,18 @@ using UnityEngine;
 
 namespace Saltr.UnitySdk.Repository
 {
-    internal class SLTMobileRepository : ISLTRepository
+    public class SLTMobileRepository : ISLTRepository
     {
+        #region Fields
+
+        private FileStream _fileStream;
         private DirectoryInfo _storageDirectory;
         private DirectoryInfo _applicationDirectory;
         private DirectoryInfo _cacheDirectory;
-        private FileStream _fileStream;
+
+        #endregion Fields
+
+        #region Ctor
 
         public SLTMobileRepository()
         {
@@ -24,12 +30,16 @@ namespace Saltr.UnitySdk.Repository
             Debug.Log("cacheDir: " + _cacheDirectory.FullName);
         }
 
-		public void CacheObject(string name, string version, object objectToSave)
-        {
-            string filePath = _cacheDirectory + "/" + name;
-            saveInternal(filePath, objectToSave);
-            filePath = _cacheDirectory + "/" + name.Replace(".", "") + "_VERSION_";
+        #endregion Ctor
 
+        #region Business Methods
+
+        public void CacheObject(string name, string version, object objectToSave)
+        {
+            string filePath = Path.Combine(_cacheDirectory.FullName, name);
+            saveInternal(filePath, objectToSave);
+
+            filePath = Path.Combine(_cacheDirectory.FullName, name.Replace(".", string.Empty) + "_VERSION_");
             saveInternal(filePath, new { _VERSION_ = version });
         }
 
@@ -37,44 +47,44 @@ namespace Saltr.UnitySdk.Repository
         {
             //string file = _applicationDirectory + "/" + fileName;
             // return getIntenrnal(new FileInfo(file));
-			TextAsset file = Resources.Load<TextAsset>(fileName);
-			return file != null ? MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
+            TextAsset file = Resources.Load<TextAsset>(fileName);
+            return file != null ? MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
         }
 
         public object GetObjectFromCache(string fileName)
         {
-            string file = _cacheDirectory + "/" + fileName;
-           // if (File.Exists(file))
-                return getIntenrnal(new FileInfo(file));
-          //  else
-             //   return null;
+            string file = Path.Combine(_cacheDirectory.FullName, fileName);
+            // if (File.Exists(file))
+            return getIntenrnal(new FileInfo(file));
+            //  else
+            //   return null;
         }
 
         public object GetObjectFromStorage(string name)
         {
-         //   string file = _storageDirectory + "/" + name;
-           // return getIntenrnal(new FileInfo(file));
+            //   string file = _storageDirectory + "/" + name;
+            // return getIntenrnal(new FileInfo(file));
             Debug.Log(name);
             return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(name).text);
         }
 
         public string GetObjectVersion(string name)
         {
-            string file = _cacheDirectory + "/" + name.Replace(".", "") + "_VERSION_";
+            string file = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
             object obj = getIntenrnal(new FileInfo(file));
             Dictionary<string, object> dict = (Dictionary<string, object>)obj;
-            if (dict == null)
-                return "";
 
-            if (dict.ContainsKey("_VERSION_"))
+            if (dict != null && dict.ContainsKey("_VERSION_"))
+            {
                 return dict["_VERSION_"].ToString();
-            else
-                return "";
+            }
+
+            return string.Empty;
         }
 
-		public void SaveObject(string name, object objectToSave)
+        public void SaveObject(string name, object objectToSave)
         {
-            string resolvedPath = _storageDirectory + "/" + name;
+            string resolvedPath = Path.Combine(_storageDirectory.FullName, name);
             saveInternal(resolvedPath, objectToSave);
         }
 
@@ -83,15 +93,20 @@ namespace Saltr.UnitySdk.Repository
             try
             {
                 if (!file.Exists)
+                {
                     return null;
+                }
 
                 string stringData = File.ReadAllText(file.FullName);
 
-
                 if (stringData == null)
+                {
                     return null;
+                }
                 else
+                {
                     return MiniJSON.Json.Deserialize(stringData);
+                }
             }
             catch (Exception e)
             {
@@ -107,6 +122,8 @@ namespace Saltr.UnitySdk.Repository
 
             File.WriteAllText(file, LitJson.JsonMapper.ToJson(objectToSave));
         }
+
+        #endregion Business Methods
 
     }
 }

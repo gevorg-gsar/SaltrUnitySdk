@@ -5,36 +5,45 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
-	/// <summary>
-	/// Represents a layer of a matching board.
-	/// </summary>
-	public class SLTMatchingBoardLayer : SLTBoardLayer
-	{
-		private List<SLTChunk> _chunks;
+    /// <summary>
+    /// Represents a layer of a matching board.
+    /// </summary>
+    public class SLTMatchingBoardLayer : SLTBoardLayer
+    {
+        #region Fields
 
-		internal SLTMatchingBoardLayer(string LayerId, int LayerIndex):base(LayerId,LayerIndex)
-		{
-			_chunks = new List<SLTChunk>();
-		}
+        private List<SLTChunk> _chunks = new List<SLTChunk>();
 
-		/// <summary>
-		/// Regenerates contents of all the chunks within the layer.
-		/// </summary>
-		public override void Regenerate ()
-		{
-			foreach(SLTChunk chunk in _chunks)
-			{
-				chunk.GenerateContent();
-			}
-		}
+        #endregion Fields
 
-		// <summary>
-		// Adds a chunk to the layer.
-		// </summary>
-		internal void AddChunk(SLTChunk chunk)
-		{
-			_chunks.Add(chunk);
-		}
+        #region Ctor
 
-	}
+        public SLTMatchingBoardLayer(string layerId, int layerIndex)
+            : base(layerId, layerIndex)
+        {
+        }
+
+        #endregion Ctor
+
+        #region Business Methods
+
+        // <summary>
+        // Adds a chunk to the layer.
+        // </summary>
+        public void AddChunk(SLTChunk chunk)
+        {
+            _chunks.Add(chunk);
+        }
+
+        /// <summary>
+        /// Regenerates contents of all the chunks within the layer.
+        /// </summary>
+        public override void Regenerate()
+        {
+            _chunks.ForEach(chunk => chunk.GenerateContent());
+        }
+
+        #endregion Business Methods
+
+    }
 }

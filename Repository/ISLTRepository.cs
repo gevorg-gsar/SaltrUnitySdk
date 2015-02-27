@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Repository
 {
-   internal interface ISLTRepository
+    public interface ISLTRepository
     {
         object GetObjectFromStorage(string name);
 
@@ -13,9 +13,9 @@ namespace Saltr.UnitySdk.Repository
 
         string GetObjectVersion(string name);
 
-		void SaveObject(string name, object objectToSave);
+        void SaveObject(string name, object objectToSave);
 
-		void CacheObject(string name, string version, object objectToSave);
+        void CacheObject(string name, string version, object objectToSave);
 
         object GetObjectFromApplication(string fileName);
     }

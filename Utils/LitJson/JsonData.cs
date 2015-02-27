@@ -194,7 +194,7 @@ namespace LitJson
             }
 
             set {
-                if (! (key is String))
+                if (! (key is string))
                     throw new ArgumentException (
                         "The key has to be a string");
 
@@ -360,7 +360,7 @@ namespace LitJson
                 return;
             }
 
-            if (obj is String) {
+            if (obj is string) {
                 type = JsonType.String;
                 inst_string = (string) obj;
                 return;
@@ -399,7 +399,7 @@ namespace LitJson
             return new JsonData (data);
         }
 
-        public static implicit operator JsonData (String data)
+        public static implicit operator JsonData (string data)
         {
             return new JsonData (data);
         }
@@ -443,7 +443,7 @@ namespace LitJson
             return data.inst_long;
         }
 
-        public static explicit operator String (JsonData data)
+        public static explicit operator string (JsonData data)
         {
             if (data.type != JsonType.String)
                 throw new InvalidCastException (
@@ -878,7 +878,7 @@ namespace LitJson
                 break;
 
             case JsonType.String:
-                inst_string = default (String);
+                inst_string = default (string);
                 break;
 
             case JsonType.Int:

@@ -16,7 +16,7 @@ namespace Saltr.UnitySdk
     /// <summary>
     /// The entry point to SDK, and the main class, used to send and receive data from Saltr.
     /// </summary>
-    public class SLTUnity// TODO @gyln: reorder memebrs as is in as3 sdk
+    public class SLTUnity
     {
         #region Constants
 
@@ -56,10 +56,10 @@ namespace Saltr.UnitySdk
         private List<SLTExperiment> _experiments = new List<SLTExperiment>();
         private List<SLTLevelPack> _levelPacks = new List<SLTLevelPack>();
 
-        private Action _connectSuccessCallback;
-        private Action<SLTStatus> _connectFailCallback;
-        private Action _levelContentLoadSuccessCallback;
-        private Action<SLTStatus> _levelContentLoadFailCallback;
+        private Action _onConnectSuccess;
+        private Action<SLTStatus> _onConnectFail;
+        private Action _onLevelContentLoadSuccess;
+        private Action<SLTStatus> _onLevelContentLoadFail;
 
         #endregion Fields
 
@@ -188,9 +188,9 @@ namespace Saltr.UnitySdk
         /// <summary>
         /// Initializes a new instance of the <see cref="saltr.SLTUnity"/> class.
         /// </summary>
-        /// <param name="clientKey">Client key.</param>
+        /// <param name="_clientKey">Client key.</param>
         /// <param name="DeviceId">Device identifier.</param>
-        /// <param name="useCache">If set to <c>true</c> use cache. If not specified defaults to <c>true</c></param>
+        /// <param name="_useCache">If set to <c>true</c> use cache. If not specified defaults to <c>true</c></param>
         public SLTUnity(string clientKey, string deviceId, bool useCache)
         {
             Init(clientKey, deviceId, useCache);
@@ -218,7 +218,7 @@ namespace Saltr.UnitySdk
             }
 
             return ticket;
-        } 
+        }
 
         private static SLTResourceTicket GetTicket(string url, Dictionary<string, string> urlVars)
         {
@@ -276,8 +276,8 @@ namespace Saltr.UnitySdk
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
 
-            urlVars["cmd"] = SLTConstants.ActionGetAppData; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConstants.ActionGetAppData;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionGetAppData; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionGetAppData;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -285,9 +285,13 @@ namespace Saltr.UnitySdk
             args.Client = CLIENT;
 
             if (_deviceId != null)
+            {
                 args.DeviceId = _deviceId;
+            }
             else
-                throw new Exception("Field 'deviceId' is required.");
+            { 
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
 
             if (_socialId != null)
             {
@@ -304,10 +308,10 @@ namespace Saltr.UnitySdk
                 args.CustomProperties = customProperties;
             }
 
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
-            return new SLTResource("saltAppConfig", ticket, loadSuccessCallback, loadFailCallback);
+            return new SLTResource(SLTConstants.ResourceIdSaltrAppConfig, ticket, loadSuccessCallback, loadFailCallback);
         }
 
         private object LoadLevelContentInternally(SLTLevel level)
@@ -322,14 +326,14 @@ namespace Saltr.UnitySdk
 
         private object LoadLevelContentFromDisk(SLTLevel level)
         {
-            string url = Util.FormatString(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string url = string.Format(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectFromApplication(url);
         }
 
         private object LoadLevelContentFromCache(SLTLevel level)
         {
 
-            string url = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string url = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectFromCache(url);
         }
 
@@ -375,14 +379,13 @@ namespace Saltr.UnitySdk
                 SLTResource.Dispose();
             };
 
-
-            SLTResource resource = new SLTResource("saltr", ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdSaltr, ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
             resource.Load();
         }
 
         private string GetCachedLevelVersion(SLTLevel level)
         {
-            string cachedFileName = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             return _repository.GetObjectVersion(cachedFileName);
         }
 
@@ -398,8 +401,8 @@ namespace Saltr.UnitySdk
         private void Sync()
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConstants.ActionDevSyncData; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConstants.ActionDevSyncData;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionDevSyncData; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevSyncData;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -407,16 +410,16 @@ namespace Saltr.UnitySdk
             args.ClientKey = _clientKey;
             args.IsDevMode = _isDevMode;
 
-            urlVars["devMode"] = _isDevMode.ToString();
+            urlVars[SLTConstants.UrlParamDevMode] = _isDevMode.ToString();
 
             if (_deviceId != null)
             {
                 args.DeviceId = _deviceId;
-                urlVars["deviceId"] = _deviceId;
+                urlVars[SLTConstants.DeviceId] = _deviceId;
             }
             else
             {
-                throw new Exception("Field 'deviceId' is required.");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
             if (_socialId != null)
@@ -428,24 +431,24 @@ namespace Saltr.UnitySdk
             foreach (SLTFeature feature in _developerFeatures.Values)
             {
                 Dictionary<string, object> featureDictionary = feature.ToDictionary();
-                featureDictionary.RemoveEmptyOrNull();
+                featureDictionary.RemoveEmptyOrNullEntries();
                 featureList.Add(featureDictionary);
             }
 
             args.DeveloperFeatures = featureList;
-            args.RawData.RemoveEmptyOrNull();
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            args.RawData.RemoveEmptyOrNullEntries();
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
-            SLTResource resource = new SLTResource("syncFeatures", ticket, SyncSuccessHandler, SyncFailHandler);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdSyncFeatures, ticket, SyncSuccessHandler, SyncFailHandler);
             resource.Load();
         }
 
         private void AddDeviceToSaltr(string email)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["action"] = SLTConstants.ActionDevRegisterDevice;
-            urlVars["clientKey"] = _clientKey;
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevRegisterDevice;
+            urlVars[SLTConstants.UrlParamClientKey] = _clientKey;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = API_VERSION;
@@ -457,16 +460,17 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception("Field 'deviceId' is required");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
-            string deviceModel = "Unknown";
-            string os = "Unknown";
+            string deviceModel = SLTConstants.Unknown;
+            string os = SLTConstants.Unknown;
+
             switch (Application.platform)
             {
                 case RuntimePlatform.IPhonePlayer:
                     deviceModel = Util.GetHumanReadableDeviceModel(SystemInfo.deviceModel);
-                    os = SystemInfo.operatingSystem.Replace("Phone ", "");
+                    os = SystemInfo.operatingSystem.Replace("Phone ", string.Empty);
                     break;
                 case RuntimePlatform.Android:
                     deviceModel = SystemInfo.deviceModel;
@@ -489,25 +493,25 @@ namespace Saltr.UnitySdk
             args.Source = deviceModel;
             args.OS = os;
 
-            if (email != null && email != "")
+            if (!string.IsNullOrEmpty(email))
             {
                 args.Email = email;
             }
             else
             {
-                throw new Exception("Email is required.");
+                throw new Exception(ExceptionConstants.EmailIsRequired);
             }
 
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars);
-            SLTResource resource = new SLTResource("addDevice", ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdAddDevice, ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
             resource.Load();
         }
 
         private void CacheLevelContent(SLTLevel level, object content)
         {
-            string cachedFileName = Util.FormatString(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
             _repository.CacheObject(cachedFileName, level.Version.ToString(), content);
         }
 
@@ -517,8 +521,8 @@ namespace Saltr.UnitySdk
 
         private void LevelContentLoadSuccessHandler(SLTLevel level, object content)
         {
-            level.UpdateContent(content.ToDictionaryOrNull());
-            _levelContentLoadSuccessCallback();
+            level.UpdateContent(content as Dictionary<string, object>);
+            _onLevelContentLoadSuccess();
         }
 
         private void AppDataLoadSuccessCallback(SLTResource resource)
@@ -527,7 +531,7 @@ namespace Saltr.UnitySdk
 
             if (data == null)
             {
-                _connectFailCallback(new SLTStatusAppDataLoadFail());
+                _onConnectFail(new SLTStatusAppDataLoadFail());
                 resource.Dispose();
                 return;
             }
@@ -535,21 +539,21 @@ namespace Saltr.UnitySdk
             bool isSuccess = false;
             Dictionary<string, object> response = new Dictionary<string, object>();
 
-            if (data.ContainsKey("response"))
+            if (data.ContainsKey(SLTConstants.Response))
             {
-                IEnumerable<object> res = (IEnumerable<object>)data["response"];
-                response = res.FirstOrDefault().ToDictionaryOrNull();
-                isSuccess = (bool)response["success"]; //.ToString().ToLower() == "true";
+                IEnumerable<object> res = (IEnumerable<object>)data[SLTConstants.Response];
+                response = res.FirstOrDefault() as Dictionary<string, object>;
+                isSuccess = (bool)response[SLTConstants.Success]; //.ToString().ToLower() == "true";
             }
             else
             {
                 //TODO @GSAR: remove later when API is versioned!
-                if (data.ContainsKey("responseData"))
+                if (data.ContainsKey(SLTConstants.ResponseData))
                 {
-                    response = data["responseData"].ToDictionaryOrNull();
+                    response = data[SLTConstants.ResponseData] as Dictionary<string, object>;
                 }
 
-                isSuccess = (data.ContainsKey("status") && data["status"].ToString() == SLTConstants.ResultSuccess);
+                isSuccess = (data.ContainsKey(SLTConstants.Status) && data[SLTConstants.Status].ToString() == SLTConstants.ResultSuccess);
             }
 
             _isLoading = false;
@@ -561,9 +565,9 @@ namespace Saltr.UnitySdk
                     Sync();
                 }
 
-                if (response.ContainsKey("levelType"))
+                if (response.ContainsKey(SLTConstants.LevelType))
                 {
-                    _levelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), response["levelType"].ToString(), true);
+                    _levelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), response[SLTConstants.LevelType].ToString(), true);
                 }
 
                 Dictionary<string, SLTFeature> saltrFeatures = new Dictionary<string, SLTFeature>();
@@ -574,7 +578,7 @@ namespace Saltr.UnitySdk
                 catch (Exception e)
                 {
                     Debug.Log(e.Message);
-                    _connectFailCallback(new SLTStatusFeaturesParseError());
+                    _onConnectFail(new SLTStatusFeaturesParseError());
                     return;
                 }
 
@@ -584,7 +588,7 @@ namespace Saltr.UnitySdk
                 }
                 catch
                 {
-                    _connectFailCallback(new SLTStatusExperimentsParseError());
+                    _onConnectFail(new SLTStatusExperimentsParseError());
                     return;
                 }
 
@@ -600,7 +604,7 @@ namespace Saltr.UnitySdk
                     catch (Exception e)
                     {
                         Debug.Log(e.Message);
-                        _connectFailCallback(new SLTStatusLevelsParseError());
+                        _onConnectFail(new SLTStatusLevelsParseError());
                         return;
                     }
 
@@ -616,20 +620,23 @@ namespace Saltr.UnitySdk
                 _repository.CacheObject(SLTConstants.AppDataUrlCache, "0", response);
 
                 _activeFeatures = saltrFeatures;
-                _connectSuccessCallback();
+                _onConnectSuccess();
 
                 Debug.Log("[SALTR] AppData load success. LevelPacks loaded: " + _levelPacks.Count);
                 //TODO @GSAR: later we need to report the feature set differences by an event or a callback to client;
             }
             else
             {
-                if (response.ContainsKey("error"))
+                if (response.ContainsKey(SLTConstants.Error))
                 {
-                    _connectFailCallback(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>("error").GetValue<string>("code")), response.GetValue<Dictionary<string, object>>("error").GetValue<string>("message")));
+                    _onConnectFail(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Code)), response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Message)));
                 }
                 else
                 {
-                    _connectFailCallback(new SLTStatus(response.GetValue<string>("errorCode").ToIntegerOrZero(), response.GetValue<string>("errorMessage")));
+                    int errorCode;
+                    int.TryParse(response.GetValue<string>(SLTConstants.ErrorCode), out errorCode);
+
+                    _onConnectFail(new SLTStatus(errorCode, response.GetValue<string>(SLTConstants.ErrorMessage)));
                 }
 
             }
@@ -646,33 +653,46 @@ namespace Saltr.UnitySdk
                 return;
             }
 
-            IEnumerable<object> response = (IEnumerable<object>)data.ToDictionaryOrNull().GetValue("response");
-            if (response == null)
+            var dataDict = data as Dictionary<string, object>;
+            if (dataDict != null)
             {
-                Debug.Log("[Saltr] Dev feature Sync's response is null.");
-                return;
-            }
-
-            if (response.Count() <= 0)
-            {
-                Debug.Log("[Saltr] Dev feature Sync response's length is <= 0.");
-                return;
-            }
-
-            Dictionary<string, object> responseObject = response.ElementAt(0).ToDictionaryOrNull();
-
-            if ((bool)responseObject.GetValue("success") == false)
-            {
-                if ((SLTStatusCode)responseObject.GetValue("error").ToDictionaryOrNull().GetValue("code").ToIntegerOrZero() == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
+                IEnumerable<object> response = (IEnumerable<object>)dataDict.GetValue(SLTConstants.Response);
+                if (response == null)
                 {
-                    RegisterDevice();
+                    Debug.Log("[Saltr] Dev feature Sync's response is null.");
+                    return;
                 }
-                Debug.Log("[Saltr] Sync error: " + responseObject.GetValue("error").ToDictionaryOrNull().GetValue<string>("message"));
-            }
-            else
-            {
-                Debug.Log("[Saltr] Dev feature Sync is complete.");
-                _isSynced = true;
+
+                if (response.Count() <= 0)
+                {
+                    Debug.Log("[Saltr] Dev feature Sync response's length is <= 0.");
+                    return;
+                }
+
+                Dictionary<string, object> responseObject = response.ElementAt(0) as Dictionary<string, object>;
+
+                if ((bool)responseObject.GetValue(SLTConstants.Success) == false)
+                {
+
+                    Dictionary<string, object> errorDict = responseObject.GetValue(SLTConstants.Error) as Dictionary<string, object>;
+                    if (errorDict != null)
+                    {
+                        int errorCode;
+                        int.TryParse(errorDict.GetValue(SLTConstants.Code).ToString(), out errorCode);
+                        //TODO: change below casting to use Enum.Parse() method.
+                        if ((SLTStatusCode)errorCode == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
+                        {
+                            RegisterDevice();
+                        }
+
+                        Debug.Log("[Saltr] Sync error: " + errorDict.GetValue<string>(SLTConstants.Message));
+                    }
+                }
+                else
+                {
+                    Debug.Log("[Saltr] Dev feature Sync is complete.");
+                    _isSynced = true;
+                }
             }
         }
 
@@ -684,21 +704,25 @@ namespace Saltr.UnitySdk
         private void AddDeviceSuccessHandler(SLTResource resource)
         {
             Debug.Log("[Saltr] Dev adding new device is complete.");
-            Dictionary<string, object> data = resource.Data.ToDictionaryOrNull();
+            Dictionary<string, object> data = resource.Data as Dictionary<string, object>;
             bool isSuccess = false;
             Dictionary<string, object> response;
-            if (data.ContainsKey("response"))
+            if (data.ContainsKey(SLTConstants.Response))
             {
-                response = ((IEnumerable<object>)(data["response"])).ElementAt(0).ToDictionaryOrNull();
-                isSuccess = (bool)response.GetValue("success");
+                response = ((IEnumerable<object>)(data[SLTConstants.Response])).ElementAt(0) as Dictionary<string, object>;
+                isSuccess = (bool)response.GetValue(SLTConstants.Success);
                 if (isSuccess)
                 {
-                    _wrapper.SetStatus("Success");
+                    _wrapper.SetStatus(SLTConstants.Success);
                     Sync();
                 }
                 else
                 {
-                    _wrapper.SetStatus(response.GetValue("error").ToDictionaryOrNull().GetValue<string>("message"));
+                    Dictionary<string, object> errorDict = response.GetValue(SLTConstants.Error) as Dictionary<string, object>;
+                    if (errorDict != null)
+                    {
+                        _wrapper.SetStatus(errorDict.GetValue<string>(SLTConstants.Message));
+                    }
                 }
             }
             else
@@ -710,25 +734,154 @@ namespace Saltr.UnitySdk
         private void AddDeviceFailHandler(SLTResource resource)
         {
             Debug.Log("[Saltr] Dev adding new device has failed.");
-            _wrapper.SetStatus("Failed");
+            _wrapper.SetStatus(SLTConstants.Failed);
         }
 
         private void AppDataLoadFailCallback(SLTResource resource)
         {
             resource.Dispose();
             _isLoading = false;
-            _connectFailCallback(new SLTStatusAppDataLoadFail());
+            _onConnectFail(new SLTStatusAppDataLoadFail());
         }
 
         private void LevelContentLoadFailHandler()
         {
-            _levelContentLoadFailCallback(new SLTStatusLevelContentLoadFail());
+            _onLevelContentLoadFail(new SLTStatusLevelContentLoadFail());
         }
 
         #endregion Handlers
 
         #region Business Methods
 
+        /// <summary>
+        /// Checks if everything is initialized properly and starts the instance.
+        /// After this call you can access application data (levels, features), and establish connection with the server.
+        /// </summary>
+        public void Start()
+        {
+            if (_deviceId == null)
+            {
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
+
+            if (_developerFeatures.Count == 0 && !_useNoFeatures)
+            {
+                throw new Exception("Features should be defined.");
+            }
+
+            if (_levelPacks.Count == 0 && !_useNoLevels)
+            {
+                throw new Exception("Levels should be imported.");
+            }
+
+            object cachedData = _repository.GetObjectFromCache(SLTConstants.AppDataUrlCache);
+            if (cachedData == null)
+            {
+                foreach (var item in _developerFeatures.Keys)
+                {
+                    _activeFeatures[item] = _developerFeatures[item];
+                }
+            }
+            else
+            {
+                if (cachedData != null)
+                {
+                    _activeFeatures = SLTDeserializer.DecodeFeatures(cachedData as Dictionary<string, object>);
+                    _experiments = SLTDeserializer.DecodeExperiments(cachedData as Dictionary<string, object>);
+                }
+            }
+            _isStarted = true;
+        }
+
+        /// <summary>
+        /// Establishes connection to the server and updates application data(levels, features and experiments).
+        /// After connecting successfully you can load level content from server with <see cref="saltr.SLTUnity.LoadLevelContent"/> .
+        /// </summary>
+        /// <param name="successCallback">Success callback.</param>
+        /// <param name="failCallback">Fail callback, receives <see cref="saltr.Status.SLTStatus"/> object as the first parameter.</param>
+        /// <param name="basicProperties">(Optional)Basic properties. Same as in <see cref="saltr.SLTUnity.AddProperties"/>.</param>
+        /// <param name="customProperties">(Optional)Custom properties. Same as in <see cref="saltr.SLTUnity.AddProperties"/>.</param>
+        public void Connect(Action successCallback, Action<SLTStatus> failCallback, SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
+        {
+            if (!_isStarted)
+            {
+                throw new Exception("Method 'connect()' should be called after 'Start()' only.");
+            }
+
+            if (_isLoading)
+            {
+                failCallback(new SLTStatusAppDataConcurrentLoadRefused());
+                return;
+            }
+
+            _onConnectFail = failCallback;
+            _onConnectSuccess = successCallback;
+
+            _isLoading = true;
+            SLTResource resource = CreateAppDataResource(AppDataLoadSuccessCallback, AppDataLoadFailCallback, basicProperties, customProperties);
+            resource.Load();
+        }
+
+        /// <summary>
+        /// See <see cref="saltr.SLTUnity.Connect"/>.
+        /// </summary>
+        public void Connect(Action successCallback, Action<SLTStatus> failCallback, SLTBasicProperties basicProperties)
+        {
+            Connect(successCallback, failCallback, basicProperties, null);
+        }
+
+        /// <summary>
+        /// See <see cref="saltr.SLTUnity.Connect"/>.
+        /// </summary>
+        public void Connect(Action successCallback, Action<SLTStatus> failCallback)
+        {
+            Connect(successCallback, failCallback, null);
+        }
+
+        /// <summary>
+        /// Opens the device registration dialog. Can be called after <see cref="saltr.SLTUnity.Start"/> only.
+        /// </summary>
+        public void RegisterDevice()
+        {
+            if (!_isStarted)
+            {
+                throw new Exception("Method 'registerDevice()' should be called after 'Start()' only.");
+            }
+            _wrapper.ShowDeviceRegistationDialog(AddDeviceToSaltr);
+        }
+
+        // If you want to have a feature synced with SALTR you should call define before getAppData call.
+        /// <summary>
+        /// Defines a feature (<see cref="saltr.SLTFeature"/>).
+        /// </summary>
+        /// <param name="token">Token - a unique identifier for the feature.</param>
+        /// <param name="properties">A dictionary of properties, that should be of "JSON friendly" datatypes 
+        /// (string, int, double, Dictionary, List, etc.). To represent color use standard HTML format: <c>"#RRGGBB"</c> </param>
+        /// <param name="isRequired">If set to <c>true</c> feature is isRequired(see <see cref="saltr.SLTUnity.GetFeatureProperties"/>). <c>false</c> by default.</param>
+        public void DefineFeature(string token, Dictionary<string, object> properties, bool isRequired)
+        {
+            if (_useNoFeatures)
+            {
+                return;
+            }
+
+            if (_isStarted == false)
+            {
+                _developerFeatures[token] = new SLTFeature(token, properties, isRequired);
+            }
+            else
+            {
+                throw new Exception("Method 'defineFeature()' should be called before 'Start()' only.");
+            }
+        }
+
+        /// <summary>
+        /// See <see cref="saltr.SLTUnity.DefineFeature"/>.
+        /// </summary>
+        public void DefineFeature(string token, Dictionary<string, object> properties)
+        {
+            DefineFeature(token, properties, false);
+        }
 
         /// <summary>
         /// Gets a level by its global index in all levels.
@@ -798,7 +951,7 @@ namespace Saltr.UnitySdk
         {
             if (_activeFeatures.ContainsKey(token))
             {
-                return (_activeFeatures[token]).Properties.ToDictionaryOrNull();
+                return (_activeFeatures[token]).Properties as Dictionary<string, object>;
             }
             else
                 if (_developerFeatures.ContainsKey(token))
@@ -806,7 +959,7 @@ namespace Saltr.UnitySdk
                     SLTFeature devFeature = _developerFeatures[token];
                     if (devFeature != null && devFeature.Required)
                     {
-                        return devFeature.Properties.ToDictionaryOrNull();
+                        return devFeature.Properties as Dictionary<string, object>;
                     }
                 }
 
@@ -832,7 +985,7 @@ namespace Saltr.UnitySdk
             {
                 path = path == null ? SLTConstants.LocalLevelPackageUrl : path;
                 object applicationData = _repository.GetObjectFromApplication(path);
-                _levelPacks = SLTDeserializer.DecodeLevels(applicationData.ToDictionaryOrNull());
+                _levelPacks = SLTDeserializer.DecodeLevels(applicationData as Dictionary<string, object>);
             }
             else
             {
@@ -848,125 +1001,6 @@ namespace Saltr.UnitySdk
             ImportLevels(null);
         }
 
-        // If you want to have a feature synced with SALTR you should call define before getAppData call.
-        /// <summary>
-        /// Defines a feature (<see cref="saltr.SLTFeature"/>).
-        /// </summary>
-        /// <param name="token">Token - a unique identifier for the feature.</param>
-        /// <param name="properties">A dictionary of properties, that should be of "JSON friendly" datatypes 
-        /// (string, int, double, Dictionary, List, etc.). To represent color use standard HTML format: <c>"#RRGGBB"</c> </param>
-        /// <param name="isRequired">If set to <c>true</c> feature is isRequired(see <see cref="saltr.SLTUnity.GetFeatureProperties"/>). <c>false</c> by default.</param>
-        public void DefineFeature(string token, Dictionary<string, object> properties, bool isRequired)
-        {
-            if (_useNoFeatures)
-            {
-                return;
-            }
-
-            if (_isStarted == false)
-            {
-                _developerFeatures[token] = new SLTFeature(token, properties, isRequired);
-            }
-            else
-            {
-                throw new Exception("Method 'defineFeature()' should be called before 'Start()' only.");
-            }
-        }
-
-        /// <summary>
-        /// See <see cref="saltr.SLTUnity.DefineFeature"/>.
-        /// </summary>
-        public void DefineFeature(string token, Dictionary<string, object> properties)
-        {
-            DefineFeature(token, properties, false);
-        }
-
-        /// <summary>
-        /// Checks if everything is initialized properly and starts the instance.
-        /// After this call you can access application data (levels, features), and establish connection with the server.
-        /// </summary>
-        public void Start()
-        {
-            if (_deviceId == null)
-            {
-                throw new Exception("deviceId field is required and can't be null.");
-            }
-
-            if (_developerFeatures.Count == 0 && !_useNoFeatures)
-            {
-                throw new Exception("Features should be defined.");
-            }
-
-            if (_levelPacks.Count == 0 && !_useNoLevels)
-            {
-                throw new Exception("Levels should be imported.");
-            }
-
-            object cachedData = _repository.GetObjectFromCache(SLTConstants.AppDataUrlCache);
-            if (cachedData == null)
-            {
-                foreach (var item in _developerFeatures.Keys)
-                {
-                    _activeFeatures[item] = _developerFeatures[item];
-                }
-            }
-            else
-            {
-                if (cachedData != null)
-                {
-                    _activeFeatures = SLTDeserializer.DecodeFeatures(cachedData.ToDictionaryOrNull());
-                    _experiments = SLTDeserializer.DecodeExperiments(cachedData.ToDictionaryOrNull());
-                }
-            }
-            _isStarted = true;
-        }
-
-        /// <summary>
-        /// Establishes connection to the server and updates application data(levels, features and experiments).
-        /// After connecting successfully you can load level content from server with <see cref="saltr.SLTUnity.LoadLevelContent"/> .
-        /// </summary>
-        /// <param name="successCallback">Success callback.</param>
-        /// <param name="failCallback">Fail callback, receives <see cref="saltr.Status.SLTStatus"/> object as the first parameter.</param>
-        /// <param name="basicProperties">(Optional)Basic properties. Same as in <see cref="saltr.SLTUnity.AddProperties"/>.</param>
-        /// <param name="customProperties">(Optional)Custom properties. Same as in <see cref="saltr.SLTUnity.AddProperties"/>.</param>
-        public void Connect(Action successCallback, Action<SLTStatus> failCallback, SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
-        {
-            if (!_isStarted)
-            {
-                throw new Exception("Method 'connect()' should be called after 'Start()' only.");
-            }
-
-            if (_isLoading)
-            {
-                failCallback(new SLTStatusAppDataConcurrentLoadRefused());
-                return;
-            }
-
-            _connectFailCallback = failCallback;
-            _connectSuccessCallback = successCallback;
-
-            _isLoading = true;
-            SLTResource resource = CreateAppDataResource(AppDataLoadSuccessCallback, AppDataLoadFailCallback, basicProperties, customProperties);
-            resource.Load();
-        }
-
-        /// <summary>
-        /// See <see cref="saltr.SLTUnity.Connect"/>.
-        /// </summary>
-        public void Connect(Action successCallback, Action<SLTStatus> failCallback, SLTBasicProperties basicProperties)
-        {
-            Connect(successCallback, failCallback, basicProperties, null);
-        }
-
-        /// <summary>
-        /// See <see cref="saltr.SLTUnity.Connect"/>.
-        /// </summary>
-        public void Connect(Action successCallback, Action<SLTStatus> failCallback)
-        {
-            Connect(successCallback, failCallback, null);
-        }
-
-
         /// <summary>
         /// Loads the content(boards and properties) of the level.
         /// Contents may be loaded from server, cache, or local level data(<see cref="saltr.SLTUnity.ImportLevels"/>).
@@ -974,11 +1008,11 @@ namespace Saltr.UnitySdk
         /// <param name="SLTLevel">The level, contents of which will be updated.</param>
         /// <param name="loadSuccessCallback">Load isSuccess callback.</param>
         /// <param name="loadFailCallback">Load fail callback, receives <see cref="saltr.Status.SLTStatus"/> object as the first parameter.</param>
-        /// <param name="useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established. <c>true</c> by default. </param>
+        /// <param name="_useCache">If set to <c>false</c> cached level data will be ignored, forcing content to be loaded from server or local data if connection is not established. <c>true</c> by default. </param>
         public void LoadLevelContent(SLTLevel level, Action loadSuccessCallback, Action<SLTStatus> loadFailCallback, bool useCache)
         {
-            _levelContentLoadSuccessCallback = loadSuccessCallback;
-            _levelContentLoadFailCallback = loadFailCallback;
+            _onLevelContentLoadSuccess = loadSuccessCallback;
+            _onLevelContentLoadFail = loadFailCallback;
             object content = null;
             if (_isConected == false)
             {
@@ -1028,8 +1062,8 @@ namespace Saltr.UnitySdk
             }
 
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars["cmd"] = SLTConstants.ActionAddProperties; //TODO @GSAR: remove later
-            urlVars["action"] = SLTConstants.ActionAddProperties;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionAddProperties; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionAddProperties;
 
             SLTRequestArguments args = new SLTRequestArguments()
             {
@@ -1044,7 +1078,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception("Field 'deviceId' is a required.");
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
             if (_socialId != null)
@@ -1064,21 +1098,21 @@ namespace Saltr.UnitySdk
 
             Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
             {
-                Debug.Log("success");
+                Debug.Log(SLTConstants.Success);
                 Dictionary<string, object> data = res.Data;
                 res.Dispose();
             };
 
             Action<SLTResource> propertyAddFail = delegate(SLTResource res)
             {
-                Debug.Log("error");
+                Debug.Log(SLTConstants.Error);
                 res.Dispose();
             };
 
-            urlVars["args"] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
-            SLTResource resource = new SLTResource("property", ticket, propertyAddSuccess, propertyAddFail);
+            SLTResource resource = new SLTResource(SLTConstants.ResourceIdProperty, ticket, propertyAddSuccess, propertyAddFail);
             resource.Load();
         }
 
@@ -1089,18 +1123,7 @@ namespace Saltr.UnitySdk
         {
             AddProperties(basicProperties, null);
         }
-
-        /// <summary>
-        /// Opens the device registration dialog. Can be called after <see cref="saltr.SLTUnity.Start"/> only.
-        /// </summary>
-        public void RegisterDevice()
-        {
-            if (!_isStarted)
-            {
-                throw new Exception("Method 'registerDevice()' should be called after 'Start()' only.");
-            }
-            _wrapper.ShowDeviceRegistationDialog(AddDeviceToSaltr);
-        }
+        
 
         #endregion Public Methods
 

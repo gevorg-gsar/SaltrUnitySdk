@@ -84,6 +84,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ExceptionConstants.cs" />
+    <Compile Include="Game\LevelSortByIndexComparer.cs" />
+    <Compile Include="Game\LevelPackSortByIndexComparer.cs" />
+    <Compile Include="Game\SLTLevelParserFactory.cs" />
     <Compile Include="SLTBasicProperties.cs" />
     <Compile Include="SLTConstants.cs" />
     <Compile Include="SLTDeserializer.cs" />
@@ -147,4 +151,8 @@
   <ItemGroup>
     <Folder Include="Assets\" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y /S "E:\Projects\dev\unity\saltr-unity-sdk\bin\Debug\Saltr.UnitySdk.dll" "e:\Projects\dev\unity\saltr-demo-flappy-game\Assets\Scripts\saltr_sdk"
+xcopy /Y /S "E:\Projects\dev\unity\saltr-unity-sdk\bin\Debug\Saltr.UnitySdk.pdb" "e:\Projects\dev\unity\saltr-demo-flappy-game\Assets\Scripts\saltr_sdk"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

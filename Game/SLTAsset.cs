@@ -5,47 +5,64 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game
 {
-    internal class SLTAsset
+    public class SLTAsset
     {
-        private string _token;
-        private object _properties;
-        private Dictionary<string, object> _stateMap;
+        #region Properties
 
-        public SLTAsset(string token, object properties, Dictionary<string,object> StateMap)
+        public string Token
         {
-            _token = token;
-            _properties = properties;
-            _stateMap = StateMap;
+            get;
+            private set;
         }
+
+        public object Properties
+        {
+            get;
+            private set;
+        }
+
+        public Dictionary<string, object> StateMap
+        {
+            get;
+            private set;
+        }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTAsset(string token, object properties, Dictionary<string, object> stateMap)
+        {
+            Token = token;
+            Properties = properties;
+            StateMap = stateMap;
+        }
+
+        #endregion Ctor
+
+        #region Business Methods
 
         public override string ToString()
         {
-            return "[Asset] type: " + _token + ", " + " keys: " + _properties;
+            return "[Asset] type: " + Token + ", " + " keys: " + Properties;
         }
 
-		public string Token
-		{
-			get { return _token; }
-		}
-		
-		public object Properties
-		{
-			get { return _properties; }
-		}
+        public List<SLTAssetState> GetInstanceStates(IEnumerable<object> stateIds)
+        {
+            List<SLTAssetState> states = new List<SLTAssetState>();
+            foreach (var stateId in stateIds)
+            {
+                SLTAssetState state = StateMap[stateId.ToString()] as SLTAssetState;
 
-		public List<SLTAssetState> GetInstanceStates(IEnumerable<object> stateIds)
-		{
-			List<SLTAssetState> states = new List<SLTAssetState>(); 
-			foreach(object stateId in stateIds)
-			{
-				SLTAssetState state = _stateMap[stateId.ToString()] as SLTAssetState;
+                if (state != null)
+                {
+                    states.Add(state);
+                }
+            }
+            return states;
+        }
 
-				if(state != null)
-				{
-					states.Add(state);
-				}
-			}
-			return states;
-		}
+        #endregion Ctor
+
     }
 }

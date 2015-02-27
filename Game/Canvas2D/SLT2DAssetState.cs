@@ -10,31 +10,38 @@ namespace Saltr.UnitySdk.Game.Canvas2D
 	/// </summary>
     public class SLT2DAssetState : SLTAssetState
     {
-		// TODO @gyln: I think one also needs the width and the height of the asset state from Saltr to be able to properly utilize this information, since those might not correspond to the actual in-game asset sizes. Alternative pivot coordinates can be represented with ratios from 0 to 1 instead of pixels. 
-		private float _pivotX;
-		private float _pivotY;
+        #region Properties
 
-		/// <summary>
-		/// Gets the X coordinate of the pivot relative to the top left corner, in pixels.
-		/// </summary>
+        /// <summary>
+        /// Gets the X coordinate of the pivot relative to the top left corner, in pixels.
+        /// </summary>
         public float PivotX
         {
-            get { return _pivotX; }
+            get;
+            private set;
         }
 
-		/// <summary>
-		/// Gets the Y coordinate of the pivot relative to the top left corner, in pixels.
-		/// </summary>
+        /// <summary>
+        /// Gets the Y coordinate of the pivot relative to the top left corner, in pixels.
+        /// </summary>
         public float PivotY
         {
-            get { return _pivotY; }
+            get;
+            private set;
         }
 
-        internal SLT2DAssetState(string token, Dictionary<string, object> properties, float pivotX, float pivotY)
+        #endregion Properties
+
+        #region Ctor
+
+        public SLT2DAssetState(string token, Dictionary<string, object> properties, float pivotX, float pivotY)
             : base(token, properties)
         {
-            _pivotX = pivotX;
-            _pivotY = pivotY;
+            PivotX = pivotX;
+            PivotY = pivotY;
         }
+
+        #endregion Ctor
+        
     }
 }

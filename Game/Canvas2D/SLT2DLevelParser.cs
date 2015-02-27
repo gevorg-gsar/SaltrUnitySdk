@@ -3,43 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Saltr.UnitySdk.Utils;
+using System;
 
 namespace Saltr.UnitySdk.Game.Canvas2D
 {
-    internal class SLT2DLevelParser : SLTLevelParser
+    public class SLT2DLevelParser : SLTLevelParser
     {
+        #region Static Fields
 
-        private static SLT2DLevelParser _instance;
+        private static readonly SLT2DLevelParser _instance = new SLT2DLevelParser();
 
-        public static SLT2DLevelParser GetInstance()
+        #endregion Static Fields
+
+        #region Ctor
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static SLT2DLevelParser() { }
+
+        private SLT2DLevelParser() { }
+
+        public static SLT2DLevelParser Instance
         {
-            if (_instance == null)
+            get
             {
-                _instance = new SLT2DLevelParser();
+                return _instance;
             }
-            return _instance;
         }
 
+        #endregion Ctor
 
-        public override System.Collections.Generic.Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
-        {
-            Dictionary<string, object> boards = new Dictionary<string, object>();
-            foreach (var boardId in boardNodes.Keys)
-            {
-                Dictionary<string, object> boardNode = boardNodes[boardId].ToDictionaryOrNull();
-                boards[boardId] = ParseLevelBoard(boardNode, assetMap);
-
-            }
-            return boards;
-        }
-
+        #region Internal Methods
 
         private SLT2DBoard ParseLevelBoard(Dictionary<string, object> boardNode, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boardProperties = new Dictionary<string, object>();
             if (boardNode.ContainsKey("properties"))
             {
-                boardProperties = boardNode["properties"].ToDictionaryOrNull();
+                boardProperties = boardNode["properties"] as Dictionary<string, object>;
             }
 
             List<SLTBoardLayer> layers = new List<SLTBoardLayer>();
@@ -47,63 +48,102 @@ namespace Saltr.UnitySdk.Game.Canvas2D
 
             for (int i = 0; i < layerNodes.Count(); i++)
             {
-                Dictionary<string, object> layerNode = layerNodes.ElementAt(i).ToDictionaryOrNull();
+                Dictionary<string, object> layerNode = layerNodes.ElementAt(i) as Dictionary<string, object>;
                 SLT2DBoardLayer layer = ParseLayer(layerNode, i, assetMap);
                 layers.Add(layer);
             }
-            float width = boardNode.ContainsKey("width") ? boardNode["width"].ToFloatOrZero() : 0;
-            float height = boardNode.ContainsKey("height") ? boardNode["height"].ToFloatOrZero() : 0;
+
+            float width = 0;
+            float height = 0;
+
+            if (boardNode.ContainsKey("width"))
+            {
+                float.TryParse(boardNode["width"].ToString(), out width);
+            }
+
+            if (boardNode.ContainsKey("height"))
+            {
+                float.TryParse(boardNode["height"].ToString(), out height);
+            }
 
             return new SLT2DBoard(width, height, layers, boardProperties);
-
         }
 
         private SLT2DBoardLayer ParseLayer(Dictionary<string, object> layerNode, int layerIndex, Dictionary<string, object> assetMap)
         {
-			//temporarily checking for 2 names until "layerId" is removed!
-			string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
-			SLT2DBoardLayer layer = new SLT2DBoardLayer(token, layerIndex);
+            //temporarily checking for 2 names until "layerId" is removed!
+            string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
+            SLT2DBoardLayer layer = new SLT2DBoardLayer(token, layerIndex);
             ParseAssetInstances(layer, (IEnumerable<object>)layerNode["assets"], assetMap);
             return layer;
-
         }
-
 
         private void ParseAssetInstances(SLT2DBoardLayer layer, IEnumerable<object> assetNodes, Dictionary<string, object> assetMap)
         {
-            for (int i = 0; i < assetNodes.Count(); i++)
+            foreach (var assetNodeObj in assetNodes)
             {
-                Dictionary<string, object> assetInstanceNode = assetNodes.ElementAt(i).ToDictionaryOrNull();
-                float x = assetInstanceNode["x"].ToFloatOrZero();
-                float y = assetInstanceNode["y"].ToFloatOrZero();
+                Dictionary<string, object> assetInstanceNode = assetNodeObj as Dictionary<string, object>;
 
-                float rotation = assetInstanceNode["rotation"].ToFloatOrZero();
+                float x;
+                float y;
+                float rotation;
 
+                float.TryParse(assetInstanceNode[SLTConstants.X].ToString(), out x);
+                float.TryParse(assetInstanceNode[SLTConstants.Y].ToString(), out y);
+                float.TryParse(assetInstanceNode[SLTConstants.Rotation].ToString(), out rotation);
 
-                SLTAsset asset = assetMap[assetInstanceNode["assetId"].ToString()] as SLTAsset;
-
-
-                IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode["states"];
+                SLTAsset asset = assetMap[assetInstanceNode[SLTConstants.AssetId].ToString()] as SLTAsset;
+                IEnumerable<object> stateIds = (IEnumerable<object>)assetInstanceNode[SLTConstants.States];
 
                 layer.AddAssetInstance(new SLT2DAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties, x, y, rotation));
             }
         }
 
+        #endregion
 
+        #region Business Methods
+        
+        public override System.Collections.Generic.Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
+        {
+            Dictionary<string, object> boards = new Dictionary<string, object>();
+            try
+            {
+                foreach (var boardId in boardNodes.Keys)
+                {
+                    Dictionary<string, object> boardNode = boardNodes[boardId] as Dictionary<string, object>;
+                    boards[boardId] = ParseLevelBoard(boardNode, assetMap);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[SALTR: ERROR] Level content boards parsing failed." + e.Message);
+            }
 
+            return boards;
+        }
 
         protected override SLTAssetState ParseAssetState(Dictionary<string, object> stateNode)
         {
-            string token = stateNode.ContainsKey("token") ? stateNode["token"].ToString() : null;
-            Dictionary<string, object> properties = stateNode.ContainsKey("properties") ? stateNode["properties"].ToDictionaryOrNull() : null;
+            string token = stateNode.ContainsKey(SLTConstants.Token) ? stateNode[SLTConstants.Token].ToString() : null;
+            Dictionary<string, object> properties = stateNode.ContainsKey(SLTConstants.Properties) ? stateNode[SLTConstants.Properties] as Dictionary<string, object> : null;
 
-            float pivotX = stateNode.ContainsKey("pivotX") ? stateNode["pivotX"].ToFloatOrZero() : 0;
-            float pivotY = stateNode.ContainsKey("pivotY") ? stateNode["pivotY"].ToFloatOrZero() : 0;
+            float pivotX = 0;
+            float pivotY = 0;
+
+            if (stateNode.ContainsKey(SLTConstants.PivotX))
+            {
+                float.TryParse(stateNode[SLTConstants.PivotX].ToString(), out pivotX);
+            }
+
+            if (stateNode.ContainsKey(SLTConstants.PivotY))
+            {
+                float.TryParse(stateNode[SLTConstants.PivotY].ToString(), out pivotY);
+            }
 
             return new SLT2DAssetState(token, properties, pivotX, pivotY);
         }
 
-
+        #endregion Business Methods
 
     }
 }

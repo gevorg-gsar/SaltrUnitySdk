@@ -320,7 +320,7 @@ namespace LitJson
                     return null;
                 }
 
-                throw new JsonException (String.Format (
+                throw new JsonException (string.Format (
                             "Can't assign null to an instance of type {0}",
                             inst_type));
             }
@@ -370,7 +370,7 @@ namespace LitJson
                                            new object[] { reader.Value });
 
                 // No luck
-                throw new JsonException (String.Format (
+                throw new JsonException (string.Format (
                         "Can't assign value '{0}' (type {1}) to type {2}",
                         reader.Value, json_type, inst_type));
             }
@@ -383,7 +383,7 @@ namespace LitJson
                 ArrayMetadata t_data = array_metadata[inst_type];
 
                 if (! t_data.IsArray && ! t_data.IsList)
-                    throw new JsonException (String.Format (
+                    throw new JsonException (string.Format (
                             "Type {0} can't act as an array",
                             inst_type));
 
@@ -453,7 +453,7 @@ namespace LitJson
                         if (! t_data.IsDictionary) {
 
                             if (! reader.SkipNonMembers) {
-                                throw new JsonException (String.Format (
+                                throw new JsonException (string.Format (
                                         "The type {0} doesn't have the " +
                                         "property '{1}'",
                                         inst_type, property));
@@ -691,7 +691,7 @@ namespace LitJson
         {
             if (depth > max_nesting_depth)
                 throw new JsonException (
-                    String.Format ("Max allowed object depth reached while " +
+                    string.Format ("Max allowed object depth reached while " +
                                    "trying to export from type {0}",
                                    obj.GetType ()));
 
@@ -709,7 +709,7 @@ namespace LitJson
                 return;
             }
 
-            if (obj is String) {
+            if (obj is string) {
                 writer.Write ((string) obj);
                 return;
             }

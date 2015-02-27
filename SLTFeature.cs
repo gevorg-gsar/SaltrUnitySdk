@@ -6,11 +6,17 @@ using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk
 {
-	/// <summary>
-	/// Represents an application feature - a uniquely identifiable set of properties.
-	/// </summary>
+    /// <summary>
+    /// Represents an application feature - a uniquely identifiable set of properties.
+    /// </summary>
     public class SLTFeature
     {
+        #region Constants
+
+        private const string ToStringPatthern = @"Feature {{ token : {0} , value : {1}}}";
+
+        #endregion Constants
+
         #region Fields
 
         private string _token;
@@ -22,12 +28,12 @@ namespace Saltr.UnitySdk
         #region properties
 
         /// <summary>
-		/// Gets the token, a unique identifier for a feature.
-		/// </summary>
-		public string Token
-		{
-			get { return _token; }
-		}
+        /// Gets the token, a unique identifier for a feature.
+        /// </summary>
+        public string Token
+        {
+            get { return _token; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is isRequired.
@@ -38,13 +44,13 @@ namespace Saltr.UnitySdk
             get { return _isRequired; }
         }
 
-		/// <summary>
-		/// Gets the user defined properties.
-		/// </summary>
-		public Dictionary<string,object> Properties
-		{
-			get { return _properties; }
-		}
+        /// <summary>
+        /// Gets the user defined properties.
+        /// </summary>
+        public Dictionary<string, object> Properties
+        {
+            get { return _properties; }
+        }
 
         #endregion properties
 
@@ -82,16 +88,16 @@ namespace Saltr.UnitySdk
 
         public override string ToString()
         {
-            return "Feature { token : " + _token + " , value : " + _properties + "}";
+            return string.Format(ToStringPatthern, _token, _properties);
         }
 
-		public Dictionary<string, object> ToDictionary()
-		{
-			var featureDict = new Dictionary<string, object>();
-			featureDict["token"] = _token.ToUpper();
-			_properties.RemoveEmptyOrNull();
-			featureDict["value"] = MiniJSON.Json.Serialize(_properties);
-			return featureDict;
+        public Dictionary<string, object> ToDictionary()
+        {
+            var featureDict = new Dictionary<string, object>();
+            featureDict[SLTConstants.Token] = _token.ToUpper();
+            _properties.RemoveEmptyOrNullEntries();
+            featureDict[SLTConstants.Value] = MiniJSON.Json.Serialize(_properties);
+            return featureDict;
         }
 
         #endregion Utils

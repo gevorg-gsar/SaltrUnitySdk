@@ -5,22 +5,33 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
-    internal class SLTCompositeAsset : SLTAsset
+    public class SLTCompositeAsset : SLTAsset
     {
-        public IEnumerable<object> _cellInfos { get; set; }
+        #region Properties
 
-        public SLTCompositeAsset(string token, IEnumerable<object> cellInfos, object properties, Dictionary<string,object> states)
-            : base(token, properties,states)
+        public IEnumerable<object> CellInfos { get; set; }
+
+        #endregion Properties
+
+        #region Ctor
+
+        public SLTCompositeAsset(string token, IEnumerable<object> cellInfos, object properties, Dictionary<string, object> states)
+            : base(token, properties, states)
         {
-            _cellInfos = cellInfos;
+            CellInfos = cellInfos;
         }
-    
-    
-    SLTAssetInstance GetInstance(IEnumerable<object> stateIds)
+
+        #endregion Ctor
+
+        #region Business Methods
+
+        public SLTAssetInstance GetInstance(IEnumerable<object> stateIds)
         {
-            return new SLTCompositeInstance (Token, GetInstanceStates(stateIds),
-                Properties, _cellInfos);
+            return new SLTCompositeInstance(Token, GetInstanceStates(stateIds),
+                Properties, CellInfos);
         }
+
+        #endregion Business Methods
 
     }
 }
