@@ -93,7 +93,6 @@ namespace Saltr.UnitySdk.Game
 
         #endregion Properties
 
-
         #region Ctor
 
         public SLTLevel(string id, SLTLevelType levelType, int index, int localIndex, int packIndex, string contentUrl, object properties, string version)
