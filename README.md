@@ -4,10 +4,10 @@ SALTR Unity SDK
 This is the README file of the SALTR Unity SDK.
 
 To clone the project from GitHub:
-<a href="https://github.com/plexonic/saltr-unity-sdk.git">https://github.com/plexonic/saltr-unity-sdk.git</a>
+<a href="https://github.com/plexonic/SaltrUnitySdk.git">https://github.com/plexonic/SaltrUnitySdk.git</a>
 
 To download the latest ZIP:
-<a href="https://github.com/plexonic/saltr-unity-sdk/archive/master.zip">https://github.com/plexonic/saltr-unity-sdk/archive/master.zip</a>
+<a href="https://github.com/plexonic/SaltrUnitySdk/archive/master.zip">https://github.com/plexonic/SaltrUnitySdk/archive/master.zip</a>
 
 
 
@@ -46,7 +46,7 @@ project.
 
 To clone Git repository via command line:
 ```
-$ git clone https://github.com/plexonic/saltr-unity-sdk.git
+$ git clone https://github.com/plexonic/SaltrUnitySdk.git
 ```
 
 The entry point is the SLTUnity class, which you can create and initialize in code. Or you can darg and drop the SALTR prefab on your main scene and access its instance through SaltrWrapper component.
