@@ -152,7 +152,7 @@
     <Folder Include="Assets\" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /S "E:\Projects\dev\unity\saltr-unity-sdk\bin\Debug\Saltr.UnitySdk.dll" "e:\Projects\dev\unity\saltr-demo-flappy-game\Assets\Scripts\saltr_sdk"
-xcopy /Y /S "E:\Projects\dev\unity\saltr-unity-sdk\bin\Debug\Saltr.UnitySdk.pdb" "e:\Projects\dev\unity\saltr-demo-flappy-game\Assets\Scripts\saltr_sdk"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
