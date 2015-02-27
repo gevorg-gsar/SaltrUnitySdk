@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Saltr.UnitySdk.Utils;
+using GAFEditor.Utils;
 
 namespace Saltr.UnitySdk
 {
@@ -96,7 +97,7 @@ namespace Saltr.UnitySdk
             var featureDict = new Dictionary<string, object>();
             featureDict[SLTConstants.Token] = _token.ToUpper();
             _properties.RemoveEmptyOrNullEntries();
-            featureDict[SLTConstants.Value] = MiniJSON.Json.Serialize(_properties);
+            featureDict[SLTConstants.Value] = Json.Serialize(_properties);
             return featureDict;
         }
 

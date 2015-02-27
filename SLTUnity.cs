@@ -9,6 +9,7 @@ using Saltr.UnitySdk.Resource;
 using Saltr.UnitySdk.Game;
 using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
+using GAFEditor.Utils;
 
 namespace Saltr.UnitySdk
 {
@@ -308,7 +309,7 @@ namespace Saltr.UnitySdk
                 args.CustomProperties = customProperties;
             }
 
-            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
             return new SLTResource(SLTConstants.ResourceIdSaltrAppConfig, ticket, loadSuccessCallback, loadFailCallback);
@@ -437,7 +438,7 @@ namespace Saltr.UnitySdk
 
             args.DeveloperFeatures = featureList;
             args.RawData.RemoveEmptyOrNullEntries();
-            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
             SLTResource resource = new SLTResource(SLTConstants.ResourceIdSyncFeatures, ticket, SyncSuccessHandler, SyncFailHandler);
@@ -502,7 +503,7 @@ namespace Saltr.UnitySdk
                 throw new Exception(ExceptionConstants.EmailIsRequired);
             }
 
-            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars);
             SLTResource resource = new SLTResource(SLTConstants.ResourceIdAddDevice, ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
@@ -1109,7 +1110,7 @@ namespace Saltr.UnitySdk
                 res.Dispose();
             };
 
-            urlVars[SLTConstants.UrlParamArguments] = MiniJSON.Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
 
             SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
             SLTResource resource = new SLTResource(SLTConstants.ResourceIdProperty, ticket, propertyAddSuccess, propertyAddFail);

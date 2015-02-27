@@ -77,6 +77,10 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MiniJson, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\MiniJson.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
       <HintPath>dll\UnityEngine.dll</HintPath>
@@ -134,7 +138,6 @@
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\NetworkWrapper.cs" />
     <Compile Include="Utils\HTTPStatus.cs" />
-    <Compile Include="Utils\MiniJSON.cs" />
     <Compile Include="Utils\Util.cs" />
     <Compile Include="Utils\SaltrWrapper.cs" />
     <Compile Include="Utils\LitJson\IJsonWrapper.cs" />
@@ -150,6 +153,14 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libs\MiniJson.dll" />
+    <Content Include="Libs\UnityEngine.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Libs\MiniJson.dll.meta" />
+    <None Include="Libs\UnityEngine.dll.meta" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

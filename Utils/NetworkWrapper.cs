@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Timers;
 using Saltr.UnitySdk.Resource;
+using GAFEditor.Utils;
 
 namespace Saltr.UnitySdk.Utils
 {
@@ -70,7 +71,7 @@ namespace Saltr.UnitySdk.Utils
                     if (_www.error == null)
                     {
                         //Debug.Log("Download is finished!" + _www.text);
-                        _resource.Data = (Dictionary<string, object>)MiniJSON.Json.Deserialize(_www.text);
+                        _resource.Data = (Dictionary<string, object>)Json.Deserialize(_www.text);
                         _isDownloading = false;
                         _www.Dispose();
                         _www = null;
@@ -142,7 +143,7 @@ namespace Saltr.UnitySdk.Utils
                 this._dropTimeout = 3;
             }
 
-            form.AddField(SLTConstants.UrlParamArguments, MiniJSON.Json.Serialize(post));
+            form.AddField(SLTConstants.UrlParamArguments, Json.Serialize(post));
             form.AddField(SLTConstants.UrlParamCommand, SLTConstants.ActionDevSyncData);
 
 
@@ -152,7 +153,7 @@ namespace Saltr.UnitySdk.Utils
             //}
 
 
-            Debug.Log(MiniJSON.Json.Serialize(post));
+            Debug.Log(Json.Serialize(post));
 
 
 

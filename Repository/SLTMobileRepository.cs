@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using UnityEngine;
+using GAFEditor.Utils;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -48,7 +49,7 @@ namespace Saltr.UnitySdk.Repository
             //string file = _applicationDirectory + "/" + fileName;
             // return getIntenrnal(new FileInfo(file));
             TextAsset file = Resources.Load<TextAsset>(fileName);
-            return file != null ? MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
+            return file != null ? Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
         }
 
         public object GetObjectFromCache(string fileName)
@@ -65,7 +66,7 @@ namespace Saltr.UnitySdk.Repository
             //   string file = _storageDirectory + "/" + name;
             // return getIntenrnal(new FileInfo(file));
             Debug.Log(name);
-            return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(name).text);
+            return Json.Deserialize(Resources.Load<TextAsset>(name).text);
         }
 
         public string GetObjectVersion(string name)
@@ -105,7 +106,7 @@ namespace Saltr.UnitySdk.Repository
                 }
                 else
                 {
-                    return MiniJSON.Json.Deserialize(stringData);
+                    return Json.Deserialize(stringData);
                 }
             }
             catch (Exception e)

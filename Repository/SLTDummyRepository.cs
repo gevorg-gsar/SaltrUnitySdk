@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using UnityEngine;
+using GAFEditor.Utils;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -28,7 +29,7 @@ namespace Saltr.UnitySdk.Repository
 
         public object GetObjectFromApplication(string fileName)
         {
-            return MiniJSON.Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
+            return Json.Deserialize(Resources.Load<TextAsset>(fileName).text);
         }
 
         public object GetObjectFromCache(string fileName)
