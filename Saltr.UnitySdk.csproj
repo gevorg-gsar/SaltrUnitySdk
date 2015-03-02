@@ -163,7 +163,7 @@
     <None Include="Libs\UnityEngine.dll.meta" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"c:\Program Files (x86)\Unity\Editor\Data\Mono\lib\mono\2.0\pdb2mdb.exe" $(TargetPath)
+$(ProjectDir)..\CopyLibraryDllsIntoProjects.bat</PostBuildEvent>
   </PropertyGroup>
 </Project>
