@@ -5,18 +5,19 @@ using System;
 using Saltr.UnitySdk;
 using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
+using Plexonic.Core.Network;
 
 namespace Saltr.UnitySdk.Utils
 {
 
     /// <summary>
-    /// Saltr wrapper.
+    /// Unity Saltr.
     /// </summary>
-    public class SaltrWrapper : MonoBehaviour
+    public class SaltrUnity : MonoBehaviour
     {
         #region Fields
 
-        private SLTUnity _saltr;
+        private SaltrConnector _saltrConnector;
 
         [SerializeField]
         private string _clientKey = string.Empty;
@@ -75,23 +76,12 @@ namespace Saltr.UnitySdk.Utils
 
         #endregion Nested Classes
 
-        #region Propertiess
+        #region Properties
 
-        /// <summary>
-        /// Gets all levels count.
-        /// </summary>
-        public int AllLevelsCount
+        public SaltrConnector SaltrConnector
         {
-            get { return (int)_saltr.AllLevelsCount; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="saltr.SLTUnity"/> instance.
-        /// </summary>
-        public SLTUnity Saltr
-        {
-            get { return _saltr; }
-            internal set { _saltr = value; }
+            get { return _saltrConnector; }
+            internal set { _saltrConnector = value; }
         }
 
         #endregion
@@ -103,24 +93,31 @@ namespace Saltr.UnitySdk.Utils
         /// </summary>
         protected virtual void Awake()
         {
-            if (_saltr != null)
+            if (_saltrConnector != null)
                 return;
 
-            gameObject.name = SLTUnity.SALTR_GAME_OBJECT_NAME;
+            gameObject.name = SLTConstants.SaltrGameObjectName;
+            gameObject.AddComponent<HttpWrapper>();
+
             _deviceId = _deviceId != string.Empty ? _deviceId : SystemInfo.deviceUniqueIdentifier;
-            _saltr = new SLTUnity(_clientKey, _deviceId, _useCache);
-            _saltr.SocialId = _socialId;
-            _saltr.IsDevMode = _isDevMode;
-            _saltr.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
-            _saltr.UseNoLevels = _useNoLevels;
-            _saltr.UseNoFeatures = _useNoFeatures;
-            _saltr.RequestIdleTimeout = _requestIdleTimeout;
-            _saltr.ImportLevels(_localLevelPackage);
+
+            _saltrConnector = new SaltrConnector(_clientKey, _deviceId, _useCache);
+
+            _saltrConnector.SocialId = _socialId;
+            _saltrConnector.IsDevMode = _isDevMode;
+            _saltrConnector.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
+            _saltrConnector.UseNoLevels = _useNoLevels;
+            _saltrConnector.UseNoFeatures = _useNoFeatures;
+            _saltrConnector.RequestIdleTimeout = _requestIdleTimeout;
+
+            _saltrConnector.ImportLevels(_localLevelPackage);
 
             DefineFeatures();
 
             if (_autoStart)
-                _saltr.Start();
+            { 
+                _saltrConnector.Start();
+            }
         }
 
         /// <summary>
@@ -128,16 +125,36 @@ namespace Saltr.UnitySdk.Utils
         /// </summary>
         protected virtual void DefineFeatures()
         {
-            foreach (FeatureEntry feateure in _defaultFeatures)
+            foreach (FeatureEntry feature in _defaultFeatures)
             {
                 Dictionary<string, object> properties = new Dictionary<string, object>();
-                foreach (PropertyEntry property in feateure.properties)
+                foreach (PropertyEntry property in feature.properties)
+                {
                     properties[property.key] = property.value;
-                _saltr.DefineFeature(feateure.token, properties, feateure.required);
+                }
+
+                _saltrConnector.DefineFeature(feature.token, properties, feature.required);
             }
         }
 
         #endregion Messages
+
+
+        #region Business Methods
+
+
+
+        #endregion Business Methods
+
+
+
+
+
+
+
+
+
+
 
         #region TODO @gyln: move everything below to a separate script?
 

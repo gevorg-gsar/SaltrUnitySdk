@@ -10,14 +10,16 @@ namespace Saltr.UnitySdk
     /// </summary>
     public class SLTConstants
     {
+        public const string SaltrGameObjectName = "Saltr";
+
         //TODO @gyln: Group these actions in an enum or a struct?
         public const string ActionGetAppData = "getAppData";
         public const string ActionAddProperties = "addProperties";
         public const string ActionDevSyncData = "sync";
         public const string ActionDevRegisterDevice = "registerDevice";
 
-        public const string SALTR_API_URL = "https://api.saltr.com/call";
-        public const string SALTR_DEVAPI_URL = "https://devapi.saltr.com/call";
+        public const string SaltrApiUrl = "https://api.saltr.com/call";
+        public const string SaltrDevApiUrl = "https://devapi.saltr.com/call";
 
         //used to
         public const string AppDataUrlCache = "app_data_cache.json";
