@@ -18,89 +18,49 @@ namespace Saltr.UnitySdk
 
         #endregion Constants
 
-        #region Fields
-
-        private string _token;
-        private bool _isRequired;
-        private Dictionary<string, object> _properties;
-
-        #endregion Fields
-
-        #region properties
+        #region Properties
 
         /// <summary>
         /// Gets the token, a unique identifier for a feature.
         /// </summary>
-        public string Token
-        {
-            get { return _token; }
-        }
+        public string Token { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="saltr.SLTFeature"/> is isRequired.
         /// </summary>
         /// <value><c>true</c> if isRequired; otherwise, <c>false</c>.</value>
-        public bool Required
-        {
-            get { return _isRequired; }
-        }
+        public bool IsRequired { get; set; }
+
+        public SLTFeatureType? FeatureType { get; set; }
 
         /// <summary>
         /// Gets the user defined properties.
         /// </summary>
-        public Dictionary<string, object> Properties
-        {
-            get { return _properties; }
-        }
+        public Dictionary<string, object> Properties { get; set; }
 
-        #endregion properties
-
-        #region Ctor
-
-        public SLTFeature(string token, Dictionary<string, object> properties, bool isRequired)
-        {
-            Init(token, properties, isRequired);
-        }
-
-        public SLTFeature(string token, Dictionary<string, object> properties)
-        {
-            Init(token, properties, false);
-        }
-
-        public SLTFeature(string token)
-        {
-            Init(token, null, false);
-        }
-
-        #endregion Ctor
-
-        #region Internal Methods
-
-        private void Init(string token, Dictionary<string, object> properties, bool isRequired)
-        {
-            _token = token;
-            _properties = properties;
-            _isRequired = isRequired;
-        }
-
-        #endregion Internal Methods
+        #endregion Properties
 
         #region Utils
 
         public override string ToString()
         {
-            return string.Format(ToStringPatthern, _token, _properties);
+            return string.Format(ToStringPatthern, Token, Properties);
         }
 
-        public Dictionary<string, object> ToDictionary()
-        {
-            var featureDict = new Dictionary<string, object>();
-            featureDict[SLTConstants.Token] = _token.ToUpper();
-            _properties.RemoveEmptyOrNullEntries();
-            featureDict[SLTConstants.Value] = Json.Serialize(_properties);
-            return featureDict;
-        }
+        //public Dictionary<string, object> ToDictionary()
+        //{
+        //    var featureDict = new Dictionary<string, object>();
+        //    featureDict[SLTConstants.Token] = Token.ToUpper();
+        //    Properties.RemoveEmptyOrNullEntries();
+        //    featureDict[SLTConstants.Value] = Json.Serialize(Properties);
+        //    return featureDict;
+        //}
 
         #endregion Utils
+    }
+
+    public enum SLTFeatureType
+    {
+        Generic
     }
 }

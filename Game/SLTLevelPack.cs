@@ -6,77 +6,24 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game
 {
-	/// <summary>
-	/// Represents a level pack - a uniquely identifiable collection of levels.
-	/// </summary>
+    /// <summary>
+    /// Represents a level pack - a uniquely identifiable collection of levels.
+    /// </summary>
     public class SLTLevelPack
     {
-        #region Fields
+        public string Token { get; set; }
 
-        private int _index;
-        private string _token;
-        private List<SLTLevel> _levels;
+        public string Name { get; set; }
 
-        #endregion Fields
+        public int Id { get; set; }
 
-        #region Properties
+        public int Index { get; set; }
 
-        /// <summary>
-        /// Gets the index of the pack.
-        /// </summary>
-        public int Index
-        {
-            get { return _index; }
-        }
+        public List<SLTLevel> Levels { get; set; }
 
-        /// <summary>
-        /// Gets the token, a unique identifier for the pack.
-        /// </summary>
-        public string Token
-        {
-            get { return _token; }
-        }
-
-        /// <summary>
-        /// Gets the list of levels of the pack.
-        /// </summary>
-        public List<SLTLevel> Levels
-        {
-            get { return _levels; }
-        }
-
-        #endregion Properties
-
-        #region Ctor
-
-        public SLTLevelPack(string token, int index, List<SLTLevel> levels)
-        {
-            _token = token;
-            _index = index;
-            _levels = levels;
-        }
-
-        #endregion Ctor
-
-        #region Business Methods
-        
-        // <summary>
-		/// Returns the token.
-		/// </summary>
         public override string ToString()
         {
-            return _token;
+            return Token;
         }
-
-		public void Dispose()
-		{
-			// We are NOT disposing levels here as they still can be used by the app (references!).
-			// We let levels to be garbage collected later if not used.
-			_levels.Clear();
-			_levels = null;
-		}
-
-        #endregion Business Methods
-        
     }
 }

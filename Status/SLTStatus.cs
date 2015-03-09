@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Saltr.UnitySdk.Status
 {
@@ -48,14 +49,14 @@ namespace Saltr.UnitySdk.Status
             }
 
             _statusMessage = statusMessage;
-            UnityEngine.Debug.Log(statusMessage);
+            Debug.Log(statusMessage);
         }
 
         public SLTStatus(SLTStatusCode statusCode, string statusMessage)
         {
             _statusCode = statusCode;
             _statusMessage = statusMessage;
-            UnityEngine.Debug.Log(statusMessage);
+            Debug.Log(statusMessage);
         }
 
         #endregion Ctor

@@ -22,11 +22,11 @@ namespace Saltr.UnitySdk
         public const string SaltrDevApiUrl = "https://devapi.saltr.com/call";
 
         //used to
-        public const string AppDataUrlCache = "app_data_cache.json";
+        public const string AppDataCacheFileName = "app_data_cache.json";
         /// <summary>
         /// Default path to the local level files.
         /// </summary>
-        public const string LocalLevelPackageUrl = "saltr/level_packs";
+        public const string LocalLevelPacksUrl = "saltr/level_packs";
         public const string LocalLevelContentPackageUrlTemplate = "saltr/pack_{0}/level_{1}";
         public const string LocalLevelContentCacheUrlTemplate = "pack_{0}_level_{1}.json";
 
@@ -37,6 +37,7 @@ namespace Saltr.UnitySdk
 
         public const string Id = "id";
         public const string Age = "age";
+        public const string Url = "url";
         public const string Gender = "gender";
         public const string Locale = "locale";
         public const string Region = "region";
@@ -70,10 +71,13 @@ namespace Saltr.UnitySdk
         public const string Type = "type";
         public const string Cols = "cols";
         public const string Rows = "rows";
+        public const string Name = "name";
         public const string Cells = "cells";
         public const string Value = "value";
         public const string Error = "error";
         public const string Token = "token";
+        public const string Index = "index";
+        public const string Levels = "levels";
         public const string Layers = "layers";
         public const string Boards = "boards";
         public const string Status = "status";
@@ -81,25 +85,32 @@ namespace Saltr.UnitySdk
         public const string Failed = "failed";
         public const string Source = "source";
         public const string Coords = "coords";
+        public const string Version = "version";
         public const string Success = "success";
         public const string Message = "message";
         public const string Response = "response";
+        public const string Features = "features";
         public const string LevelType = "levelType";
         public const string ErrorCode = "errorCode";
         public const string Partition = "partition";
+        public const string LevelPacks = "levelPacks";
+        public const string LocalIndex = "localIndex";
         public const string Properties = "properties";
+        public const string FeatureType = "featureType";
         public const string Experiments = "experiments";
+        public const string VariationId = "variationId";
         public const string ErrorMessage = "errorMessage";
         public const string ResponseData = "responseData";
         public const string BlockedCells = "blockedCells";
         public const string CellProperties = "cellProperties";
         public const string CustomEventList = "customEventList";
         public const string BasicProperties = "basicProperties";
+        public const string VariationVersion = "variationVersion";
         public const string CustomProperties = "customProperties";
         public const string DistributionType = "distributionType";
         public const string DistributionValue = "distributionValue";
         public const string DeveloperFeatures = "developerFeatures";
-
+        
         public const string UrlParamCommand = "cmd";
         public const string UrlParamAction = "action";
         public const string UrlParamArguments = "args";

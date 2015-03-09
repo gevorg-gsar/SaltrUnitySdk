@@ -38,10 +38,10 @@ namespace Saltr.UnitySdk.Repository
         public void CacheObject(string name, string version, object objectToSave)
         {
             string filePath = Path.Combine(_cacheDirectory.FullName, name);
-            saveInternal(filePath, objectToSave);
+            SaveObjectInFile(filePath, objectToSave);
 
             filePath = Path.Combine(_cacheDirectory.FullName, name.Replace(".", string.Empty) + "_VERSION_");
-            saveInternal(filePath, new { _VERSION_ = version });
+            SaveObjectInFile(filePath, new { _VERSION_ = version });
         }
 
         public object GetObjectFromApplication(string fileName)
@@ -56,7 +56,7 @@ namespace Saltr.UnitySdk.Repository
         {
             string file = Path.Combine(_cacheDirectory.FullName, fileName);
             // if (File.Exists(file))
-            return getIntenrnal(new FileInfo(file));
+            return GetObjectFromFile(new FileInfo(file));
             //  else
             //   return null;
         }
@@ -72,7 +72,7 @@ namespace Saltr.UnitySdk.Repository
         public string GetObjectVersion(string name)
         {
             string file = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
-            object obj = getIntenrnal(new FileInfo(file));
+            object obj = GetObjectFromFile(new FileInfo(file));
             Dictionary<string, object> dict = (Dictionary<string, object>)obj;
 
             if (dict != null && dict.ContainsKey("_VERSION_"))
@@ -86,37 +86,35 @@ namespace Saltr.UnitySdk.Repository
         public void SaveObject(string name, object objectToSave)
         {
             string resolvedPath = Path.Combine(_storageDirectory.FullName, name);
-            saveInternal(resolvedPath, objectToSave);
+            SaveObjectInFile(resolvedPath, objectToSave);
         }
 
-        private object getIntenrnal(FileInfo file)
+        #endregion Business Methods
+
+        #region Internal Methods
+
+        private object GetObjectFromFile(FileInfo file)
         {
-            try
+            if (file.Exists)
             {
-                if (!file.Exists)
+                try
                 {
-                    return null;
-                }
+                    string strObject = File.ReadAllText(file.FullName);
 
-                string stringData = File.ReadAllText(file.FullName);
-
-                if (stringData == null)
-                {
-                    return null;
+                    if (string.IsNullOrEmpty(strObject))
+                    {
+                        return Json.Deserialize(strObject);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    return Json.Deserialize(stringData);
+                    Debug.Log("[MobileStorageEngine] : error while getting object.\nError : " + e.Message);
                 }
             }
-            catch (Exception e)
-            {
-                Debug.Log("[MobileStorageEngine] : error while getting object.\nError : " + e.Message);
-                return null;
-            }
+            return null;
         }
 
-        private void saveInternal(string file, object objectToSave)
+        private void SaveObjectInFile(string file, object objectToSave)
         {
             _fileStream = new FileStream(file, FileMode.Create);
             _fileStream.Close();
@@ -124,7 +122,7 @@ namespace Saltr.UnitySdk.Repository
             File.WriteAllText(file, LitJson.JsonMapper.ToJson(objectToSave));
         }
 
-        #endregion Business Methods
+        #endregion Internal Methods
 
     }
 }

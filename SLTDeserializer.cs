@@ -7,221 +7,300 @@ using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk
 {
-    public class SLTDeserializer
+    public static class SLTDeserializer
     {
-        #region Ctor
-
-        public SLTDeserializer()
-        { }
-
-        #endregion Ctor
-
         #region Business Methods
 
-        public static List<SLTExperiment> DecodeExperiments(Dictionary<string, object> rootNode)
+        public static SLTAppData DeserializeAppData(Dictionary<string, object> responseAppData)
         {
-            if (rootNode == null)
+            SLTAppData sltAppData = new SLTAppData();
+            try
             {
-                return new List<SLTExperiment>();
-            }
-
-            List<SLTExperiment> experiments = new List<SLTExperiment>();
-            Dictionary<string, object> rootDictionary = rootNode; //  (Dictionary<string, object>)rootNod["responseData"];
-
-            if (rootDictionary == null)
-            {
-                return null;
-            }
-
-            if (rootDictionary.ContainsKey(SLTConstants.Experiments))
-            {
-                IEnumerable<object> experimentDictionaryList = (IEnumerable<object>)rootDictionary[SLTConstants.Experiments];
-                foreach (var experimentDictionaryObj in experimentDictionaryList)
+                if (responseAppData.ContainsKey(SLTConstants.Success))
                 {
-                    Dictionary<string, object> experimentDictionary = (Dictionary<string, object>)experimentDictionaryObj;
-
-                    string token = string.Empty;
-                    string partition = string.Empty;
-                    SLTExperimentType experimentType = SLTExperimentType.Unknown;
-                    IEnumerable<object> customEvents = null;
-
-                    if (experimentDictionary.ContainsKey(SLTConstants.Token))
-                        token = experimentDictionary[SLTConstants.Token].ToString();
-
-                    if (experimentDictionary.ContainsKey(SLTConstants.Partition))
-                        partition = experimentDictionary[SLTConstants.Partition].ToString();
-
-                    if (experimentDictionary.ContainsKey(SLTConstants.Type))
-                        experimentType = (SLTExperimentType)Enum.Parse(typeof(SLTExperimentType), experimentDictionary[SLTConstants.Type].ToString(), true);
-
-                    if (experimentDictionary.ContainsKey(SLTConstants.CustomEventList))
-                        customEvents = (IEnumerable<object>)experimentDictionary[SLTConstants.CustomEventList];
-
-                    SLTExperiment experimentInfo = new SLTExperiment(token, partition, experimentType, customEvents);
-                    experiments.Add(experimentInfo);
+                    sltAppData.Success = bool.Parse(responseAppData[SLTConstants.Success].ToString());
                 }
+
+                if (responseAppData.ContainsKey(SLTConstants.LevelType))
+                {
+                    sltAppData.LevelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), responseAppData[SLTConstants.LevelType].ToString(), true);
+                }
+
+                if (responseAppData.ContainsKey(SLTConstants.Features))
+                {
+                    sltAppData.Features = DeserializeFeatures(responseAppData[SLTConstants.Features] as IEnumerable<object>);
+                }
+
+                if (responseAppData.ContainsKey(SLTConstants.Experiments))
+                {
+                    sltAppData.Experiments = DeserializeExperiments(responseAppData[SLTConstants.Experiments] as IEnumerable<object>);
+                }
+
+                if (responseAppData.ContainsKey(SLTConstants.LevelPacks))
+                {
+                    sltAppData.LevelPacks = DeserializeLevelPacks(responseAppData[SLTConstants.LevelPacks] as IEnumerable<object>);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return sltAppData;
+        }
+
+        public static SLTFeature DeserializeFeature(Dictionary<string, object> responseFeature)
+        {
+            SLTFeature sltFeature = new SLTFeature();
+            try
+            {
+                if (responseFeature.ContainsKey(SLTConstants.Token))
+                {
+                    sltFeature.Token = responseFeature[SLTConstants.Token].ToString();
+                }
+
+                if (responseFeature.ContainsKey(SLTConstants.FeatureType))
+                {
+                    sltFeature.FeatureType = (SLTFeatureType)Enum.Parse(typeof(SLTFeatureType), responseFeature[SLTConstants.FeatureType].ToString(), true);
+                }
+
+                if (responseFeature.ContainsKey(SLTConstants.Properties))
+                {
+                    sltFeature.Properties = responseFeature[SLTConstants.Properties] as Dictionary<string, object>;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return sltFeature;
+
+        }
+
+        public static List<SLTFeature> DeserializeFeatures(IEnumerable<object> responseFeatures)
+        {
+            List<SLTFeature> features = new List<SLTFeature>();
+            try
+            {
+                if (responseFeatures != null)
+                {
+                    foreach (Dictionary<string, object> responseFeature in responseFeatures)
+                    {
+                        features.Add(DeserializeFeature(responseFeature));
+                    }
+                }
+
+            }
+            catch
+            {
+                throw;
+            }
+            return features;
+        }
+
+        public static SLTExperiment DeserializeExperiment(Dictionary<string, object> responseExperiment)
+        {
+            SLTExperiment sltExperiment = new SLTExperiment();
+            try
+            {
+                if (responseExperiment.ContainsKey(SLTConstants.Token))
+                {
+                    sltExperiment.Token = responseExperiment[SLTConstants.Token].ToString();
+                }
+
+                if (responseExperiment.ContainsKey(SLTConstants.Partition))
+                {
+                    sltExperiment.Partition = responseExperiment[SLTConstants.Partition].ToString();
+                }
+
+                if (responseExperiment.ContainsKey(SLTConstants.Type))
+                {
+                    sltExperiment.ExperimentType = (SLTExperimentType)Enum.Parse(typeof(SLTExperimentType), responseExperiment[SLTConstants.Type].ToString(), true);
+                }
+
+                if (responseExperiment.ContainsKey(SLTConstants.CustomEventList))
+                {
+                    sltExperiment.CustomEvents = responseExperiment[SLTConstants.CustomEventList] as IEnumerable<object>;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return sltExperiment;
+        }
+
+        public static List<SLTExperiment> DeserializeExperiments(IEnumerable<object> responseExperiments)
+        {
+            List<SLTExperiment> experiments = new List<SLTExperiment>();
+            try
+            {
+                if (responseExperiments != null)
+                {
+                    foreach (Dictionary<string, object> responseExperiment in responseExperiments)
+                    {
+                        experiments.Add(DeserializeExperiment(responseExperiment));
+                    }
+                }
+            }
+            catch
+            {
+                throw;
             }
 
             return experiments;
         }
 
-        public static Dictionary<string, SLTFeature> DecodeFeatures(Dictionary<string, object> rootNode)
+        public static SLTLevelPack DeserializeLevelPack(Dictionary<string, object> responseLevelPack)
         {
-            if (rootNode == null)
+            SLTLevelPack sltLevelPack = new SLTLevelPack();
+            try
             {
-                return new Dictionary<string, SLTFeature>();
-            }
 
-            Dictionary<string, SLTFeature> features = new Dictionary<string, SLTFeature>();
-            if (rootNode.ContainsKey("features"))
-            {
-                IEnumerable<object> featureDictionaryList = (IEnumerable<object>)rootNode["features"];
-
-                foreach (var featureDictionary in featureDictionaryList)
+                if (responseLevelPack.ContainsKey(SLTConstants.Token))
                 {
-                    Dictionary<string, object> featureNod = (Dictionary<string, object>)featureDictionary;
-                    string tokken = string.Empty;
-                    if (featureNod.ContainsKey("token"))
-                    {
-                        tokken = featureNod["token"].ToString();
-                    }
+                    sltLevelPack.Token = responseLevelPack[SLTConstants.Token].ToString();
+                }
 
-                    Dictionary<string, object> properties = new Dictionary<string, object>();
-                    //TODO @GSAR: remove "data" check later when API versioning is done.
-                    if (featureNod.ContainsKey("data"))
-                    {
-                        properties = (Dictionary<string, object>)featureNod["data"];
-                    }
-                    else if (featureNod.ContainsKey("properties"))
-                    {
-                        properties = (Dictionary<string, object>)featureNod["properties"];
-                    }
+                if (responseLevelPack.ContainsKey(SLTConstants.Name))
+                {
+                    sltLevelPack.Name = responseLevelPack[SLTConstants.Name].ToString();
+                }
 
-                    bool isRequired = false;
-                    if (featureNod.ContainsKey("required"))
-                    {
-                        isRequired = featureNod["required"].ToString() == "true";
-                    }
+                if (responseLevelPack.ContainsKey(SLTConstants.Id))
+                {
+                    sltLevelPack.Id = int.Parse(responseLevelPack[SLTConstants.Id].ToString());
+                }
 
-                    features[tokken] = new SLTFeature(tokken, properties, isRequired);
+                if (responseLevelPack.ContainsKey(SLTConstants.Index))
+                {
+                    sltLevelPack.Index = int.Parse(responseLevelPack[SLTConstants.Index].ToString());
+                }
+
+                if (responseLevelPack.ContainsKey(SLTConstants.Levels))
+                {
+                    sltLevelPack.Levels = DeserializeLevels(responseLevelPack[SLTConstants.Levels] as IEnumerable<object>);
                 }
             }
+            catch
+            {
+                throw;
+            }
 
-            return features;
+            return sltLevelPack;
         }
 
-        public static List<SLTLevelPack> DecodeLevels(Dictionary<string, object> rootNod)
+        public static List<SLTLevelPack> DeserializeLevelPacks(IEnumerable<object> responseLevelPacks)
         {
-            if (rootNod == null)
-            {
-                return new List<SLTLevelPack>();
-            }
-
-            SLTLevelType levelType = SLTLevelType.Matching;
-            if (rootNod.ContainsKey("levelType"))
-            {
-                levelType = (SLTLevelType)Enum.Parse(typeof(SLTLevelType), rootNod["levelType"].ToString(), true);
-            }
-
             List<SLTLevelPack> levelPacks = new List<SLTLevelPack>();
-            Dictionary<string, object> rootDictionary = rootNod;  // rootNod["responseData"].toDictionaryOrNull();
-            if (rootDictionary == null)
+            try
             {
-                return null;
-            }
-
-            int index = -1;
-            if (rootDictionary.ContainsKey("levelPacks"))
-            {
-                IEnumerable<object> levelPackDictionaryList = (IEnumerable<object>)rootDictionary["levelPacks"];
-
-                foreach (var LevelPackDictionaryObj in levelPackDictionaryList)
+                if (responseLevelPacks != null)
                 {
-                    Dictionary<string, object> levelPackDictionary = (Dictionary<string, object>)LevelPackDictionaryObj;
-
-                    string token = string.Empty;
-                    if (levelPackDictionary.ContainsKey("token"))
+                    foreach (Dictionary<string, object> responseLevelPack in responseLevelPacks)
                     {
-                        token = (string)levelPackDictionary["token"];
+                        levelPacks.Add(DeserializeLevelPack(responseLevelPack));
                     }
-
-                    int packIndex = 0;
-                    if (levelPackDictionary.ContainsKey("index"))
-                    {
-                        int.TryParse(levelPackDictionary["index"].ToString(), out packIndex);
-                    }
-
-                    List<SLTLevel> levelStructures = new List<SLTLevel>();
-
-                    IEnumerable<object> leveldictionaryList = null;
-                    if (levelPackDictionary.ContainsKey("levels"))
-                    {
-                        leveldictionaryList = (IEnumerable<object>)levelPackDictionary["levels"];
-                    }
-
-                    object properties = null;
-                    foreach (var levelobj in leveldictionaryList)
-                    {
-                        ++index;
-                        Dictionary<string, object> levelDict = (Dictionary<string, object>)levelobj;
-
-                        int id = 0;
-                        if (levelDict.ContainsKey("id"))
-                        {
-                            int.TryParse(levelDict["id"].ToString(), out id);
-                        }
-
-                        int ind = 0;
-                        if (levelDict.ContainsKey("index"))
-                        {
-                            int.TryParse(levelDict["index"].ToString(), out ind);
-                        }
-
-                        string url = string.Empty;
-                        if (levelDict.ContainsKey("url"))
-                        {
-                            url = levelDict["url"].ToString();
-                        }
-
-                        int version = 0;
-                        if (levelDict.ContainsKey("version"))
-                        {
-                            int.TryParse(levelDict["version"].ToString(), out version);
-                        }
-
-                        // if (levelDict.ContainsKey("index"))
-                        //   packIndex = Int32.Parse(levelDict["index"].ToString());
-
-                        if (levelDict.ContainsKey("properties"))
-                        {
-                            properties = levelDict["properties"];
-                        }
-
-                        int localIndex = 0;
-                        if (levelDict.ContainsKey("localIndex"))
-                        {
-                            localIndex = Int32.Parse(levelDict["localIndex"].ToString());
-                        }
-                        else if (levelDict.ContainsKey("index"))
-                        {
-                            localIndex = Int32.Parse(levelDict["index"].ToString());
-                        }
-
-                        //TODO @GSAR: later, leave localIndex only!
-                        levelStructures.Add(new SLTLevel(id.ToString(), levelType, index, localIndex, packIndex, url, properties as Dictionary<string, object>, version.ToString()));
-                    }
-
-                    //TODO @GSAR: remove this sort when SALTR confirms correct ordering
-                    levelStructures.Sort(new LevelSortByIndexComparer());
-                    //levelStructures.Sort(new SLTLevel.SortByIndex());
-                    SLTLevelPack levelPack = new SLTLevelPack(token, packIndex, levelStructures);
-                    levelPacks.Add(levelPack);
-
                 }
             }
-            //TODO @GSAR: remove this sort when SALTR confirms correct ordering
-            levelPacks.Sort(new LevelPackSortByIndexComparer());
+            catch
+            {
+                throw;
+            }
+
             return levelPacks;
+        }
+
+        public static SLTLevel DeserializeLevel(Dictionary<string, object> responseLevel)
+        {
+            SLTLevel sltLevel = new SLTLevel();
+            try
+            {
+                if (responseLevel.ContainsKey(SLTConstants.Url))
+                {
+                    sltLevel.ContentUrl = responseLevel[SLTConstants.Url].ToString();
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.Id))
+                {
+                    sltLevel.Id = int.Parse(responseLevel[SLTConstants.Id].ToString());
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.Index))
+                {
+                    sltLevel.Index = int.Parse(responseLevel[SLTConstants.Index].ToString());
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.LocalIndex))
+                {
+                    sltLevel.LocalIndex = int.Parse(responseLevel[SLTConstants.LocalIndex].ToString());
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.Version))
+                {
+                    sltLevel.Version = int.Parse(responseLevel[SLTConstants.Version].ToString());
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.VariationVersion))
+                {
+                    sltLevel.VariationVersion = int.Parse(responseLevel[SLTConstants.VariationVersion].ToString());
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.VariationId))
+                {
+                    sltLevel.VariationId = int.Parse(responseLevel[SLTConstants.VariationId].ToString());
+                }
+
+                if (responseLevel.ContainsKey(SLTConstants.Properties))
+                {
+                    sltLevel.Properties = responseLevel[SLTConstants.Properties] as Dictionary<string, object>;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return sltLevel;
+        }
+
+        public static List<SLTLevel> DeserializeLevels(IEnumerable<object> responseLevels)
+        {
+            List<SLTLevel> levels = new List<SLTLevel>();
+            try
+            {
+                if (responseLevels != null)
+                {
+                    foreach (Dictionary<string, object> responseLevel in responseLevels)
+                    {
+                        levels.Add(DeserializeLevel(responseLevel));
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return levels;
+        }
+
+        public static SLTLevelContent DeserializeLevelContent(Dictionary<string, object> responseLevelContent)
+        {
+            SLTLevelContent sltLevelContent = new SLTLevelContent();
+            try
+            {
+                if (responseLevelContent.ContainsKey(SLTConstants.Properties))
+                {
+                    sltLevelContent.Properties = responseLevelContent[SLTConstants.Properties] as Dictionary<string, object>;
+                } 
+            }
+            catch
+            {
+                throw;
+            }
+            return sltLevelContent;
         }
 
         #endregion Business Methods

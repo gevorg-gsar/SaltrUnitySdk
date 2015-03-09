@@ -11,65 +11,29 @@ namespace Saltr.UnitySdk
 	/// </summary>
     public class SLTExperiment
     {
-        #region Fields
-
-        private string _token;
-        private string _partition;
-
-        private SLTExperimentType _experimentType;
-        private IEnumerable<object> _customEvents;
-
-        #endregion Fields
-
         #region Properties
-
-
-        /// <summary>
-        /// The partition letter the client is assign to (<c>"A"</c>, <c>"B"</c>, <c>"C"</c>, etc.).
-        /// </summary>
-        public string Partition
-        {
-            get { return _partition; }
-        }
 
         /// <summary>
         /// A unique identifier for the experiment.
         /// </summary>
-        public string Token
-        {
-            get { return _token; }
-        }
+        public string Token { get; set; }
+
+        /// <summary>
+        /// The partition letter the client is assign to (<c>"A"</c>, <c>"B"</c>, <c>"C"</c>, etc.).
+        /// </summary>
+        public string Partition { get; set; }
 
         /// <summary>
         /// The experimentType of the experiment. See <see cref="saltr.SLTExperimet.SLTExperimentType"/>.
         /// </summary>
-        public SLTExperimentType ExperimentType
-        {
-            get { return _experimentType; }
-        }
+        public SLTExperimentType? ExperimentType { get; set; }
 
         // <summary>
         // The array of comma separated event names for which A/B test data should be send.
         // </summary>
-        public IEnumerable<object> CustomEvents
-        {
-            get { return _customEvents; }
-        }
+        public IEnumerable<object> CustomEvents { get; set; }
 
         #endregion Properties
-
-        #region Ctor
-
-        public SLTExperiment(string token, string partition, SLTExperimentType experimentType, IEnumerable<object> customEvents)
-        {
-            _token = token;
-            _partition = partition;
-            _customEvents = customEvents;
-            _experimentType = experimentType;
-        }
-
-        #endregion Ctor       
-
     }
     
     /// <summary>
@@ -77,7 +41,6 @@ namespace Saltr.UnitySdk
     /// </summary>
     public enum SLTExperimentType
     {
-        Unknown,
         Feature,
         Level
     }
