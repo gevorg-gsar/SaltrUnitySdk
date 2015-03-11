@@ -17,20 +17,13 @@ namespace Saltr.UnitySdk.Game
         /// <summary>
         /// Gets the layers of the board.
         /// </summary>
-        public List<SLTBoardLayer> Layers
-        {
-            get;
-            private set;
-        }
+        public List<SLTBoardLayer> Layers { get; set; }
+
 
         /// <summary>
         /// Gets the properties associated with the board.
         /// </summary>
-        public Dictionary<string, object> Properties
-        {
-            get;
-            private set;
-        }
+        public Dictionary<string, object> Properties { get; set; }
 
         #endregion Properties
 

@@ -16,15 +16,6 @@ namespace Saltr.UnitySdk.Game.Matching
 
         #endregion Fields
 
-        #region Ctor
-
-        public SLTMatchingBoardLayer(string layerId, int layerIndex)
-            : base(layerId, layerIndex)
-        {
-        }
-
-        #endregion Ctor
-
         #region Business Methods
 
         // <summary>

@@ -73,7 +73,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
         {
             //temporarily checking for 2 names until "layerId" is removed!
             string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
-            SLT2DBoardLayer layer = new SLT2DBoardLayer(token, layerIndex);
+            SLT2DBoardLayer layer = new SLT2DBoardLayer() { Token = token, Index = layerIndex };
             ParseAssetInstances(layer, (IEnumerable<object>)layerNode["assets"], assetMap);
             return layer;
         }
@@ -102,7 +102,7 @@ namespace Saltr.UnitySdk.Game.Canvas2D
         #endregion
 
         #region Business Methods
-        
+
         public override System.Collections.Generic.Dictionary<string, object> ParseLevelContent(Dictionary<string, object> boardNodes, Dictionary<string, object> assetMap)
         {
             Dictionary<string, object> boards = new Dictionary<string, object>();

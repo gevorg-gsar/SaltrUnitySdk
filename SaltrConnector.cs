@@ -11,7 +11,7 @@ using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
 using GAFEditor.Utils;
 using Plexonic.Core.Network;
-using LitJson;
+using Newtonsoft.Json;
 
 namespace Saltr.UnitySdk
 {
@@ -97,7 +97,7 @@ namespace Saltr.UnitySdk
 
             DownloadManager.Instance.AddDownload(levelContentUrl, OnLevelContentLoad);
         }
-        
+
         ///// <summary>
         ///// Associates some properties with this client, that are used to assign it to a certain user group in Saltr.
         ///// </summary>
@@ -238,7 +238,7 @@ namespace Saltr.UnitySdk
             return url;
         }
 
-        
+
         private void Sync()
         {
             //Dictionary<string, string> urlVars = new Dictionary<string, string>();
@@ -285,7 +285,7 @@ namespace Saltr.UnitySdk
             //resource.Load();
         }
 
-        
+
 
         #endregion Internal Methods
 
@@ -300,20 +300,16 @@ namespace Saltr.UnitySdk
                 OnConnectFail(result);
             }
 
-            Dictionary<string, object> appDataResponse;
-            Dictionary<string, object> responseData = Json.Deserialize(result.Text) as Dictionary<string, object>;
+            Dictionary<string, List<SLTAppData>> responseData = JsonConvert.DeserializeObject<Dictionary<string, List<SLTAppData>>>(result.Text);//Json.Deserialize(result.Text) as Dictionary<string, object>;
 
             if (responseData != null && responseData.ContainsKey(SLTConstants.Response))
             {
-                IEnumerable<object> response = responseData[SLTConstants.Response] as IEnumerable<object>;
-                appDataResponse = response.FirstOrDefault() as Dictionary<string, object>;
+                sltAppData = responseData[SLTConstants.Response].FirstOrDefault<SLTAppData>();
 
-                sltAppData = SLTDeserializer.DeserializeAppData(appDataResponse);
-
-                if (sltAppData.Success.HasValue && sltAppData.Success.Value)
+                if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {
                     _isConected = true;
-                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, "0", responseData);
+                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, "0", sltAppData);
 
                     Debug.Log("[SALTR] AppData load success.");
 
@@ -326,7 +322,6 @@ namespace Saltr.UnitySdk
                     //{
                     //    Sync();
                     //}
-
 
                     //// if developer didn't announce use without levels, and levelType in returned JSON is not "noLevels",
                     //// then - parse levels
@@ -384,22 +379,14 @@ namespace Saltr.UnitySdk
             if (result != null && !string.IsNullOrEmpty(result.Text))
             {
                 SLTLevel sltLevel = (result.StateObject as SLTLevel) ?? new SLTLevel();
+                sltLevel.LevelContent = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
 
-                Dictionary<string, object> levelContentResponse;
-                Dictionary<string, object> responseData = Json.Deserialize(result.Text) as Dictionary<string, object>;
-
-                if (responseData != null)
+                if (LevelContentLoadSuccess != null)
                 {
-                    levelContentResponse = responseData as Dictionary<string, object>;
-                    sltLevel.LevelContent = SLTDeserializer.DeserializeLevelContent(levelContentResponse);
-                    
-                    if (LevelContentLoadSuccess != null)
-                    {
-                        LevelContentLoadSuccess(sltLevel);
-                        return;
-                    }
-                }    
-            }            
+                    LevelContentLoadSuccess(sltLevel);
+                    return;
+                }
+            }
 
             OnLevelContentLoadFail(result);
 
@@ -662,7 +649,7 @@ namespace Saltr.UnitySdk
 
 
 
-        
+
 
 
         //    Action<SLTResource> loadFromSaltrFailCallback = delegate(SLTResource SLTResource)

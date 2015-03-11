@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using UnityEngine;
 using GAFEditor.Utils;
+using Newtonsoft.Json;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -49,7 +50,7 @@ namespace Saltr.UnitySdk.Repository
             //string file = _applicationDirectory + "/" + fileName;
             // return getIntenrnal(new FileInfo(file));
             TextAsset file = Resources.Load<TextAsset>(fileName);
-            return file != null ? Json.Deserialize(Resources.Load<TextAsset>(fileName).text) : null;
+            return file != null ? JsonConvert.DeserializeObject(Resources.Load<TextAsset>(fileName).text) : null;
         }
 
         public object GetObjectFromCache(string fileName)
@@ -66,7 +67,7 @@ namespace Saltr.UnitySdk.Repository
             //   string file = _storageDirectory + "/" + name;
             // return getIntenrnal(new FileInfo(file));
             Debug.Log(name);
-            return Json.Deserialize(Resources.Load<TextAsset>(name).text);
+            return JsonConvert.DeserializeObject(Resources.Load<TextAsset>(name).text);
         }
 
         public string GetObjectVersion(string name)
@@ -103,7 +104,7 @@ namespace Saltr.UnitySdk.Repository
 
                     if (string.IsNullOrEmpty(strObject))
                     {
-                        return Json.Deserialize(strObject);
+                        return JsonConvert.DeserializeObject(strObject);
                     }
                 }
                 catch (Exception e)
@@ -119,7 +120,7 @@ namespace Saltr.UnitySdk.Repository
             _fileStream = new FileStream(file, FileMode.Create);
             _fileStream.Close();
 
-            File.WriteAllText(file, LitJson.JsonMapper.ToJson(objectToSave));
+            File.WriteAllText(file, JsonConvert.SerializeObject(objectToSave));
         }
 
         #endregion Internal Methods

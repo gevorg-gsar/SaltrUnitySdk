@@ -14,23 +14,9 @@ namespace Saltr.UnitySdk.Game.Canvas2D
         /// <summary>
         /// Gets all the asset instances present on the board.
         /// </summary>
-        public List<SLT2DAssetInstance> AssetInstances
-        {
-            get;
-            private set;
-        }
-
+        public List<SLT2DAssetInstance> AssetInstances {get;set;}
+        
         #endregion Properties
-
-        #region Ctor
-
-        public SLT2DBoardLayer(string layerId, int layerIndex)
-            : base(layerId, layerIndex)
-        {
-            AssetInstances = new List<SLT2DAssetInstance>();
-        }
-
-        #endregion Ctor
 
         #region Business Methods
 

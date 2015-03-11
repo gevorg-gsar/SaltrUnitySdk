@@ -7,6 +7,7 @@ using Saltr.UnitySdk.Game.Matching;
 using Saltr.UnitySdk.Game.Canvas2D;
 using Saltr.UnitySdk.Utils;
 using Saltr.UnitySdk.Status;
+using Newtonsoft.Json;
 
 namespace Saltr.UnitySdk.Game
 {
@@ -38,6 +39,7 @@ namespace Saltr.UnitySdk.Game
         /// <summary>
         /// Gets the URL, used to retrieve contents of the level from Saltr.
         /// </summary>
+        [JsonProperty("url")]
         public string ContentUrl { get; set; }
 
         /// <summary>

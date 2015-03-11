@@ -187,7 +187,7 @@ namespace Saltr.UnitySdk.Game.Matching
         {
             //temporarily checking for 2 names until "layerId" is removed!
             string token = (layerNode.ContainsKey("token")) ? layerNode.GetValue<string>("token") : layerNode.GetValue<string>("layerId");
-            SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer(token, layerIndex);
+            SLTMatchingBoardLayer layer = new SLTMatchingBoardLayer() { Token = token, Index = layerIndex };
 
             ParseFixedAssets(layer, (IEnumerable<object>)layerNode["fixedAssets"], cells, assetMap);
             ParseLayerChunks(layer, (IEnumerable<object>)layerNode["chunks"], cells, assetMap);
