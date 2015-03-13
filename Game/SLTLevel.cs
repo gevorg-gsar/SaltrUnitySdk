@@ -47,7 +47,7 @@ namespace Saltr.UnitySdk.Game
         /// </summary>
         public Dictionary<string, object> Properties { get; set; }
 
-        public SLTLevelContent LevelContent { get; set; }
+        public SLTLevelContent Content { get; set; }
 
         #endregion Properties
 

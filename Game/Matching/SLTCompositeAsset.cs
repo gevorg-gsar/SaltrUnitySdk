@@ -13,16 +13,6 @@ namespace Saltr.UnitySdk.Game.Matching
 
         #endregion Properties
 
-        #region Ctor
-
-        public SLTCompositeAsset(string token, IEnumerable<object> cellInfos, object properties, Dictionary<string, object> states)
-            : base(token, properties, states)
-        {
-            CellInfos = cellInfos;
-        }
-
-        #endregion Ctor
-
         #region Business Methods
 
         public SLTAssetInstance GetInstance(IEnumerable<object> stateIds)

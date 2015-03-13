@@ -9,36 +9,13 @@ namespace Saltr.UnitySdk.Game
     {
         #region Properties
 
-        public string Token
-        {
-            get;
-            private set;
-        }
+        public string Token { get; set; }
 
-        public object Properties
-        {
-            get;
-            private set;
-        }
+        public Dictionary<string, object> States { get; set; }
 
-        public Dictionary<string, object> StateMap
-        {
-            get;
-            private set;
-        }
+        public Dictionary<string, object> Properties { get; set; }
 
         #endregion Properties
-
-        #region Ctor
-
-        public SLTAsset(string token, object properties, Dictionary<string, object> stateMap)
-        {
-            Token = token;
-            Properties = properties;
-            StateMap = stateMap;
-        }
-
-        #endregion Ctor
 
         #region Business Methods
 
@@ -52,7 +29,7 @@ namespace Saltr.UnitySdk.Game
             List<SLTAssetState> states = new List<SLTAssetState>();
             foreach (var stateId in stateIds)
             {
-                SLTAssetState state = StateMap[stateId.ToString()] as SLTAssetState;
+                SLTAssetState state = States[stateId.ToString()] as SLTAssetState;
 
                 if (state != null)
                 {

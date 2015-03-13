@@ -15,10 +15,19 @@ namespace Saltr.UnitySdk.Game
         #region Properties
 
         /// <summary>
+        /// Gets the width of the board in pixels as is in Saltr level editor.
+        /// </summary>
+        public float Width { get; set; }
+
+        /// <summary>
+        /// Gets the height of the board in pixels as is in Saltr level editor.
+        /// </summary>
+        public float Height { get; set; }
+
+        /// <summary>
         /// Gets the layers of the board.
         /// </summary>
         public List<SLTBoardLayer> Layers { get; set; }
-
 
         /// <summary>
         /// Gets the properties associated with the board.
@@ -26,16 +35,6 @@ namespace Saltr.UnitySdk.Game
         public Dictionary<string, object> Properties { get; set; }
 
         #endregion Properties
-
-        #region Ctor
-
-        public SLTBoard(List<SLTBoardLayer> layers, Dictionary<string, object> properties)
-        {
-            Layers = layers;
-            Properties = properties;
-        }
-
-        #endregion
 
         #region Business Methods
 

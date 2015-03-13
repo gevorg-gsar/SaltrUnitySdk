@@ -16,6 +16,10 @@ namespace Saltr.UnitySdk.Game
 
         public Dictionary<string, SLTBoard> Boards { get; set; }
 
+        public Dictionary<string, SLTAsset> Asset { get; set; }
+
+        public Dictionary<string, string> AssetStates { get; set; }
+
         public Dictionary<string, object> Properties { get; set; }
 
         #endregion Properties

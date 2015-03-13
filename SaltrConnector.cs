@@ -379,7 +379,7 @@ namespace Saltr.UnitySdk
             if (result != null && !string.IsNullOrEmpty(result.Text))
             {
                 SLTLevel sltLevel = (result.StateObject as SLTLevel) ?? new SLTLevel();
-                sltLevel.LevelContent = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
+                sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
 
                 if (LevelContentLoadSuccess != null)
                 {
