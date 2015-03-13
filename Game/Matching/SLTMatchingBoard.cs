@@ -15,43 +15,18 @@ namespace Saltr.UnitySdk.Game.Matching
         /// <summary>
         /// Gets the number of rows.
         /// </summary>
-        public int Rows
-        {
-            get;
-            private set;
-        }
+        public int Rows { get; set; }
 
         /// <summary>
         /// Gets the number of columns.
         /// </summary>
-        public int Cols
-        {
-            get;
-            private set;
-        }
+        public int Cols { get; set; }
 
         /// <summary>
         /// Gets the cells.
         /// </summary>
-        public SLTCells Cells
-        {
-            get;
-            private set;
-        }
+        public SLTCells Cells { get; set; }
 
         #endregion Properties
-
-        #region Ctor
-
-        public SLTMatchingBoard(SLTCells cells, List<SLTBoardLayer> layers, Dictionary<string, object> properties)
-            : base(layers, properties)
-        {
-            Cells = cells;
-            Cols = cells.Width;
-            Rows = cells.Height;
-        }
-
-        #endregion Ctor        
-
     }
 }
