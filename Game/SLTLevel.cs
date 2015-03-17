@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Saltr.UnitySdk.Game.Matching;
-using Saltr.UnitySdk.Game.Canvas2D;
 using Saltr.UnitySdk.Utils;
 using Saltr.UnitySdk.Status;
 using Newtonsoft.Json;

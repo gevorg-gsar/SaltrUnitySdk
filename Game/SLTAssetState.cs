@@ -15,17 +15,21 @@ namespace Saltr.UnitySdk.Game
         /// <summary>
         /// Gets the token, a unique identifier for each state of an asset.
         /// </summary>
-        public string Token {get;set;}
+        public string Token { get; set; }
 
         /// <summary>
         /// Gets the X coordinate of the pivot relative to the top left corner, in pixels.
         /// </summary>
-        public float PivotX { get; set; }
+        public float? PivotX { get; set; }
 
         /// <summary>
         /// Gets the Y coordinate of the pivot relative to the top left corner, in pixels.
         /// </summary>
-        public float PivotY { get; set; }
+        public float? PivotY { get; set; }
+
+        public float? Width { get; set; }
+
+        public float? Height { get; set; }
 
         /// <summary>
         /// Gets the properties, associated with the state.

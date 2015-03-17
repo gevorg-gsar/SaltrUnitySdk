@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
@@ -12,263 +13,186 @@ namespace Saltr.UnitySdk.Game.Matching
     {
         #region Fields
 
-        private string _layerToken;
-        private int _layerIndex;
+        public int? ChunkId { get; set; }
 
-        private List<SLTCell> _chunkCells;
-        private List<SLTCell> _availableCells;
-        private Dictionary<string, object> _assetMap;
-        private List<SLTChunkAssetRule> _chunkAssetRules;
+        public List<List<int>> Cells { get; set; }
+
+        public List<SLTChunkAsset> Assets { get; set; }
 
         #endregion Fields
 
-        #region Ctor
+        #region Public Methods
 
-        public SLTChunk(string layerToken, int layerIndex, List<SLTCell> chunkCells, List<SLTChunkAssetRule> chunkAssetInfos, Dictionary<string, object> assetMap)
+        public void GenerateContent(string layerToken, int layerIndex, SLTCell[,] boardCells)
         {
-            _layerIndex = layerIndex;
-            _layerToken = layerToken;
-            _chunkCells = chunkCells;
-            _chunkAssetRules = chunkAssetInfos;
-            _assetMap = assetMap;
+            List<SLTCell> chunkCells = FilterChunkCells(boardCells);
 
-            //_availableCells = new List<SLTCell>();
+            ResetChunkCells(chunkCells, layerToken, layerIndex);
+
+            List<SLTChunkAsset> countChunkAssets = new List<SLTChunkAsset>();
+            List<SLTChunkAsset> ratioChunkAssets = new List<SLTChunkAsset>();
+            List<SLTChunkAsset> randomChunkAssets = new List<SLTChunkAsset>();
+
+            foreach (var chunkAsset in Assets)
+            {
+                switch (chunkAsset.DistributionType)
+                {
+                    case ChunkAssetDistributionType.Count:
+                        countChunkAssets.Add(chunkAsset);
+                        break;
+                    case ChunkAssetDistributionType.Ratio:
+                        ratioChunkAssets.Add(chunkAsset);
+                        break;
+                    case ChunkAssetDistributionType.Random:
+                        randomChunkAssets.Add(chunkAsset);
+                        break;
+                }
+            }
+
+            GenerateChunkAssetsByCount(countChunkAssets, chunkCells, layerToken, layerIndex);
+            GenerateChunkAssetsByRatio(ratioChunkAssets, chunkCells, layerToken, layerIndex);
+            //GenerateChunkAssetsRandomly(randomChunkAssets);
         }
 
-        #endregion Ctor
+        #endregion public Methods
+
 
         #region Internal Methods
 
-        private void ResetChunkCells()
+        private List<SLTCell> FilterChunkCells(SLTCell[,] boardCells)
         {
-            _chunkCells.ForEach(cell => cell.RemoveAssetInstance(_layerToken, _layerIndex));
+            List<SLTCell> chunkCells = new List<SLTCell>();
+
+            foreach (List<int> cell in Cells)
+            {
+
+                int chunkAssetRowIndex = cell.ElementAt<int>(0);
+                int chunkAssetColIndex = cell.ElementAt<int>(1);
+
+                chunkCells.Add(boardCells[chunkAssetRowIndex, chunkAssetColIndex]);
+            }
+
+            return chunkCells;
         }
 
-        private void GenerateAssetInstancesRandomly(List<SLTChunkAssetRule> randomChunkAssetRules)
+        private void ResetChunkCells(List<SLTCell> chunkCells, string layerToken, int layerIndex)
         {
-            int randomChunkAssetRulesLength = randomChunkAssetRules.Count;
-            uint availableCellsNum = (uint)_availableCells.Count;
+            chunkCells.ForEach(cell => cell.RemoveAsset(layerToken, layerIndex));
+        }
 
-            if (randomChunkAssetRulesLength > 0)
+        private void GenerateChunkAssetsRandomly(List<SLTChunkAsset> chunkAssets, List<SLTCell> chunkCells, string layerToken, int layerIndex)
+        {
+            if (!chunkAssets.IsNullOrEmpty<SLTChunkAsset>())
             {
-                float assetConcentration = availableCellsNum > randomChunkAssetRulesLength ? availableCellsNum / randomChunkAssetRulesLength : 1;
-                uint minAssetCount = (uint)(assetConcentration <= 2 ? 1 : assetConcentration - 2);
-                uint maxAssetCount = (uint)(assetConcentration == 1 ? 1 : assetConcentration + 2);
-                int lastChunkAssetIndex = randomChunkAssetRulesLength - 1;
-                SLTChunkAssetRule chunkAssetRule;
-                int count = 0;
-
-                for (int i = 0; (0 < _availableCells.Count && i < randomChunkAssetRulesLength); i++)
+                int chunkAssetsCount = chunkAssets.Count;
+                
+                if (chunkAssetsCount > 0)
                 {
-                    chunkAssetRule = randomChunkAssetRules[i];
-                    count = (i == lastChunkAssetIndex ? _availableCells.Count : (int)RandomWithin(minAssetCount, maxAssetCount));
-                    GenerateAssetInstances(count, chunkAssetRule.AssetId, chunkAssetRule.StateIds);
+                    float assetConcentration = chunkCells.Count > chunkAssetsCount ? chunkCells.Count / chunkAssetsCount : 1;
+                    int minAssetCount = (int)(assetConcentration <= 2 ? 1 : assetConcentration - 2);
+                    int maxAssetCount = (int)(assetConcentration == 1 ? 1 : assetConcentration + 2);
+
+                    SLTChunkAsset chunkAsset;
+                    int toBeGeneratedAssetsCount = 0;
+
+                    for (int i = 0; (0 < chunkCells.Count && i < chunkAssetsCount); i++)
+                    {
+                        chunkAsset = chunkAssets[i];
+                        
+                        if(i == chunkAssetsCount - 1)
+                        {
+                            toBeGeneratedAssetsCount = chunkCells.Count;
+                        }
+                        else
+                        {
+                            toBeGeneratedAssetsCount = new Random().Next(minAssetCount, maxAssetCount);
+                        }                        
+                        
+                        GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAsset, chunkCells, layerToken, layerIndex);
+                    }
                 }
             }
         }
 
-        private void GenerateAssetInstancesByRatio(List<SLTChunkAssetRule> ratioChunkAssetRules)
+        private void GenerateChunkAssetsByRatio(List<SLTChunkAsset> chunkAssets, List<SLTCell> chunkCells, string layerToken, int layerIndex)
         {
-            float ratioSum = 0;
-            int ratioChunkAssetRulesLength = ratioChunkAssetRules.Count;
-
-            ratioChunkAssetRules.ForEach(assetRule => ratioSum += assetRule.DistributionValue);
-
-            int count;
-            float proportion = 0;
-            int availableCellsNum = _availableCells.Count;
-            List<TempFractionObject> fractionAssets = new List<TempFractionObject>();
-
-            if (ratioSum != 0)
+            if (!chunkAssets.IsNullOrEmpty<SLTChunkAsset>())
             {
-                foreach (var assetRule in ratioChunkAssetRules)
+                float ratioSum = 0;
+                chunkAssets.ForEach(chunkAsset => ratioSum += chunkAsset.DistributionValue.Value);
+
+                if (ratioSum != 0)
                 {
-                    if (ratioSum * availableCellsNum != 0)
+                    int toBeGeneratedAssetsCount;
+                    float proportion = 0;
+                    List<TempAssetFraction> fractionAssets = new List<TempAssetFraction>();
+
+                    foreach (var chunkAsset in chunkAssets)
                     {
-                        proportion = assetRule.DistributionValue * availableCellsNum / ratioSum;
+                        if (!chunkCells.Any())
+                        {
+                            return;
+                        }
+
+                        proportion = chunkAsset.DistributionValue.Value * chunkCells.Count / ratioSum;
+                        toBeGeneratedAssetsCount = (int)proportion;
+
+                        TempAssetFraction fractObject = new TempAssetFraction()
+                        {
+                            Fraction = proportion - toBeGeneratedAssetsCount,
+                            ChunkAsset = chunkAsset
+                        };
+
+                        fractionAssets.Add(fractObject);
+
+                        GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAsset, chunkCells, layerToken, layerIndex);
                     }
 
-                    count = (int)proportion;
-
-                    TempFractionObject fractObject = new TempFractionObject()
+                    fractionAssets = fractionAssets.OrderByDescending(fa => fa.Fraction).ToList();
+                    
+                    for (int i = 0; i < chunkCells.Count; i++)
                     {
-                        Fraction = (int)(proportion - count),
-                        AssetRule = assetRule
-                    };
-
-                    fractionAssets.Add(fractObject);
-
-                    GenerateAssetInstances(count, assetRule.AssetId, assetRule.StateIds);
-                }
-
-                fractionAssets.Sort(new TempFractionComparer());
-                availableCellsNum = _availableCells.Count;
-
-                //TODO: Gor review why fractionAssets are iterated availableCellsNum times. 
-                for (int i = 0; i < availableCellsNum; i++)
-                {
-                    GenerateAssetInstances(1, fractionAssets[i].AssetRule.AssetId, fractionAssets[i].AssetRule.StateIds);
+                        GenerateChunkAssets(1, fractionAssets[i].ChunkAsset, chunkCells, layerToken, layerIndex);
+                    }
                 }
             }
         }
 
-        private void GenerateAssetInstancesByCount(List<SLTChunkAssetRule> countChunkAssetRules)
+        private void GenerateChunkAssetsByCount(List<SLTChunkAsset> chunkAssets, List<SLTCell> chunkCells, string layerToken, int layerIndex)
         {
-            countChunkAssetRules.ForEach(assetRule => GenerateAssetInstances(assetRule.DistributionValue, assetRule.AssetId, assetRule.StateIds));
+            if (!chunkAssets.IsNullOrEmpty<SLTChunkAsset>())
+            {
+                chunkAssets.ForEach(chunkAsset => GenerateChunkAssets(chunkAsset.DistributionValue.Value, chunkAsset, chunkCells, layerToken, layerIndex));
+            }
         }
 
-        private void GenerateAssetInstances(float count, string assetId, IEnumerable<object> stateIds)
+        private void GenerateChunkAssets(int count, SLTChunkAsset chunkAsset, List<SLTCell> chunkCells, string layerToken, int layerIndex)
         {
-            SLTAsset asset = _assetMap[assetId] as SLTAsset;
-
-            SLTCell randCell = new SLTCell(0, 0);
-            int randCellIndex;
-
             for (int i = 0; i < count; i++)
             {
-                randCellIndex = new Random().Next(0, _availableCells.Count);
-
-                if (_availableCells.Any())
-                    randCell = _availableCells[randCellIndex];
-
-                randCell.SetAssetInstance(_layerToken, _layerIndex, new SLTAssetInstance(asset.Token, asset.GetInstanceStates(stateIds), asset.Properties));
-
-                if (_availableCells.Any())
-                    _availableCells.RemoveAt(randCellIndex);
-                if (_availableCells.Count == 0)
+                if (chunkCells.Any())
+                {
                     return;
-            }
-        }
+                }
 
-        private void GenerateWeakAssetsInstances(List<SLTChunkAssetRule> weakChunkAssetInfos)
-        {
-            int weakChunkAssetInfosLength = weakChunkAssetInfos.Count;
+                SLTCell randomCell = null;
+                int randomCellIndex = new Random().Next(0, chunkCells.Count);
 
-            if (weakChunkAssetInfosLength > 0)
-            {
-                float assetConcentration = _availableCells.Count > weakChunkAssetInfosLength ? _availableCells.Count / weakChunkAssetInfosLength : 1;
-                uint minAssetCount = (uint)(assetConcentration <= 2 ? 1 : assetConcentration - 2);
+                randomCell = chunkCells.ElementAt<SLTCell>(randomCellIndex);
+                chunkCells.Remove(randomCell);
 
-                uint maxAssetCount = (uint)(assetConcentration == 1 ? 1 : assetConcentration + 2);
-                int lastChunkAssetIndex = weakChunkAssetInfosLength - 1;
-
-                //for (int i = 0; i < weakChunkAssetInfosLength; i++)
-                //{
-                //    SLTChunkAssetRule chunkAssetInfo = weakChunkAssetInfos[i];
-                //    uint count = (uint)(i == lastChunkAssetIndex ? _availableCells.Count : RandomWithin(minAssetCount, maxAssetCount));
-                //}
+                randomCell.SetAsset(layerToken, layerIndex, chunkAsset);
             }
         }
 
         #endregion Internal Methods
 
-        #region Business Methods
-        public override string ToString()
-        {
-            return "[Chunk] cells:" + _availableCells.Count + ", " + " chunkAssets: " + _chunkAssetRules.Count;
-        }
-
-        public void GenerateContent()
-        {
-            //resetting chunk cells, as when chunk can contain empty cells, previous generation can leave assigned values to cells
-            ResetChunkCells();
-
-            //availableCells are being always overwritten here, so no need to initialize
-            _availableCells = _chunkCells.ToList();
-
-            //            List<SLTCell> tempCells = new List<SLTCell>();
-            //            foreach (var item in _chunkCells)
-            //            {
-            //                if (item == null)
-            //                    continue;
-            //                SLTCell cell = new SLTCell(item.col, item.row)
-            //                {
-            //                    isBlocked = item.isBlocked,
-            //                    properties = item.properties
-            //                };
-            //                tempCells.Add(cell);
-            //            }
-            //
-            //            _availableCells = tempCells;
-
-            List<SLTChunkAssetRule> countChunkAssetRules = new List<SLTChunkAssetRule>();
-            List<SLTChunkAssetRule> ratioChunkAssetRules = new List<SLTChunkAssetRule>();
-            List<SLTChunkAssetRule> randomChunkAssetRules = new List<SLTChunkAssetRule>();
-
-            foreach (var assetRule in _chunkAssetRules)
-            {
-                switch (assetRule.DistributionType)
-                {
-                    case ChunkAssetRuleDistributionType.Count:
-                        countChunkAssetRules.Add(assetRule);
-                        break;
-                    case ChunkAssetRuleDistributionType.Ratio:
-                        ratioChunkAssetRules.Add(assetRule);
-                        break;
-                    case ChunkAssetRuleDistributionType.Random:
-                        randomChunkAssetRules.Add(assetRule);
-                        break;
-                }
-            }
-
-            if (countChunkAssetRules.Count > 0)
-            {
-                GenerateAssetInstancesByCount(countChunkAssetRules);
-            }
-            if (ratioChunkAssetRules.Count > 0)
-            {
-                GenerateAssetInstancesByRatio(ratioChunkAssetRules);
-            }
-            else if (randomChunkAssetRules.Count > 0)
-            {
-                GenerateAssetInstancesRandomly(randomChunkAssetRules);
-            }
-            _availableCells.Clear();
-        }
-
-        #endregion Business Methods
-
-        #region Util Methods
-
-        private static float RandomWithin(float min, float max, bool isFloat)
-        {
-            return isFloat ? new Random().Next(0, (int)(1 + (max - min))) + min : (int)(new Random().Next(0, (int)(1 + max - min))) + min;
-        }
-
-        private static float RandomWithin(float min, float max)
-        {
-            return RandomWithin(min, max, false);
-        }
-
-        #endregion Util Methods
-
         #region TempFractionObject
 
-        public class TempFractionObject
+        public struct TempAssetFraction
         {
-            public int Fraction { get; set; }
-            public SLTChunkAssetRule AssetRule { get; set; }
-        }
-
-        public class TempFractionComparer : IComparer<TempFractionObject>
-        {
-            public int Compare(TempFractionObject firstTempFractionObject, TempFractionObject secondTempFractionObject)
-            {
-                if (firstTempFractionObject == null & secondTempFractionObject == null)
-                    return 1;
-                if (firstTempFractionObject == null && secondTempFractionObject != null)
-                    return 1;
-                if (firstTempFractionObject != null && secondTempFractionObject == null)
-                    return -1;
-                if (firstTempFractionObject.Fraction > secondTempFractionObject.Fraction)
-                    return -1;
-                if (firstTempFractionObject.Fraction < secondTempFractionObject.Fraction)
-                    return 1;
-                if (firstTempFractionObject.Fraction == secondTempFractionObject.Fraction)
-                    return 1;
-
-                return 0;
-            }
+            public float Fraction { get; set; }
+            public SLTChunkAsset ChunkAsset { get; set; }
         }
 
         #endregion TempFractionObject

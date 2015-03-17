@@ -13,8 +13,8 @@ namespace Saltr.UnitySdk.Game.Matching
     {
         #region Firlds
 
-        private Dictionary<string, object> _instancesByLayerId;
-        private Dictionary<string, object> _instancesByLayerIndex;
+        private Dictionary<string, SLTAsset> _assetsByLayerToken;
+        private Dictionary<string, SLTAsset> _assetsByLayerIndex;
 
         #endregion Firlds
         
@@ -45,34 +45,32 @@ namespace Saltr.UnitySdk.Game.Matching
 
         #region Ctor
 
-        public SLTCell(int col, int row)
+        public SLTCell(int row, int col)
         {
-            Col = col;
             Row = row;
-            Properties = null;
-            IsBlocked = false;
+            Col = col;
 
-            _instancesByLayerId = new Dictionary<string, object>();
-            _instancesByLayerIndex = new Dictionary<string, object>();
+            _assetsByLayerToken = new Dictionary<string, SLTAsset>();
+            _assetsByLayerIndex = new Dictionary<string, SLTAsset>();
         }
 
         #endregion Ctor
 
         #region Business Methods
 
-        public void SetAssetInstance(string layerId, int layerIndex, SLTAssetInstance assetInstance)
+        public void SetAsset(string layerToken, int layerIndex, SLTAsset assetInstance)
         {
             if (IsBlocked == false)
             {
-                _instancesByLayerId[layerId] = assetInstance;
-                _instancesByLayerIndex[layerIndex.ToString()] = assetInstance;
+                _assetsByLayerToken[layerToken] = assetInstance;
+                _assetsByLayerIndex[layerIndex.ToString()] = assetInstance;
             }
         }
 
-        public void RemoveAssetInstance(string layerId, int layerIndex)
+        public void RemoveAsset(string layerToken, int layerIndex)
         {
-            _instancesByLayerId.Remove(layerId);
-            _instancesByLayerIndex.Remove(layerIndex.ToString());
+            _assetsByLayerToken.Remove(layerToken);
+            _assetsByLayerIndex.Remove(layerIndex.ToString());
 
         }
 
@@ -80,10 +78,15 @@ namespace Saltr.UnitySdk.Game.Matching
         /// Gets the asset instance by layer identifier(token).
         /// </summary>
         /// <returns>The asset instance that is positioned in the cell in the layer specified by layerId.</returns>
-        /// <param name="layerId">Layer identifier(token).</param>
-        public SLTAssetInstance GetAssetInstanceByLayerId(string layerId)
+        /// <param name="layerToken">Layer identifier(token).</param>
+        public SLTAsset GetAssetByLayerToken(string layerToken)
         {
-            return _instancesByLayerId.GetValue(layerId) as SLTAssetInstance;
+            if (!_assetsByLayerToken.ContainsKey(layerToken))
+            {
+                return null;
+            }
+
+            return _assetsByLayerToken[layerToken];            
         }
 
         /// <summary>
@@ -91,9 +94,14 @@ namespace Saltr.UnitySdk.Game.Matching
         /// </summary>
         /// <returns>The asset instance that is positioned in the cell in the layer specified by layerIndex.</returns>
         /// <param name="layerIndex">Layer index.</param>
-        public SLTAssetInstance GetAssetInstanceByLayerIndex(int layerIndex)
+        public SLTAsset GetAssetByLayerIndex(int layerIndex)
         {
-            return _instancesByLayerIndex.GetValue(layerIndex.ToString()) as SLTAssetInstance;
+            if (!_assetsByLayerIndex.ContainsKey(layerIndex.ToString()))
+            {
+                return null;
+            }
+
+            return _assetsByLayerIndex[layerIndex.ToString()];
         }
 
         #endregion Business Methods

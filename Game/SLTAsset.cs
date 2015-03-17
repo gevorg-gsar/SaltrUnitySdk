@@ -9,37 +9,20 @@ namespace Saltr.UnitySdk.Game
     {
         #region Properties
 
-        public string Token { get; set; }
+        public string AssetId { get; set; }
 
-        public Dictionary<string, object> States { get; set; }
+        public string StateId { get; set; }
 
-        public Dictionary<string, object> Properties { get; set; }
+        public float? X { get; set; }
 
+        public float? Y { get; set; }
+
+        public float? Rotation { get; set; }
+
+        public List<string> States { get; set; }
+
+        public List<List<int>> Cells { get; set; }        
+        
         #endregion Properties
-
-        #region Business Methods
-
-        public override string ToString()
-        {
-            return "[Asset] type: " + Token + ", " + " keys: " + Properties;
-        }
-
-        public List<SLTAssetState> GetInstanceStates(IEnumerable<object> stateIds)
-        {
-            List<SLTAssetState> states = new List<SLTAssetState>();
-            foreach (var stateId in stateIds)
-            {
-                SLTAssetState state = States[stateId.ToString()] as SLTAssetState;
-
-                if (state != null)
-                {
-                    states.Add(state);
-                }
-            }
-            return states;
-        }
-
-        #endregion Ctor
-
     }
 }
