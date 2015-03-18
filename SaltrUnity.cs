@@ -8,7 +8,7 @@ using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Saltr.UnitySdk.Game;
 
-namespace Saltr.UnitySdk.Utils
+namespace Saltr.UnitySdk
 {
 
     /// <summary>
@@ -58,25 +58,6 @@ namespace Saltr.UnitySdk.Utils
 
         #endregion Fields
 
-        #region Nested Classes
-
-        [System.Serializable]
-        public class FeatureEntry
-        {
-            public string token = string.Empty;
-            public PropertyEntry[] properties = null;
-            public bool required = false;
-        }
-
-        [System.Serializable]
-        public class PropertyEntry
-        {
-            public string key = string.Empty;
-            public string value = string.Empty;
-        }
-
-        #endregion Nested Classes
-
         #region Properties
 
         public SaltrConnector SaltrConnector
@@ -106,12 +87,14 @@ namespace Saltr.UnitySdk.Utils
             }
 
             _saltrConnector = new SaltrConnector(_clientKey, _deviceId, _useCache);
+
+            _saltrConnector.IsDevMode = _isDevMode;
+
             _saltrConnector.ConnectSuccess += SaltrConnector_OnConnectSuccess;
             _saltrConnector.LevelContentLoadSuccess += SaltrConnector_LevelContentLoadSuccess;
-            _saltrConnector.Connect();
 
             //_saltrConnector.SocialId = _socialId;
-            //_saltrConnector.IsDevMode = _isDevMode;
+
             //_saltrConnector.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
             //_saltrConnector.UseNoLevels = _useNoLevels;
             //_saltrConnector.UseNoFeatures = _useNoFeatures;
@@ -119,17 +102,19 @@ namespace Saltr.UnitySdk.Utils
 
             //_saltrConnector.ImportLevels(_localLevelPackage);
 
-            DefineFeatures();
+            DefineDefaultFeatures();
 
             //if (_autoStart)
             //{ 
             //    _saltrConnector.Start();
             //}
+
+            _saltrConnector.Connect();
         }
 
         private void SaltrConnector_LevelContentLoadSuccess(SLTLevel sltLevel)
         {
-            
+
         }
 
         private void SaltrConnector_OnConnectSuccess(SLTAppData sltAppData)
@@ -140,28 +125,61 @@ namespace Saltr.UnitySdk.Utils
         /// <summary>
         /// Defines features that can be specified in the Inspector.
         /// </summary>
-        protected virtual void DefineFeatures()
+        protected virtual void DefineDefaultFeatures()
         {
-            //foreach (FeatureEntry feature in _defaultFeatures)
-            //{
-            //    Dictionary<string, object> properties = new Dictionary<string, object>();
-            //    foreach (PropertyEntry property in feature.properties)
-            //    {
-            //        properties[property.key] = property.value;
-            //    }
+            if (_useNoFeatures)
+            {
+                return;
+            }
 
-            //    _saltrConnector.DefineFeature(feature.token, properties, feature.required);
+            //if (_isStarted == false)
+            //{
+            foreach (FeatureEntry featureEntry in _defaultFeatures)
+            {
+                Dictionary<string, object> properties = new Dictionary<string, object>();
+                foreach (PropertyEntry property in featureEntry.properties)
+                {
+                    properties[property.key] = property.value;
+                }
+
+                _saltrConnector.DefineDefaultFeature(featureEntry.token, properties, featureEntry.required);
+            }
             //}
+            //else
+            //{
+            //    throw new Exception("Method 'defineFeature()' should be called before 'Start()' only.");
+            //}
+        }
+
+        public void ImportLevels(string path)
+        {
+            if (_useNoLevels)
+            {
+                return;
+            }
+
+            //if (_isStarted == false)
+            {
+                //path = string.IsNullOrEmpty(path) ? SLTConstants.LocalLevelPacksUrl : path;
+
+                //object applicationData = _repository.GetObjectFromApplication(path);
+
+                //_levelPacks = SLTDeserializer.DeserializeLevelPacks(applicationData as Dictionary<string, object>);
+                //}
+                //else
+                //{
+                //    throw new Exception("Method 'importLevels()' should be called before 'Start()' only.");
+            }
         }
 
         #endregion Messages
 
 
-        #region Business Methods
+        #region Public Methods
 
 
 
-        #endregion Business Methods
+        #endregion Public Methods
 
 
 
@@ -568,24 +586,7 @@ namespace Saltr.UnitySdk.Utils
         /// The path to level packs in Resources folder. 
         /// If not specified the <see cref="saltr.SLTConfig.LocalLevelPackageUrl"/> will be used.
         /// </param>
-        //public void ImportLevels(string path)
-        //{
-        //    if (_useNoLevels)
-        //    {
-        //        return;
-        //    }
 
-        //    if (_isStarted == false)
-        //    {
-        //        path = path == null ? SLTConstants.LocalLevelPackageUrl : path;
-        //        object applicationData = _repository.GetObjectFromApplication(path);
-        //        _levelPacks = SLTDeserializer.DeserializeLevelPacks(applicationData as Dictionary<string, object>);
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("Method 'importLevels()' should be called before 'Start()' only.");
-        //    }
-        //}
 
 
         /// <summary>
@@ -725,21 +726,24 @@ namespace Saltr.UnitySdk.Utils
 
 
 
+        #region Nested Classes
 
+        [System.Serializable]
+        public class FeatureEntry
+        {
+            public string token = string.Empty;
+            public PropertyEntry[] properties = null;
+            public bool required = false;
+        }
 
+        [System.Serializable]
+        public class PropertyEntry
+        {
+            public string key = string.Empty;
+            public string value = string.Empty;
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
+        #endregion Nested Classes
 
         #region TODO @gyln: move everything below to a separate script?
 

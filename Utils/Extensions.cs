@@ -40,24 +40,6 @@ namespace Saltr.UnitySdk.Utils
             return null;
         }
 
-        public static void RemoveEmptyOrNullEntries(this Dictionary<string, object> dictionary)
-        {
-            for (int i = dictionary.Keys.Count - 1; i >= 0; --i)
-            {
-                string key = dictionary.Keys.ElementAt(i);
-                object value = dictionary[key];
-                if (value == null || (value as string == string.Empty))
-                {
-                    dictionary.Remove(key);
-                }
-                else if (value is Dictionary<string, object>)
-                {
-                    RemoveEmptyOrNullEntries(value as Dictionary<string, object>);
-                }
-            }
-        }
-
-
         /// <summary>
         /// Determines whether the collection is null or contains no elements.
         /// </summary>

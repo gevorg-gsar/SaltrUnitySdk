@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using UnityEngine;
-using GAFEditor.Utils;
+//using GAFEditor.Utils;
 using Newtonsoft.Json;
 
 namespace Saltr.UnitySdk.Repository
@@ -19,7 +19,7 @@ namespace Saltr.UnitySdk.Repository
 
         #endregion Ctor
 
-        #region Business Methods
+        #region Public Methods
 
         //TODO: Gor Implement methods below.
         
@@ -52,12 +52,8 @@ namespace Saltr.UnitySdk.Repository
         {
 
         }
-        #endregion Business Methods
 
-        
-
-        
-
+        #endregion Public Methods
         
     }
 }

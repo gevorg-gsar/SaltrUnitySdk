@@ -9,7 +9,7 @@ using Saltr.UnitySdk.Resource;
 using Saltr.UnitySdk.Game;
 using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
-using GAFEditor.Utils;
+//using GAFEditor.Utils;
 using Plexonic.Core.Network;
 using Newtonsoft.Json;
 
@@ -33,12 +33,16 @@ namespace Saltr.UnitySdk
         private string _clientKey;
         private bool _isLoading;
         private bool _isConected;
+        private bool _isSynced;
 
         private ISLTRepository _repository;
+        private Dictionary<string, SLTFeature> _defaultFeatures;
 
         #endregion Fields
 
         #region Properties
+
+        public bool IsDevMode { get; set; }
 
         #endregion Properties
 
@@ -60,6 +64,8 @@ namespace Saltr.UnitySdk
             _deviceId = deviceId;
             _isLoading = false;
             _isConected = false;
+
+            _defaultFeatures = new Dictionary<string, SLTFeature>();
 
             if (useCache)
             {
@@ -96,6 +102,22 @@ namespace Saltr.UnitySdk
             string levelContentUrl = string.Format(LevelContentUrlFormat, level.ContentUrl, DateTime.Now.ToShortTimeString());
 
             DownloadManager.Instance.AddDownload(levelContentUrl, OnLevelContentLoad);
+        }
+
+        private void Sync()
+        {
+            var urlVars = PrepareSyncRequestParameters();
+            var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
+
+            DownloadManager.Instance.AddDownload(url, OnSync);
+        }
+
+        public void DefineDefaultFeature(string featureToken, Dictionary<string, object> properties, bool isRequired)
+        {
+            if (!string.IsNullOrEmpty(featureToken))
+            {
+                _defaultFeatures[featureToken] = new SLTFeature() { Token = featureToken, Properties = properties, IsRequired = isRequired };
+            }
         }
 
         ///// <summary>
@@ -214,7 +236,46 @@ namespace Saltr.UnitySdk
                 args.CustomProperties = customProperties;
             }
 
-            urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+
+            return urlVars;
+        }
+
+        private Dictionary<string, string> PrepareSyncRequestParameters()
+        {
+            Dictionary<string, string> urlVars = new Dictionary<string, string>();
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionSync; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionSync;
+
+            SLTRequestArguments args = new SLTRequestArguments();
+            args.ApiVersion = ApiVersion;
+            args.Client = Client;
+            args.ClientKey = _clientKey;
+
+            args.IsDevMode = IsDevMode;
+
+            if (_socialId != null)
+            {
+                args.SocialId = _socialId;
+            }
+
+            if (_deviceId != null)
+            {
+                args.DeviceId = _deviceId;
+                urlVars[SLTConstants.DeviceId] = _deviceId;
+            }
+            else
+            {
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
+
+            if (_defaultFeatures != null)
+            {
+                args.DeveloperFeatures = _defaultFeatures.Values.ToList<SLTFeature>();
+            }
+
+            urlVars[SLTConstants.UrlParamDevMode] = IsDevMode.ToString();
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
 
             return urlVars;
         }
@@ -238,55 +299,6 @@ namespace Saltr.UnitySdk
             return url;
         }
 
-
-        private void Sync()
-        {
-            //Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            //urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionDevSyncData; //TODO @GSAR: remove later
-            //urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevSyncData;
-
-            //SLTRequestArguments args = new SLTRequestArguments();
-            //args.ApiVersion = ApiVersion;
-            //args.Client = Client;
-            //args.ClientKey = _clientKey;
-            //args.IsDevMode = _isDevMode;
-
-            //urlVars[SLTConstants.UrlParamDevMode] = _isDevMode.ToString();
-
-            //if (_deviceId != null)
-            //{
-            //    args.DeviceId = _deviceId;
-            //    urlVars[SLTConstants.DeviceId] = _deviceId;
-            //}
-            //else
-            //{
-            //    throw new Exception(ExceptionConstants.DeviceIdIsRequired);
-            //}
-
-            //if (_socialId != null)
-            //{
-            //    args.SocialId = _socialId;
-            //}
-
-            //List<object> featureList = new List<object>();
-            //foreach (SLTFeature feature in _developerFeatures.Values)
-            //{
-            //    Dictionary<string, object> featureDictionary = feature.ToDictionary();
-            //    featureDictionary.RemoveEmptyOrNullEntries();
-            //    featureList.Add(featureDictionary);
-            //}
-
-            //args.DeveloperFeatures = featureList;
-            //args.RawData.RemoveEmptyOrNullEntries();
-            //urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
-
-            //SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars, _requestIdleTimeout);
-            //SLTResource resource = new SLTResource(SLTConstants.ResourceIdSyncFeatures, ticket, SyncSuccessHandler, SyncFailHandler);
-            //resource.Load();
-        }
-
-
-
         #endregion Internal Methods
 
         #region Handlers
@@ -300,7 +312,7 @@ namespace Saltr.UnitySdk
                 OnConnectFail(result);
             }
 
-            Dictionary<string, List<SLTAppData>> responseData = JsonConvert.DeserializeObject<Dictionary<string, List<SLTAppData>>>(result.Text);//Json.Deserialize(result.Text) as Dictionary<string, object>;
+            Dictionary<string, List<SLTAppData>> responseData = JsonConvert.DeserializeObject<Dictionary<string, List<SLTAppData>>>(result.Text);
 
             if (responseData != null && responseData.ContainsKey(SLTConstants.Response))
             {
@@ -313,15 +325,15 @@ namespace Saltr.UnitySdk
 
                     Debug.Log("[SALTR] AppData load success.");
 
+                    if (IsDevMode && !_isSynced)
+                    {
+                        Sync();
+                    }
+
                     if (ConnectSuccess != null)
                     {
                         ConnectSuccess(sltAppData);
                     }
-
-                    //if (_isDevMode && !_isSynced)
-                    //{
-                    //    Sync();
-                    //}
 
                     //// if developer didn't announce use without levels, and levelType in returned JSON is not "noLevels",
                     //// then - parse levels
@@ -372,6 +384,11 @@ namespace Saltr.UnitySdk
             {
                 ConnectFail(new SLTStatus(SLTStatusCode.UnknownError, result.Error)); //implement correct fail mechanism with correct data.
             }
+        }
+
+        private void OnSync(DownloadResult result)
+        {
+
         }
 
         private void OnLevelContentLoad(DownloadResult result)
@@ -646,29 +663,6 @@ namespace Saltr.UnitySdk
         //}
 
         #endregion Handlers
-
-
-
-
-
-
-        //    Action<SLTResource> loadFromSaltrFailCallback = delegate(SLTResource SLTResource)
-        //    {
-        //        object contentData = LoadLevelContentInternally(level);
-        //        if (contentData != null)
-        //        {
-        //            LevelContentLoadSuccessHandler(level, contentData);
-        //        }
-        //        else
-        //        {
-        //            LevelContentLoadFailHandler();
-        //        }
-        //        SLTResource.Dispose();
-        //    };
-
-        //    SLTResource resource = new SLTResource(SLTConstants.ResourceIdSaltr, ticket, loadFromSaltrSuccessCallback, loadFromSaltrFailCallback);
-        //    resource.Load();
-        //}
 
 
     }

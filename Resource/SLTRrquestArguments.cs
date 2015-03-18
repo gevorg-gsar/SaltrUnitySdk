@@ -6,7 +6,7 @@ using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Resource
 {
-    public class SLTRequestArguments // TODO @gyln: get rid of alll the strings 
+    public class SLTRequestArguments
     {
         #region Fields
 
@@ -54,9 +54,9 @@ namespace Saltr.UnitySdk.Resource
             set { RawData[SLTConstants.UrlParamClientKey] = value; }
         }
 
-        public List<object> DeveloperFeatures
+        public List<SLTFeature> DeveloperFeatures
         {
-            get { return RawData.GetValue<List<object>>(SLTConstants.DeveloperFeatures); }
+            get { return RawData.GetValue<List<SLTFeature>>(SLTConstants.DeveloperFeatures); }
             set { RawData[SLTConstants.DeveloperFeatures] = value; }
         }
 
