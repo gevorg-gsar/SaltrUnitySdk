@@ -22,23 +22,23 @@ namespace Saltr.UnitySdk.Repository
         #region Public Methods
 
         //TODO: Gor Implement methods below.
-        
-        public void CacheObject(string name, string version, object obj)
+
+        public void CacheObject<T>(string name, T obj, string version = null)
         {
-            
+
         }
 
-        public object GetObjectFromApplication(string fileName)
+        public T GetObjectFromApplication<T>(string fileName) where T : class
         {
-            return JsonConvert.DeserializeObject(Resources.Load<TextAsset>(fileName).text);
+            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text);
         }
 
-        public object GetObjectFromCache(string fileName)
+        public T GetObjectFromCache<T>(string fileName) where T : class
         {
             return null;
         }
 
-        public object GetObjectFromStorage(string name)
+        public T GetObjectFromStorage<T>(string name) where T : class
         {
             return null;
         }
@@ -48,12 +48,12 @@ namespace Saltr.UnitySdk.Repository
             return string.Empty;
         }
 
-        public void SaveObject(string name, object obj)
+        public void SaveObject<T>(string name, T obj)
         {
 
         }
 
         #endregion Public Methods
-        
+
     }
 }

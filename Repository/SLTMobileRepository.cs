@@ -13,10 +13,8 @@ namespace Saltr.UnitySdk.Repository
     {
         #region Fields
 
-        private FileStream _fileStream;
-        private DirectoryInfo _storageDirectory;
-        private DirectoryInfo _applicationDirectory;
         private DirectoryInfo _cacheDirectory;
+        private DirectoryInfo _storageDirectory;
 
         #endregion Fields
 
@@ -24,56 +22,58 @@ namespace Saltr.UnitySdk.Repository
 
         public SLTMobileRepository()
         {
-            _applicationDirectory = new DirectoryInfo(Application.persistentDataPath);
-            _storageDirectory = new DirectoryInfo(Application.persistentDataPath);
             _cacheDirectory = new DirectoryInfo(Application.temporaryCachePath);
+            _storageDirectory = new DirectoryInfo(Application.persistentDataPath);
 
-            Debug.Log("storageDirectory: " + _storageDirectory.FullName);
             Debug.Log("cacheDir: " + _cacheDirectory.FullName);
+            Debug.Log("storageDirectory: " + _storageDirectory.FullName);
         }
 
         #endregion Ctor
 
         #region Public Methods
 
-        public void CacheObject(string name, string version, object objectToSave)
+        public void SaveObject<T>(string name, T objectToSave)
+        {
+            string filePath = Path.Combine(_storageDirectory.FullName, name);
+            SaveObjectInFile<T>(filePath, objectToSave);
+        }
+
+        public void CacheObject<T>(string name, T objectToSave, string version = null)
         {
             string filePath = Path.Combine(_cacheDirectory.FullName, name);
-            SaveObjectInFile(filePath, objectToSave);
+            SaveObjectInFile<T>(filePath, objectToSave);
 
-            filePath = Path.Combine(_cacheDirectory.FullName, name.Replace(".", string.Empty) + "_VERSION_");
-            SaveObjectInFile(filePath, new { _VERSION_ = version });
+            if (string.IsNullOrEmpty(version))
+            {
+                filePath = Path.Combine(_cacheDirectory.FullName, name.Replace(".", string.Empty) + "_VERSION_");
+                SaveObjectInFile<object>(filePath, new { _VERSION_ = version });
+            }
         }
 
-        public object GetObjectFromApplication(string fileName)
+        public T GetObjectFromApplication<T>(string fileName) where T : class
         {
-            //string file = _applicationDirectory + "/" + fileName;
-            // return getIntenrnal(new FileInfo(file));
             TextAsset file = Resources.Load<TextAsset>(fileName);
-            return file != null ? JsonConvert.DeserializeObject(Resources.Load<TextAsset>(fileName).text) : null;
+            return file != null ? JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text) : null;
         }
 
-        public object GetObjectFromCache(string fileName)
+        public T GetObjectFromCache<T>(string fileName) where T : class
         {
-            string file = Path.Combine(_cacheDirectory.FullName, fileName);
-            // if (File.Exists(file))
-            return GetObjectFromFile(new FileInfo(file));
-            //  else
-            //   return null;
+            string filePath = Path.Combine(_cacheDirectory.FullName, fileName);
+            return GetObjectFromFile<T>(filePath);
         }
 
-        public object GetObjectFromStorage(string name)
+        public T GetObjectFromStorage<T>(string name) where T : class
         {
-            //   string file = _storageDirectory + "/" + name;
-            // return getIntenrnal(new FileInfo(file));
+            //@TODO: Gor it seems Path.Combine method call is missing here.
             Debug.Log(name);
-            return JsonConvert.DeserializeObject(Resources.Load<TextAsset>(name).text);
+            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(name).text);
         }
 
         public string GetObjectVersion(string name)
         {
-            string file = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
-            object obj = GetObjectFromFile(new FileInfo(file));
+            string filePath = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
+            object obj = GetObjectFromFile<object>(filePath);
             Dictionary<string, object> dict = (Dictionary<string, object>)obj;
 
             if (dict != null && dict.ContainsKey("_VERSION_"))
@@ -84,43 +84,47 @@ namespace Saltr.UnitySdk.Repository
             return string.Empty;
         }
 
-        public void SaveObject(string name, object objectToSave)
-        {
-            string resolvedPath = Path.Combine(_storageDirectory.FullName, name);
-            SaveObjectInFile(resolvedPath, objectToSave);
-        }
-
         #endregion Public Methods
 
         #region Internal Methods
 
-        private object GetObjectFromFile(FileInfo file)
+        private T GetObjectFromFile<T>(string filePath) where T : class
         {
+            FileInfo file = new FileInfo(filePath);
+
             if (file.Exists)
             {
                 try
                 {
                     string strObject = File.ReadAllText(file.FullName);
 
-                    if (string.IsNullOrEmpty(strObject))
+                    if (!string.IsNullOrEmpty(strObject))
                     {
-                        return JsonConvert.DeserializeObject(strObject);
+                        return JsonConvert.DeserializeObject<T>(strObject);
                     }
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("[MobileStorageEngine] : error while getting object.\nError : " + e.Message);
+                    Debug.Log("[Caching] : error while getting object from a file.\nError : " + e.Message);
                 }
             }
+
             return null;
         }
 
-        private void SaveObjectInFile(string file, object objectToSave)
+        private void SaveObjectInFile<T>(string filePath, T objectToSave)
         {
-            _fileStream = new FileStream(file, FileMode.Create);
-            _fileStream.Close();
-
-            File.WriteAllText(file, JsonConvert.SerializeObject(objectToSave));
+            try
+            {
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                }
+                File.WriteAllText(filePath, JsonConvert.SerializeObject(objectToSave));
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[Caching] : error while saving object in a file.\nError : " + e.Message);
+            }
         }
 
         #endregion Internal Methods

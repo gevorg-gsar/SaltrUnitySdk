@@ -321,7 +321,7 @@ namespace Saltr.UnitySdk
                 if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {
                     _isConected = true;
-                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, "0", sltAppData);
+                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, sltAppData);
 
                     Debug.Log("[SALTR] AppData load success.");
 

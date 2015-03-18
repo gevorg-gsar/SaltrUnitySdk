@@ -7,16 +7,16 @@ namespace Saltr.UnitySdk.Repository
 {
     public interface ISLTRepository
     {
-        object GetObjectFromStorage(string name);
-
-        object GetObjectFromCache(string fileName);
-
         string GetObjectVersion(string name);
 
-        void SaveObject(string name, object objectToSave);
+        T GetObjectFromStorage<T>(string name) where T : class;
 
-        void CacheObject(string name, string version, object objectToSave);
+        T GetObjectFromCache<T>(string fileName) where T : class;
 
-        object GetObjectFromApplication(string fileName);
+        void SaveObject<T>(string name, T objectToSave);
+
+        void CacheObject<T>(string name, T objectToSave, string version = null);
+
+        T GetObjectFromApplication<T>(string fileName) where T : class;
     }
 }
