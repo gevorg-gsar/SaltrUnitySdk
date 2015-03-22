@@ -10,7 +10,7 @@ namespace Saltr.UnitySdk
 	/// The SLTBasicProperties class represents the basic user properties.
 	/// This information is useful for analytics and statistics.
 	/// </summary>
-	public class SLTBasicProperties // TODO @gyln: get rid of alll the strings 
+	public class SLTBasicProperties
     {
         #region Fields
 

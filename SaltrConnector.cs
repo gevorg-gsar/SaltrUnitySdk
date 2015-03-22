@@ -136,80 +136,18 @@ namespace Saltr.UnitySdk
             DownloadManager.Instance.AddDownload(url, OnRegisterDevice);
         }
 
-        ///// <summary>
-        ///// Associates some properties with this client, that are used to assign it to a certain user group in Saltr.
-        ///// </summary>
-        ///// <param name="basicProperties">Basic properties. Standard set of client properties</param>
-        ///// <param name="customProperties">(Optional)Custom properties.</param>
-        //public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
-        //{
-        //    if (basicProperties == null && customProperties == null)
-        //    {
-        //        return;
-        //    }
+        public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
+        {
+            if (basicProperties == null && customProperties == null)
+            {
+                return;
+            }
 
-        //    Dictionary<string, string> urlVars = new Dictionary<string, string>();
-        //    urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionAddProperties; //TODO @GSAR: remove later
-        //    urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionAddProperties;
+            var urlVars = PrepareAddPropertiesRequestParameters(basicProperties, customProperties);
+            var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
-        //    SLTRequestArguments args = new SLTRequestArguments()
-        //    {
-        //        ApiVersion = ApiVersion,
-        //        ClientKey = _clientKey,
-        //        Client = Client
-        //    };
-
-        //    if (_deviceId != null)
-        //    {
-        //        args.DeviceId = _deviceId;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception(ExceptionConstants.DeviceIdIsRequired);
-        //    }
-
-        //    if (_socialId != null)
-        //    {
-        //        args.SocialId = _socialId;
-        //    }
-
-        //    if (basicProperties != null)
-        //    {
-        //        args.BasicProperties = basicProperties;
-        //    }
-
-        //    if (customProperties != null)
-        //    {
-        //        args.CustomProperties = customProperties;
-        //    }
-
-        //    Action<SLTResource> propertyAddSuccess = delegate(SLTResource res)
-        //    {
-        //        Debug.Log(SLTConstants.Success);
-        //        Dictionary<string, object> data = res.Data;
-        //        res.Dispose();
-        //    };
-
-        //    Action<SLTResource> propertyAddFail = delegate(SLTResource res)
-        //    {
-        //        Debug.Log(SLTConstants.Error);
-        //        res.Dispose();
-        //    };
-
-        //    urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
-
-        //    SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_API_URL, urlVars, _requestIdleTimeout);
-        //    SLTResource resource = new SLTResource(SLTConstants.ResourceIdProperty, ticket, propertyAddSuccess, propertyAddFail);
-        //    resource.Load();
-        //}
-
-        ///// <summary>
-        ///// See <see cref="saltr.SLTUnity.AddProperties"/>.
-        ///// </summary>
-        //public void AddProperties(SLTBasicProperties basicProperties)
-        //{
-        //    AddProperties(basicProperties, null);
-        //}
+            DownloadManager.Instance.AddDownload(url, OnAddProperties);
+        }
 
         #endregion Public Methods
 
@@ -218,8 +156,6 @@ namespace Saltr.UnitySdk
         private Dictionary<string, string> PrepareAppDataRequestParameters(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-
-            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionGetAppData; //TODO @GSAR: remove later
             urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionGetAppData;
 
             SLTRequestArguments args = new SLTRequestArguments();
@@ -259,7 +195,6 @@ namespace Saltr.UnitySdk
         private Dictionary<string, string> PrepareSyncRequestParameters()
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionDevSync; //TODO @GSAR: remove later
             urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevSync;
 
             SLTRequestArguments args = new SLTRequestArguments();
@@ -363,6 +298,45 @@ namespace Saltr.UnitySdk
 
             args.Source = deviceModel;
             args.OS = os;
+
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+
+            return urlVars;
+        }
+
+        private Dictionary<string, string> PrepareAddPropertiesRequestParameters(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
+        {
+            Dictionary<string, string> urlVars = new Dictionary<string, string>();
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionAddProperties;
+
+            SLTRequestArguments args = new SLTRequestArguments();
+            args.ApiVersion = ApiVersion;
+            args.Client = Client;
+            args.ClientKey = _clientKey;
+
+            if (_deviceId != null)
+            {
+                args.DeviceId = _deviceId;
+            }
+            else
+            {
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
+
+            if (SocialId != null)
+            {
+                args.SocialId = SocialId;
+            }
+
+            if (basicProperties != null)
+            {
+                args.BasicProperties = basicProperties;
+            }
+
+            if (customProperties != null)
+            {
+                args.CustomProperties = customProperties;
+            }
 
             urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
 
@@ -483,6 +457,11 @@ namespace Saltr.UnitySdk
         private void OnRegisterDevice(DownloadResult result)
         {
 
+        }
+
+        private void OnAddProperties(DownloadResult result)
+        {
+            
         }
 
         private void OnLevelContentLoad(DownloadResult result)

@@ -106,7 +106,9 @@ namespace Saltr.UnitySdk
                 ImportLevels();
                 DefineDefaultFeatures();
 
-                RegisterDevice();
+                AddProperties(new SLTBasicProperties() { Age = "111", DeviceName = "GOROIDDEVICE" });
+
+                //RegisterDevice();
 
                 //_GetAppData();           
             }
@@ -172,6 +174,11 @@ namespace Saltr.UnitySdk
             //}
 
             ShowDeviceRegistationDialog(SaltrConnector.RegisterDevice);
+        }
+
+        public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
+        {
+            _saltrConnector.AddProperties(basicProperties, customProperties);
         }
 
         public void GetAppData()
