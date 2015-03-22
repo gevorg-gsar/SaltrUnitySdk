@@ -127,7 +127,15 @@ namespace Saltr.UnitySdk
 
             DownloadManager.Instance.AddDownload(url, OnSync);
         }
-                
+
+        public void RegisterDevice(string email)
+        {
+            var urlVars = PrepareRegisterDeviceRequestParameters(email);
+            var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
+
+            DownloadManager.Instance.AddDownload(url, OnRegisterDevice);
+        }
+
         ///// <summary>
         ///// Associates some properties with this client, that are used to assign it to a certain user group in Saltr.
         ///// </summary>
@@ -202,7 +210,7 @@ namespace Saltr.UnitySdk
         //{
         //    AddProperties(basicProperties, null);
         //}
-        
+
         #endregion Public Methods
 
         #region Internal Methods
@@ -282,6 +290,80 @@ namespace Saltr.UnitySdk
             }
 
             urlVars[SLTConstants.UrlParamDevMode] = IsDevMode.ToString();
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+
+            return urlVars;
+        }
+
+        private Dictionary<string, string> PrepareRegisterDeviceRequestParameters(string email)
+        {
+            Dictionary<string, string> urlVars = new Dictionary<string, string>();
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevRegisterDevice;
+
+            SLTRequestArguments args = new SLTRequestArguments();
+            args.ApiVersion = ApiVersion;
+            args.ClientKey = _clientKey;
+
+            args.IsDevMode = IsDevMode;
+
+            if (!string.IsNullOrEmpty(_deviceId))
+            {
+                args.Id = _deviceId;
+            }
+            else
+            {
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                args.Email = email;
+            }
+            else
+            {
+                throw new Exception(ExceptionConstants.EmailIsRequired);
+            }
+
+            string deviceModel = SLTConstants.Unknown;
+            string os = SLTConstants.Unknown;
+
+            //@TODO: Gor check if os value is retrived correctly.
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                deviceModel = Util.GetHumanReadableIOSDeviceModel(SystemInfo.deviceModel);
+                os = SystemInfo.operatingSystem.Replace("Phone ", string.Empty);
+            }
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                deviceModel = SystemInfo.deviceModel;
+
+                string androidVersion = string.Empty;
+
+                try
+                {
+                    androidVersion = SystemInfo.operatingSystem.Substring(SystemInfo.operatingSystem.IndexOf("API-") + 4, 2).ToString();
+                }
+                catch 
+                {
+                    androidVersion = SLTConstants.Unknown;
+                }
+
+                os = "Android " + androidVersion;
+            }
+            else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
+            {
+                deviceModel = "PC";
+                os = SystemInfo.operatingSystem;
+            }
+            else
+            {
+                deviceModel = SystemInfo.deviceModel;
+                os = SystemInfo.operatingSystem;
+            }
+
+            args.Source = deviceModel;
+            args.OS = os;
+
             urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
 
             return urlVars;
@@ -394,6 +476,11 @@ namespace Saltr.UnitySdk
         }
 
         private void OnSync(DownloadResult result)
+        {
+
+        }
+
+        private void OnRegisterDevice(DownloadResult result)
         {
 
         }

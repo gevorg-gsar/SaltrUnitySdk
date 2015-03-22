@@ -105,8 +105,10 @@ namespace Saltr.UnitySdk
             {
                 ImportLevels();
                 DefineDefaultFeatures();
-                
-                _saltrConnector.GetAppData();           
+
+                RegisterDevice();
+
+                //_GetAppData();           
             }
         }
 
@@ -162,6 +164,16 @@ namespace Saltr.UnitySdk
             //}
         }
 
+        public void RegisterDevice()
+        {
+            //if (!_isStarted)
+            //{
+            //    throw new Exception("Method 'RegisterDevice()' should be called after 'Start()' only.");
+            //}
+
+            ShowDeviceRegistationDialog(SaltrConnector.RegisterDevice);
+        }
+
         public void GetAppData()
         {
             _saltrConnector.GetAppData();
@@ -171,7 +183,7 @@ namespace Saltr.UnitySdk
         {
             //_saltrConnector.LoadLevelContent();
         }
-                
+        
         #endregion Public Methods
 
         #region Event Handlers
@@ -183,7 +195,7 @@ namespace Saltr.UnitySdk
 
         private void SaltrConnector_OnConnectSuccess(SLTAppData sltAppData)
         {
-            _saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing finished
+            _saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing is finished.
         }
 
         #endregion Event Handlers
@@ -466,19 +478,6 @@ namespace Saltr.UnitySdk
 
 
 
-        //// <summary>
-        ///// Opens the device registration dialog. Can be called after <see cref="saltr.SLTUnity.Start"/> only.
-        ///// </summary>
-        //public void RegisterDevice()
-        //{
-        //    //if (!_isStarted)
-        //    //{
-        //    //    throw new Exception("Method 'RegisterDevice()' should be called after 'Start()' only.");
-        //    //}
-
-        //    //ShowDeviceRegistationDialog(SaltrConnector.AddDeviceToSaltr);
-        //}
-
         // If you want to have a feature synced with SALTR you should call define before getAppData call.
         /// <summary>
         /// Defines a feature (<see cref="saltr.SLTFeature"/>).
@@ -512,70 +511,7 @@ namespace Saltr.UnitySdk
         //    DefineFeature(token, properties, false);
         //}
 
-        //public void AddDeviceToSaltr(string email)
-        //{
-        //    Dictionary<string, string> urlVars = new Dictionary<string, string>();
-        //    urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevRegisterDevice;
-        //    urlVars[SLTConstants.UrlParamClientKey] = _clientKey;
-
-        //    SLTRequestArguments args = new SLTRequestArguments();
-        //    args.ApiVersion = ApiVersion;
-        //    args.IsDevMode = _isDevMode;
-
-        //    if (_deviceId != null)
-        //    {
-        //        args.Id = _deviceId;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception(ExceptionConstants.DeviceIdIsRequired);
-        //    }
-
-        //    string deviceModel = SLTConstants.Unknown;
-        //    string os = SLTConstants.Unknown;
-
-        //    switch (Application.platform)
-        //    {
-        //        case RuntimePlatform.IPhonePlayer:
-        //            deviceModel = Util.GetHumanReadableDeviceModel(SystemInfo.deviceModel);
-        //            os = SystemInfo.operatingSystem.Replace("Phone ", string.Empty);
-        //            break;
-        //        case RuntimePlatform.Android:
-        //            deviceModel = SystemInfo.deviceModel;
-        //            int versionNumber = 0;
-        //            string androidVersion = SystemInfo.operatingSystem;
-        //            versionNumber = int.Parse(androidVersion.Substring(androidVersion.IndexOf("API-") + 4, 2).ToString());
-        //            os = "Android " + versionNumber;
-        //            break;
-        //        case RuntimePlatform.WindowsEditor:
-        //        case RuntimePlatform.WindowsPlayer:
-        //            deviceModel = "PC";
-        //            os = SystemInfo.operatingSystem;
-        //            break;
-        //        default:
-        //            deviceModel = SystemInfo.deviceModel;
-        //            os = SystemInfo.operatingSystem;
-        //            break;
-        //    }
-
-        //    args.Source = deviceModel;
-        //    args.OS = os;
-
-        //    if (!string.IsNullOrEmpty(email))
-        //    {
-        //        args.Email = email;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception(ExceptionConstants.EmailIsRequired);
-        //    }
-
-        //    urlVars[SLTConstants.UrlParamArguments] = Json.Serialize(args.RawData);
-
-        //    //SLTResourceTicket ticket = GetTicket(SLTConstants.SALTR_DEVAPI_URL, urlVars);
-        //    //SLTResource resource = new SLTResource(SLTConstants.ResourceIdAddDevice, ticket, AddDeviceSuccessHandler, AddDeviceFailHandler);
-        //    //resource.Load();
-        //}
+        
 
         /// <summary>
         /// Imports the level data from local files, that can be downloaded from Saltr. 
