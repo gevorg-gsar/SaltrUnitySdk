@@ -21,8 +21,6 @@ namespace Saltr.UnitySdk.Repository
 
         #region Public Methods
 
-        //TODO: Gor Implement methods below.
-
         public void CacheObject<T>(string name, T obj, string version = null)
         {
 

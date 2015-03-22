@@ -51,7 +51,7 @@ namespace Saltr.UnitySdk
         private int _requestIdleTimeout = 0;
 
         [SerializeField]
-        private string _localLevelPacksPath = SLTConstants.LocalLevelPacksUrl;
+        private string _localLevelPacksPath = SLTConstants.LocalLevelPacksPath;
 
         [SerializeField]
         private FeatureEntry[] _defaultFeatures = null;
@@ -89,43 +89,54 @@ namespace Saltr.UnitySdk
             _saltrConnector = new SaltrConnector(_clientKey, _deviceId, _useCache);
 
             _saltrConnector.IsDevMode = _isDevMode;
+            _saltrConnector.SocialId = _socialId;
 
-            _saltrConnector.ConnectSuccess += SaltrConnector_OnConnectSuccess;
+            _saltrConnector.AppDataGotten += SaltrConnector_OnConnectSuccess;
             _saltrConnector.LevelContentLoadSuccess += SaltrConnector_LevelContentLoadSuccess;
 
-            //_saltrConnector.SocialId = _socialId;
+            
 
             //_saltrConnector.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
             //_saltrConnector.UseNoLevels = _useNoLevels;
             //_saltrConnector.UseNoFeatures = _useNoFeatures;
             //_saltrConnector.RequestIdleTimeout = _requestIdleTimeout;
 
-            //_saltrConnector.ImportLevels(_localLevelPackage);
+            if (_autoStart)
+            {
+                ImportLevels();
+                DefineDefaultFeatures();
+                
+                _saltrConnector.GetAppData();           
+            }
+        }
 
-            DefineDefaultFeatures();
+        #endregion Messages
 
-            //if (_autoStart)
-            //{ 
-            //    _saltrConnector.Start();
+        #region Public Methods
+
+        public void ImportLevels()
+        {
+            if (_useNoLevels)
+            {
+                return;
+            }
+
+            //if (!_isStarted)
+            //{
+            string path = !string.IsNullOrEmpty(_localLevelPacksPath) ? _localLevelPacksPath : SLTConstants.LocalLevelPacksPath;
+
+            _saltrConnector.ImportLevels(path);
             //}
-
-            _saltrConnector.Connect();
-        }
-
-        private void SaltrConnector_LevelContentLoadSuccess(SLTLevel sltLevel)
-        {
-
-        }
-
-        private void SaltrConnector_OnConnectSuccess(SLTAppData sltAppData)
-        {
-            _saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //Remove when testing finished
+            //else
+            //{
+            //    throw new Exception("Method 'importLevels()' should be called before 'Start()' only.");
+            //}
         }
 
         /// <summary>
         /// Defines features that can be specified in the Inspector.
         /// </summary>
-        protected virtual void DefineDefaultFeatures()
+        public virtual void DefineDefaultFeatures()
         {
             if (_useNoFeatures)
             {
@@ -151,43 +162,31 @@ namespace Saltr.UnitySdk
             //}
         }
 
-        public void ImportLevels(string path)
+        public void GetAppData()
         {
-            if (_useNoLevels)
-            {
-                return;
-            }
-
-            //if (_isStarted == false)
-            {
-                //path = string.IsNullOrEmpty(path) ? SLTConstants.LocalLevelPacksUrl : path;
-
-                //object applicationData = _repository.GetObjectFromApplication(path);
-
-                //_levelPacks = SLTDeserializer.DeserializeLevelPacks(applicationData as Dictionary<string, object>);
-                //}
-                //else
-                //{
-                //    throw new Exception("Method 'importLevels()' should be called before 'Start()' only.");
-            }
+            _saltrConnector.GetAppData();
         }
 
-        #endregion Messages
-
-
-        #region Public Methods
-
-
-
+        public void LodLevelContent()
+        {
+            //_saltrConnector.LoadLevelContent();
+        }
+                
         #endregion Public Methods
 
+        #region Event Handlers
 
+        private void SaltrConnector_LevelContentLoadSuccess(SLTLevel sltLevel)
+        {
 
+        }
 
+        private void SaltrConnector_OnConnectSuccess(SLTAppData sltAppData)
+        {
+            _saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing finished
+        }
 
-
-
-
+        #endregion Event Handlers
 
         //public void LoadLevelContent(SLTLevel level, bool useCache = true)
         //{

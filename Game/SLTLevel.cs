@@ -36,10 +36,9 @@ namespace Saltr.UnitySdk.Game
         public int VariationVersion { get; set; }
 
         /// <summary>
-        /// Gets the URL, used to retrieve contents of the level from Saltr.
+        /// Gets the URL, used to retrieve level content from Saltr.
         /// </summary>
-        [JsonProperty("url")]
-        public string ContentUrl { get; set; }
+        public string Url { get; set; }
 
         /// <summary>
         /// Gets the properties of the level.

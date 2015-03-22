@@ -9,7 +9,6 @@ using Saltr.UnitySdk.Resource;
 using Saltr.UnitySdk.Game;
 using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
-//using GAFEditor.Utils;
 using Plexonic.Core.Network;
 using Newtonsoft.Json;
 
@@ -28,13 +27,14 @@ namespace Saltr.UnitySdk
 
         #region Fields
 
-        private string _socialId;
         private string _deviceId;
         private string _clientKey;
-        private bool _isLoading;
-        private bool _isConected;
-        private bool _isSynced;
 
+        private bool _isSynced;
+        private bool _isLoading;
+        private bool _isAppDataGotten;
+
+        private SLTAppData _appData;
         private ISLTRepository _repository;
         private Dictionary<string, SLTFeature> _defaultFeatures;
 
@@ -44,12 +44,14 @@ namespace Saltr.UnitySdk
 
         public bool IsDevMode { get; set; }
 
+        public string SocialId { get; set; }
+
         #endregion Properties
 
         #region Events
 
-        public event Action<SLTAppData> ConnectSuccess;
-        public event Action<SLTStatus> ConnectFail;
+        public event Action<SLTAppData> AppDataGotten;
+        public event Action<SLTStatus> GetAppDataFail;
 
         public event Action<SLTLevel> LevelContentLoadSuccess;
         public event Action<SLTStatus> LevelConnectLoadFail;
@@ -63,7 +65,7 @@ namespace Saltr.UnitySdk
             _clientKey = clientKey;
             _deviceId = deviceId;
             _isLoading = false;
-            _isConected = false;
+            _isAppDataGotten = false;
 
             _defaultFeatures = new Dictionary<string, SLTFeature>();
 
@@ -79,13 +81,27 @@ namespace Saltr.UnitySdk
 
         #endregion Ctor
 
-        #region Business Methods
+        #region Public Methods
 
-        public void Connect(SLTBasicProperties basicProperties = null, Dictionary<string, object> customProperties = null)
+        public void DefineDefaultFeature(string featureToken, Dictionary<string, object> properties, bool isRequired)
+        {
+            if (!string.IsNullOrEmpty(featureToken))
+            {
+                _defaultFeatures[featureToken] = new SLTFeature() { Token = featureToken, Properties = properties, IsRequired = isRequired };
+            }
+        }
+
+        public void ImportLevels(string path)
+        {
+            path = string.IsNullOrEmpty(path) ? SLTConstants.LocalLevelPacksPath : path;
+            _appData = _repository.GetObjectFromApplication<SLTAppData>(path);
+        }
+
+        public void GetAppData(SLTBasicProperties basicProperties = null, Dictionary<string, object> customProperties = null)
         {
             if (_isLoading)
             {
-                OnConnectFail(new DownloadResult(ExceptionConstants.SaltrAppDataLoadRefused));
+                OnGetAppDataFail(new DownloadResult(ExceptionConstants.SaltrAppDataLoadRefused));
                 return;
             }
 
@@ -94,12 +110,12 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareAppDataRequestParameters(basicProperties, customProperties);
             var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
-            DownloadManager.Instance.AddDownload(url, OnConnect);
+            DownloadManager.Instance.AddDownload(url, OnAppDataGotten);
         }
 
         public void LoadLevelContentFromSaltr(SLTLevel level)
         {
-            string levelContentUrl = string.Format(LevelContentUrlFormat, level.ContentUrl, DateTime.Now.ToShortTimeString());
+            string levelContentUrl = string.Format(LevelContentUrlFormat, level.Url, DateTime.Now.ToShortTimeString());
 
             DownloadManager.Instance.AddDownload(levelContentUrl, OnLevelContentLoad);
         }
@@ -111,15 +127,7 @@ namespace Saltr.UnitySdk
 
             DownloadManager.Instance.AddDownload(url, OnSync);
         }
-
-        public void DefineDefaultFeature(string featureToken, Dictionary<string, object> properties, bool isRequired)
-        {
-            if (!string.IsNullOrEmpty(featureToken))
-            {
-                _defaultFeatures[featureToken] = new SLTFeature() { Token = featureToken, Properties = properties, IsRequired = isRequired };
-            }
-        }
-
+                
         ///// <summary>
         ///// Associates some properties with this client, that are used to assign it to a certain user group in Saltr.
         ///// </summary>
@@ -194,8 +202,7 @@ namespace Saltr.UnitySdk
         //{
         //    AddProperties(basicProperties, null);
         //}
-
-
+        
         #endregion Public Methods
 
         #region Internal Methods
@@ -221,9 +228,9 @@ namespace Saltr.UnitySdk
                 throw new Exception(ExceptionConstants.DeviceIdIsRequired);
             }
 
-            if (_socialId != null)
+            if (SocialId != null)
             {
-                args.SocialId = _socialId;
+                args.SocialId = SocialId;
             }
 
             if (basicProperties != null)
@@ -244,8 +251,8 @@ namespace Saltr.UnitySdk
         private Dictionary<string, string> PrepareSyncRequestParameters()
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
-            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionSync; //TODO @GSAR: remove later
-            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionSync;
+            urlVars[SLTConstants.UrlParamCommand] = SLTConstants.ActionDevSync; //TODO @GSAR: remove later
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionDevSync;
 
             SLTRequestArguments args = new SLTRequestArguments();
             args.ApiVersion = ApiVersion;
@@ -254,9 +261,9 @@ namespace Saltr.UnitySdk
 
             args.IsDevMode = IsDevMode;
 
-            if (_socialId != null)
+            if (SocialId != null)
             {
-                args.SocialId = _socialId;
+                args.SocialId = SocialId;
             }
 
             if (_deviceId != null)
@@ -303,13 +310,13 @@ namespace Saltr.UnitySdk
 
         #region Handlers
 
-        private void OnConnect(DownloadResult result)
+        private void OnAppDataGotten(DownloadResult result)
         {
             SLTAppData sltAppData = null;
 
             if (result == null || string.IsNullOrEmpty(result.Text))
             {
-                OnConnectFail(result);
+                OnGetAppDataFail(result);
             }
 
             Dictionary<string, List<SLTAppData>> responseData = JsonConvert.DeserializeObject<Dictionary<string, List<SLTAppData>>>(result.Text);
@@ -320,7 +327,7 @@ namespace Saltr.UnitySdk
 
                 if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {
-                    _isConected = true;
+                    _isAppDataGotten = true;
                     _repository.CacheObject(SLTConstants.AppDataCacheFileName, sltAppData);
 
                     Debug.Log("[SALTR] AppData load success.");
@@ -330,9 +337,9 @@ namespace Saltr.UnitySdk
                         Sync();
                     }
 
-                    if (ConnectSuccess != null)
+                    if (AppDataGotten != null)
                     {
-                        ConnectSuccess(sltAppData);
+                        AppDataGotten(sltAppData);
                     }
 
                     //// if developer didn't announce use without levels, and levelType in returned JSON is not "noLevels",
@@ -378,11 +385,11 @@ namespace Saltr.UnitySdk
             }
         }
 
-        private void OnConnectFail(DownloadResult result)
+        private void OnGetAppDataFail(DownloadResult result)
         {
-            if (ConnectFail != null)
+            if (GetAppDataFail != null)
             {
-                ConnectFail(new SLTStatus(SLTStatusCode.UnknownError, result.Error)); //implement correct fail mechanism with correct data.
+                GetAppDataFail(new SLTStatus(SLTStatusCode.UnknownError, result.Error)); //implement correct fail mechanism with correct data.
             }
         }
 

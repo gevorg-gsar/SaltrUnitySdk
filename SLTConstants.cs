@@ -15,7 +15,7 @@ namespace Saltr.UnitySdk
         //TODO @gyln: Group these actions in an enum or a struct?
         public const string ActionGetAppData = "getAppData";
         public const string ActionAddProperties = "addProperties";
-        public const string ActionSync = "sync";
+        public const string ActionDevSync = "sync";
         public const string ActionDevRegisterDevice = "registerDevice";
 
         public const string SaltrApiUrl = "https://api.saltr.com/call";
@@ -26,9 +26,9 @@ namespace Saltr.UnitySdk
         /// <summary>
         /// Default path to the local level files.
         /// </summary>
-        public const string LocalLevelPacksUrl = "saltr/level_packs";
-        public const string LocalLevelContentPackageUrlTemplate = "saltr/pack_{0}/level_{1}";
-        public const string LocalLevelContentCacheUrlTemplate = "pack_{0}_level_{1}.json";
+        public const string LocalLevelPacksPath = "Saltr/level_packs.json";
+        public const string LocalLevelContentPathFormat = "Saltr/pack_{0}/level_{1}.json";
+        public const string LocalLevelContentCachePathFormat = "pack_{0}_level_{1}.json";
 
         public const string ResultSuccess = "SUCCEED";
         public const string ResultError = "ERROR";

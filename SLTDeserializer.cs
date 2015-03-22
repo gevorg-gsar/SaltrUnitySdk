@@ -219,7 +219,7 @@ namespace Saltr.UnitySdk
             {
                 if (responseLevel.ContainsKey(SLTConstants.Url))
                 {
-                    sltLevel.ContentUrl = responseLevel[SLTConstants.Url].ToString();
+                    sltLevel.Url = responseLevel[SLTConstants.Url].ToString();
                 }
 
                 if (responseLevel.ContainsKey(SLTConstants.Id))
