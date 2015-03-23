@@ -6,11 +6,9 @@ using Saltr.UnitySdk.Domain;
 
 namespace Saltr.UnitySdk.Game
 {
-    public class SLTAppData
+    public class SLTAppData : SLTBaseEntity
     {
         #region Properties
-
-        public bool? Success { get; set; }
 
         public SLTLevelType? LevelType { get; set; }
 

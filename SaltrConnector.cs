@@ -170,7 +170,7 @@ namespace Saltr.UnitySdk
         {
             if (_isLoading)
             {
-                OnGetAppDataFail(new DownloadResult(ExceptionConstants.SaltrAppDataLoadRefused));
+                GetAppDataFail(new SLTErrorStatus { Message = ExceptionConstants.SaltrAppDataLoadRefused });
                 return;
             }
 
@@ -502,12 +502,6 @@ namespace Saltr.UnitySdk
         private void OnAppDataGotten(DownloadResult result)
         {
             SLTAppData sltAppData = null;
-
-            if (result == null || string.IsNullOrEmpty(result.Text))
-            {
-                OnGetAppDataFail(result);
-            }
-
             SLTResponse<SLTAppData> response = JsonConvert.DeserializeObject<SLTResponse<SLTAppData>>(result.Text);
 
             if (response != null && !response.Response.IsNullOrEmpty<SLTAppData>())
@@ -516,68 +510,43 @@ namespace Saltr.UnitySdk
 
                 if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {
-                    _isAppDataGotten = true;
-                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, sltAppData);
-
-                    Debug.Log("[SALTR] AppData load success.");
-
                     if (IsDevMode && !_isSynced)
                     {
                         Sync();
                     }
 
-                    if (GetAppDataSuccess != null)
+                    if (!UseNoLevels && !sltAppData.LevelPacks.IsNullOrEmpty<SLTLevelPack>())
                     {
-                        GetAppDataSuccess(sltAppData);
+                        _levelPacks = sltAppData.LevelPacks;
                     }
 
-                    //// if developer didn't announce use without levels, and levelType in returned JSON is not "noLevels",
-                    //// then - parse levels
-                    //if (!_useNoLevels && _levelType != SLTLevelType.NoLevels)
-                    //{
-                    //    List<SLTLevelPack> newLevelPacks = null;
-                    //    try
-                    //    {
-                    //        newLevelPacks = SLTDeserializer.DecodeLevels(response);
-                    //    }
-                    //    catch (Exception e)
-                    //    {
-                    //        Debug.Log(e.Message);
-                    //        _onConnectFail(new SLTStatusLevelsParseError());
-                    //        return;
-                    //    }
+                    if (!UseNoFeatures && !sltAppData.Features.IsNullOrEmpty<SLTFeature>())
+                    {
+                        _activeFeatures.Clear();
+                        foreach (var feature in sltAppData.Features)
+                        {
+                            _activeFeatures.Add(feature.Token, feature);
+                        }
+                    }
 
-                    //    // if new levels are received and parsed, then only dispose old ones and assign new ones.
-                    //    if (newLevelPacks != null)
-                    //    {
-                    //        DisposeLevelPacks();
-                    //        _levelPacks = newLevelPacks;
-                    //    }
-                    //}
+                    _experiments = sltAppData.Experiments;
 
+                    _isAppDataGotten = true;
+                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, sltAppData);
+
+                    GetAppDataSuccess(sltAppData);
+
+                    Debug.Log("[SALTR] AppData load success.");
+
+                }
+                else if (sltAppData.Error != null)
+                {
+                    GetAppDataFail(sltAppData.Error);
                 }
                 else
                 {
-                    //if (responseData.ContainsKey(SLTConstants.Error))
-                    //{
-                    //OnConnectFail(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Code)), response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Message)));
-                    //}
-                    //else
-                    //{
-                    //int errorCode;
-                    //int.TryParse(response.GetValue<string>(SLTConstants.ErrorCode), out errorCode);
-
-                    //OnConnectFail(new SLTStatus(errorCode, response.GetValue<string>(SLTConstants.ErrorMessage)));
-                    //}
+                    GetAppDataFail(new SLTErrorStatus() { Message = result.Text });
                 }
-            }
-        }
-
-        private void OnGetAppDataFail(DownloadResult result)
-        {
-            if (GetAppDataFail != null)
-            {
-                //GetAppDataFail(new SLTErrorStatus(SLTErrorStatusCode.UnknownError, result.Error)); //implement correct fail mechanism with correct data.
             }
         }
 
@@ -591,14 +560,14 @@ namespace Saltr.UnitySdk
 
                 if (sltStatusEntity.Success.HasValue && !sltStatusEntity.Success.Value)
                 {
-                    if (IsAutoRegisteredDevice 
-                        && sltStatusEntity.Error != null 
+                    if (IsAutoRegisteredDevice
+                        && sltStatusEntity.Error != null
                         && sltStatusEntity.Error.Code == SLTErrorStatusCode.RegistrationRequired)
                     {
                         DeviceRegistrationRequired();
                     }
                 }
-                else 
+                else
                 {
                     _isSynced = true;
                 }
@@ -630,11 +599,6 @@ namespace Saltr.UnitySdk
             {
                 RegisterDeviceFail(new SLTErrorStatus() { Code = SLTErrorStatusCode.UnknownError, Message = result.Text });
             }
-        }
-
-        private void OnAddProperties(DownloadResult result)
-        {
-
         }
 
         private void OnLevelContentLoad(DownloadResult result)
@@ -675,6 +639,12 @@ namespace Saltr.UnitySdk
         private void OnLevelContentLoadFail(DownloadResult result)
         {
             throw new NotImplementedException();
+        }
+
+
+        private void OnAddProperties(DownloadResult result)
+        {
+
         }
 
         //private void AppDataLoadSuccessCallback(Dictionary<string, object> resource)

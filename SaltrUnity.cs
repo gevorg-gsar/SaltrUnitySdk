@@ -146,7 +146,7 @@ namespace Saltr.UnitySdk
 
                 Init();
             }
-            //GetAppData();
+            GetAppData();
             //RegisterDevice();
             //_saltrConnector.Sync();
         }
