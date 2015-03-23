@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Saltr.UnitySdk.Utils;
 
-namespace Saltr.UnitySdk
+namespace Saltr.UnitySdk.Domain
 {
 	/// <summary>
 	/// The SLTBasicProperties class represents the basic user properties.

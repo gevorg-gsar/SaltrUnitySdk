@@ -10,6 +10,11 @@ namespace Saltr.UnitySdk
         public const string EmailIsRequired = "Email is required.";
         public const string DeviceIdIsRequired = "Field 'deviceId' is required.";
 
+        public const string AppDataShouldBeInitialized = "AppData should be initialized.";
+        public const string LevelsShouldBeImported = "Levels should be imported.";
+        public const string FeaturesShouldBeDefined = "Features should be defined.";
+        public const string SaltrConnectorShouldBeCreated = "SaltrConnector should be created.";
+
         public const string SaltrFailedLoadAppData = "[SALTR] Failed to load appData.";
         public const string SaltrFailedDecodeLevels = "[SALTR] Failed to decode Levels.";
         public const string SaltrFailedLoadContent = "[SALTR] Level content load has failed.";

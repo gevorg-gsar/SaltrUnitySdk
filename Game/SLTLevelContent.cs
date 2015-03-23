@@ -5,7 +5,6 @@ using System.Text;
 using UnityEngine;
 using Saltr.UnitySdk.Game.Matching;
 using Saltr.UnitySdk.Utils;
-using Saltr.UnitySdk.Status;
 
 namespace Saltr.UnitySdk.Game
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Saltr.UnitySdk.Utils;
 
-namespace Saltr.UnitySdk.Resource
+namespace Saltr.UnitySdk.Domain
 {
     public class SLTRequestArguments
     {

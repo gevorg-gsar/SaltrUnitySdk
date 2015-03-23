@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Saltr.UnitySdk;
-using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Saltr.UnitySdk.Game;
+using Saltr.UnitySdk.Domain;
 
 namespace Saltr.UnitySdk
 {
@@ -48,7 +48,7 @@ namespace Saltr.UnitySdk
         private bool _useNoFeatures = false;
 
         [SerializeField]
-        private int _requestIdleTimeout = 0;
+        private int _timeout = 0;
 
         [SerializeField]
         private string _localLevelPacksPath = SLTConstants.LocalLevelPacksPath;
@@ -66,13 +66,46 @@ namespace Saltr.UnitySdk
             protected set { _saltrConnector = value; }
         }
 
+        public bool IsStarted { get; private set; }
+
+        public string SocialId
+        {
+            set { _socialId = value; }
+            get { return _socialId; }
+        }
+        public bool UseNoFeatures
+        {
+            set { _useNoFeatures = value; }
+            get { return _useNoFeatures; }
+        }
+
+        public bool UseNoLevels
+        {
+            set { _useNoLevels = value; }
+            get { return _useNoLevels; }
+        }
+
+        public bool IsDevMode
+        {
+            set { _isDevMode = value; }
+            get { return _isDevMode; }
+        }
+
+        public bool IsAutoRegisteredDevice
+        {
+            set { _isAutoRegisteredDevice = value; }
+            get { return _isAutoRegisteredDevice; }
+        }
+
+        //public int RequestIdleTimeout
+        //{
+        //    set { _requestIdleTimeout = value; }
+        //}
+
         #endregion
 
-        #region Messages
+        #region MonoBehaviour
 
-        /// <summary>
-        /// Creates and initialises <see cref="saltr.SLTUnity"/> instance.
-        /// </summary>
         protected virtual void Awake()
         {
             if (_saltrConnector != null)
@@ -91,89 +124,106 @@ namespace Saltr.UnitySdk
             _saltrConnector.IsDevMode = _isDevMode;
             _saltrConnector.SocialId = _socialId;
 
-            _saltrConnector.AppDataGotten += SaltrConnector_OnConnectSuccess;
-            _saltrConnector.LevelContentLoadSuccess += SaltrConnector_LevelContentLoadSuccess;
-
-            
-
-            //_saltrConnector.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
-            //_saltrConnector.UseNoLevels = _useNoLevels;
-            //_saltrConnector.UseNoFeatures = _useNoFeatures;
+            _saltrConnector.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
             //_saltrConnector.RequestIdleTimeout = _requestIdleTimeout;
 
+            _saltrConnector.UseNoLevels = _useNoLevels;
+            _saltrConnector.UseNoFeatures = _useNoFeatures;
+
+            _saltrConnector.GetAppDataSuccess += SaltrConnector_OnGetAppDataSuccess;
+            _saltrConnector.LoadLevelContentSuccess += SaltrConnector_OnLoadLevelContentSuccess;
+            
+            _saltrConnector.RegisterDeviceSuccess += SaltrConnector_RegisterDeviceSuccess;
+            _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
+        }
+        
+        protected virtual void Start()
+        {
             if (_autoStart)
             {
-                ImportLevels();
-                DefineDefaultFeatures();
+                ImportLevels(_localLevelPacksPath);
+                DefineDefaultFeatures(_defaultFeatures);
 
-                AddProperties(new SLTBasicProperties() { Age = "111", DeviceName = "GOROIDDEVICE" });
-
-                //RegisterDevice();
-
-                //_GetAppData();           
+                Init();
             }
+            //GetAppData();
+            //RegisterDevice();
+            //_saltrConnector.Sync();
         }
 
-        #endregion Messages
+        #endregion Monobehaviour
 
         #region Public Methods
 
-        public void ImportLevels()
+        public virtual void Init()
+        {
+            if (_saltrConnector == null)
+            {
+                throw new Exception(ExceptionConstants.SaltrConnectorShouldBeCreated);
+            }
+
+            _saltrConnector.Init();
+            IsStarted = true;
+        }
+
+        public virtual void ImportLevels(string path)
         {
             if (_useNoLevels)
             {
                 return;
             }
 
-            //if (!_isStarted)
-            //{
-            string path = !string.IsNullOrEmpty(_localLevelPacksPath) ? _localLevelPacksPath : SLTConstants.LocalLevelPacksPath;
-
-            _saltrConnector.ImportLevels(path);
-            //}
-            //else
-            //{
-            //    throw new Exception("Method 'importLevels()' should be called before 'Start()' only.");
-            //}
+            if (!IsStarted)
+            {
+                _saltrConnector.ImportLevels(path);
+            }
+            else
+            {
+                throw new Exception("Method 'ImportLevels()' should be called before 'Init()' only.");
+            }
         }
 
-        /// <summary>
-        /// Defines features that can be specified in the Inspector.
-        /// </summary>
-        public virtual void DefineDefaultFeatures()
+        public virtual void DefineDefaultFeatures(FeatureEntry[] features)
         {
             if (_useNoFeatures)
             {
                 return;
             }
 
-            //if (_isStarted == false)
-            //{
-            foreach (FeatureEntry featureEntry in _defaultFeatures)
+            if (!IsStarted)
             {
-                Dictionary<string, object> properties = new Dictionary<string, object>();
-                foreach (PropertyEntry property in featureEntry.properties)
+                foreach (FeatureEntry featureEntry in _defaultFeatures)
                 {
-                    properties[property.key] = property.value;
-                }
+                    Dictionary<string, object> properties = new Dictionary<string, object>();
+                    foreach (PropertyEntry property in featureEntry.properties)
+                    {
+                        properties[property.key] = property.value;
+                    }
 
-                _saltrConnector.DefineDefaultFeature(featureEntry.token, properties, featureEntry.required);
+                    DefineDefaultFeature(featureEntry.token, properties, featureEntry.required);
+                }
             }
-            //}
-            //else
-            //{
-            //    throw new Exception("Method 'defineFeature()' should be called before 'Start()' only.");
-            //}
+            else
+            {
+                throw new Exception("Method 'DefineFeatures()' should be called before 'Init()' only.");
+            }
+        }
+
+        public void DefineDefaultFeature(string token, Dictionary<string, object> properties, bool isRequired)
+        {
+            _saltrConnector.DefineDefaultFeature(token, properties, isRequired);
         }
 
         public void RegisterDevice()
         {
-            //if (!_isStarted)
-            //{
-            //    throw new Exception("Method 'RegisterDevice()' should be called after 'Start()' only.");
-            //}
-
-            ShowDeviceRegistationDialog(SaltrConnector.RegisterDevice);
+            if (!IsStarted)
+            {
+                throw new Exception("Method 'RegisterDevice()' should be called after 'Init()' only.");
+            }
+            else
+            {
+                ShowDeviceRegistationDialog(SaltrConnector.RegisterDevice);
+            }
         }
 
         public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
@@ -186,187 +236,39 @@ namespace Saltr.UnitySdk
             _saltrConnector.GetAppData();
         }
 
-        public void LodLevelContent()
+        public void LodLevelContent(SLTLevel level, bool useCache = true)
         {
-            //_saltrConnector.LoadLevelContent();
+            _saltrConnector.LoadLevelContent(level, useCache);
         }
-        
+
         #endregion Public Methods
 
         #region Event Handlers
 
-        private void SaltrConnector_LevelContentLoadSuccess(SLTLevel sltLevel)
+        private void SaltrConnector_OnLoadLevelContentSuccess(SLTLevel sltLevel)
         {
 
         }
 
-        private void SaltrConnector_OnConnectSuccess(SLTAppData sltAppData)
+        private void SaltrConnector_OnGetAppDataSuccess(SLTAppData sltAppData)
         {
-            _saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing is finished.
+            //_saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing is finished.
+        }
+
+        private void SaltrConnector_OnDeviceRegistrationRequired()
+        {
+            RegisterDevice();
+        }
+
+        private void SaltrConnector_RegisterDeviceSuccess()
+        {
+            HideDeviceRegistationDialog();
         }
 
         #endregion Event Handlers
 
-        //public void LoadLevelContent(SLTLevel level, bool useCache = true)
-        //{
-        //    object content = null;
-        //    if (_isConected == false)
-        //    {
-        //        if (useCache)
-        //        {
-        //            content = LoadLevelContentInternally(level);
-        //        }
-        //        else
-        //        {
-        //            content = LoadLevelContentFromDisk(level);
-        //        }
-
-        //        LevelContentLoadSuccessHandler(level, content);
-        //    }
-        //    else
-        //    {
-        //        if (!useCache || level.Version != GetCachedLevelVersion(level))
-        //        {
-        //            LoadLevelContentFromSaltr(level);
-        //        }
-        //        else
-        //        {
-        //            content = LoadLevelContentFromCache(level);
-        //            LevelContentLoadSuccessHandler(level, content);
-        //        }
-        //    }
-        //}
-
-        //private void LoadLevelContentFromSaltr(SLTLevel level)
-        //{
-        //    string dataUrl = level.ContentUrl + "?_time_=" + DateTime.Now.ToShortTimeString();
-
-        //    // some ugly stuff here came from AS3... you don't do like this in normal languages
-        //    Action<SLTResource> loadFromSaltrSuccessCallback = delegate(SLTResource res)
-        //    {
-        //        object contentData = res.Data;
-        //        if (contentData != null)
-        //        {
-        //            CacheLevelContent(level, contentData);
-        //        }
-        //        else
-        //        {
-        //            contentData = LoadLevelContentInternally(level);
-        //        }
-        //        if (contentData != null)
-        //        {
-        //            LevelContentLoadSuccessHandler(level, contentData);
-        //        }
-        //        else
-        //        {
-        //            LevelContentLoadFailHandler();
-        //        }
-        //        res.Dispose();
-        //    };
-        //}
-
-        //private object LoadLevelContentInternally(SLTLevel level)
-        //{
-        //    object contentData = LoadLevelContentFromCache(level);
-        //    if (contentData == null)
-        //    {
-        //        contentData = LoadLevelContentFromDisk(level);
-        //    }
-        //    return contentData;
-        //}
 
 
-        //private object LoadLevelContentFromCache(SLTLevel level)
-        //{
-        //    string url = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    return _repository.GetObjectFromCache(url);
-        //}
-
-        //private object LoadLevelContentFromDisk(SLTLevel level)
-        //{
-        //    string url = string.Format(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    return _repository.GetObjectFromApplication(url);
-        //}
-
-        //private string GetCachedLevelVersion(SLTLevel level)
-        //{
-        //    string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    return _repository.GetObjectVersion(cachedFileName);
-        //}
-
-        //private void CacheLevelContent(SLTLevel level, object content)
-        //{
-        //    string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    _repository.CacheObject(cachedFileName, level.Version.ToString(), content);
-        //}
-
-
-
-
-
-
-
-
-
-
-
-        //private bool _isDevMode;
-        //private bool _isStarted;
-        //private bool _isSynced;
-        //private bool _useNoLevels;
-        //private bool _useNoFeatures;
-        //private bool _isAutoRegisteredDevice;
-
-        //private int _requestIdleTimeout;
-
-        //private SLTLevelType? _levelType;
-        //private ISLTRepository _repository;
-
-        //private Dictionary<string, SLTFeature> _activeFeatures;
-        //private Dictionary<string, SLTFeature> _developerFeatures;
-
-        /// <summary>
-        /// Checks if everything is initialized properly and starts the instance.
-        /// After this call you can access application data (levels, features), and establish connection with the server.
-        /// </summary>
-        public void Start()
-        {
-            //if (_deviceId == null)
-            //{
-            //    throw new Exception(ExceptionConstants.DeviceIdIsRequired);
-            //}
-
-            //if (_developerFeatures.Count == 0 && !_useNoFeatures)
-            //{
-            //    throw new Exception("Features should be defined.");
-            //}
-
-            //if (_levelPacks.Count == 0 && !_useNoLevels)
-            //{
-            //    throw new Exception("Levels should be imported.");
-            //}
-
-            //object cachedAppData = _repository.GetObjectFromCache(SLTConstants.AppDataUrlCache);
-            //if (cachedAppData == null)
-            //{
-            //    foreach (var item in _developerFeatures.Keys)
-            //    {
-            //        _activeFeatures[item] = _developerFeatures[item];
-            //    }
-            //}
-            //else
-            //{
-            //    _activeFeatures = SLTDeserializer.DeserializeFeatures(cachedAppData[SLTConstants.Features] as IEnumerable<object>);
-            //    _experiments = SLTDeserializer.DeserializeExperiments(cachedAppData as Dictionary<string, object>);
-            //}
-            //_isStarted = true;
-        }
-
-
-
-        /// <summary>
-        /// Gets the level packs.
-        /// </summary>
         //public List<SLTLevelPack> LevelPacks
         //{
         //    get { return _levelPacks; }
@@ -415,120 +317,6 @@ namespace Saltr.UnitySdk
         //{
         //    get { return _experiments; }
         //}
-
-
-
-
-        ///// <summary>
-        ///// Sets the social identifier of the user.
-        ///// </summary>
-        //public string SocialId
-        //{
-        //    set { _socialId = value; }
-        //}
-
-        ///// <summary>
-        ///// Sets a value indicating whether the application does not use features.
-        ///// </summary>
-        ///// <value><c>true</c> if features are not used; otherwise, <c>false</c>.</value>
-        //public bool UseNoFeatures
-        //{
-        //    set { _useNoFeatures = value; }
-        //}
-
-        ///// <summary>
-        ///// Sets a value indicating whether the application does not use levels.
-        ///// </summary>
-        ///// <value><c>true</c> if levels are not used; otherwise, <c>false</c>.</value>
-        //public bool UseNoLevels
-        //{
-        //    set { _useNoLevels = value; }
-        //}
-
-        ///// <summary>
-        ///// Sets a value indicating weather this <see cref="saltr.SLTUnity"/> should operate in dev(developer) mode.
-        ///// In this mode client data(e.g. developer defined features) will be synced with Saltr, once, after successful <see cref="saltr.SLTUnity.Connect"/> call.
-        ///// </summary>
-        ///// <value><c>true</c> to enable; <c>false</c> to disable.</value>
-        //public bool IsDevMode
-        //{
-        //    set { _isDevMode = value; }
-        //}
-
-        ///// <summary>
-        ///// Sets a value indicating whether device registratioon dialog should be automaticaly shown in dev mode(<see cref="saltr.SLTUnity.IsDevMode"/>),
-        ///// after successful <see cref="saltr.SLTUnity.connect"/> call, if the device was not registered already.
-        ///// </summary>
-        ///// <value><c>true</c> to enable; <c>false</c> to disable. By default is set to <c>true</c></value>
-        //public bool IsAutoRegisteredDevice
-        //{
-        //    set { _isAutoRegisteredDevice = value; }
-        //}
-
-        ///// <summary>
-        ///// Sets the request idle timeout. If a URL request takes more than timeout to complete, it would be canceled.
-        ///// </summary>
-        ///// <value>The request idle timeout in milliseconds.</value>
-        //public int RequestIdleTimeout
-        //{
-        //    set { _requestIdleTimeout = value; }
-        //}
-
-        ///// <summary>
-        ///// Sets the repository used by this instance. An appropriate repository is already set by a constructor,
-        ///// so you will need this only if you want to implement and use your own custom repository (<see cref="saltr.Repository.ISLTRepository"/>).
-        ///// </summary>        
-        //internal ISLTRepository Repository
-        //{
-        //    set { _repository = value; }
-        //}
-
-
-
-        // If you want to have a feature synced with SALTR you should call define before getAppData call.
-        /// <summary>
-        /// Defines a feature (<see cref="saltr.SLTFeature"/>).
-        /// </summary>
-        /// <param name="token">Token - a unique identifier for the feature.</param>
-        /// <param name="properties">A dictionary of properties, that should be of "JSON friendly" datatypes 
-        /// (string, int, double, Dictionary, List, etc.). To represent color use standard HTML format: <c>"#RRGGBB"</c> </param>
-        /// <param name="isRequired">If set to <c>true</c> feature is isRequired(see <see cref="saltr.SLTUnity.GetFeatureProperties"/>). <c>false</c> by default.</param>
-        //public void DefineFeature(string token, Dictionary<string, object> properties, bool isRequired)
-        //{
-        //    if (_useNoFeatures)
-        //    {
-        //        return;
-        //    }
-
-        //    if (_isStarted == false)
-        //    {
-        //        _developerFeatures[token] = new SLTFeature() { Token = token, Properties = properties, IsRequired = isRequired };
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("Method 'defineFeature()' should be called before 'Start()' only.");
-        //    }
-        //}
-
-        ///// <summary>
-        ///// See <see cref="saltr.SLTUnity.DefineFeature"/>.
-        ///// </summary>
-        //public void DefineFeature(string token, Dictionary<string, object> properties)
-        //{
-        //    DefineFeature(token, properties, false);
-        //}
-
-        
-
-        /// <summary>
-        /// Imports the level data from local files, that can be downloaded from Saltr. 
-        /// If your application is using levels, this must be called before calling Start(), otherwise has no effect.
-        /// </summary>
-        /// <param name="path">
-        /// The path to level packs in Resources folder. 
-        /// If not specified the <see cref="saltr.SLTConfig.LocalLevelPackageUrl"/> will be used.
-        /// </param>
-
 
 
         /// <summary>
@@ -621,50 +409,6 @@ namespace Saltr.UnitySdk
         //{
         //    ImportLevels(null);
         //}
-
-
-
-
-
-
-
-        //private object LoadLevelContentInternally(SLTLevel level)
-        //{
-        //    object contentData = LoadLevelContentFromCache(level);
-        //    if (contentData == null)
-        //    {
-        //        contentData = LoadLevelContentFromDisk(level);
-        //    }
-        //    return contentData;
-        //}
-
-        //private object LoadLevelContentFromDisk(SLTLevel level)
-        //{
-        //    string url = string.Format(SLTConstants.LocalLevelContentPackageUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    return _repository.GetObjectFromApplication(url);
-        //}
-
-        //private object LoadLevelContentFromCache(SLTLevel level)
-        //{
-
-        //    string url = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    return _repository.GetObjectFromCache(url);
-        //}
-
-        //private string GetCachedLevelVersion(SLTLevel level)
-        //{
-        //    string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    return _repository.GetObjectVersion(cachedFileName);
-        //}
-
-        //private void CacheLevelContent(SLTLevel level, object content)
-        //{
-        //    string cachedFileName = string.Format(SLTConstants.LocalLevelContentCacheUrlTemplate, level.PackIndex.ToString(), level.LocalIndex.ToString());
-        //    _repository.CacheObject(cachedFileName, level.Version.ToString(), content);
-        //}
-
-
-
 
 
 

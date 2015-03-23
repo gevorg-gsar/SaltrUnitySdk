@@ -5,12 +5,11 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Linq;
 using Saltr.UnitySdk.Repository;
-using Saltr.UnitySdk.Resource;
 using Saltr.UnitySdk.Game;
-using Saltr.UnitySdk.Status;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Newtonsoft.Json;
+using Saltr.UnitySdk.Domain;
 
 namespace Saltr.UnitySdk
 {
@@ -34,27 +33,42 @@ namespace Saltr.UnitySdk
         private bool _isLoading;
         private bool _isAppDataGotten;
 
-        private SLTAppData _appData;
         private ISLTRepository _repository;
+        private List<SLTLevelPack> _levelPacks;
+        private List<SLTExperiment> _experiments;
+        private Dictionary<string, SLTFeature> _activeFeatures;
         private Dictionary<string, SLTFeature> _defaultFeatures;
 
         #endregion Fields
 
         #region Properties
 
+        public SLTAppData AppData { get; private set; }
+
         public bool IsDevMode { get; set; }
 
         public string SocialId { get; set; }
+
+        public bool UseNoLevels { get; set; }
+
+        public bool UseNoFeatures { get; set; }
+
+        public bool IsAutoRegisteredDevice { get; set; }
 
         #endregion Properties
 
         #region Events
 
-        public event Action<SLTAppData> AppDataGotten;
-        public event Action<SLTStatus> GetAppDataFail;
+        public event Action DeviceRegistrationRequired = delegate() { };
 
-        public event Action<SLTLevel> LevelContentLoadSuccess;
-        public event Action<SLTStatus> LevelConnectLoadFail;
+        public event Action<SLTAppData> GetAppDataSuccess = delegate(SLTAppData appData) { };
+        public event Action<SLTErrorStatus> GetAppDataFail = delegate(SLTErrorStatus errorStatus) { };
+
+        public event Action<SLTLevel> LoadLevelContentSuccess = delegate(SLTLevel sltLevel) { };
+        public event Action<SLTErrorStatus> LoadLevelConnectFail = delegate(SLTErrorStatus errorStatus) { };
+
+        public event Action RegisterDeviceSuccess = delegate() { };
+        public event Action<SLTErrorStatus> RegisterDeviceFail = delegate(SLTErrorStatus errorStatus) { };
 
         #endregion Events
 
@@ -67,6 +81,9 @@ namespace Saltr.UnitySdk
             _isLoading = false;
             _isAppDataGotten = false;
 
+            _levelPacks = new List<SLTLevelPack>();
+            _experiments = new List<SLTExperiment>();
+            _activeFeatures = new Dictionary<string, SLTFeature>();
             _defaultFeatures = new Dictionary<string, SLTFeature>();
 
             if (useCache)
@@ -83,6 +100,14 @@ namespace Saltr.UnitySdk
 
         #region Public Methods
 
+        public void ImportLevels(string path)
+        {
+            path = string.IsNullOrEmpty(path) ? SLTConstants.LocalLevelPacksPath : path;
+            AppData = _repository.GetObjectFromApplication<SLTAppData>(path);
+
+            _levelPacks = AppData.LevelPacks;
+        }
+
         public void DefineDefaultFeature(string featureToken, Dictionary<string, object> properties, bool isRequired)
         {
             if (!string.IsNullOrEmpty(featureToken))
@@ -91,10 +116,54 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public void ImportLevels(string path)
+        public void Init()
         {
-            path = string.IsNullOrEmpty(path) ? SLTConstants.LocalLevelPacksPath : path;
-            _appData = _repository.GetObjectFromApplication<SLTAppData>(path);
+            if (_deviceId == null)
+            {
+                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+            }
+
+            //if (AppData == null)
+            //{
+            //    throw new Exception(ExceptionConstants.AppDataShouldBeInitialized);
+            //}
+
+            if (_levelPacks.Count == 0 && !UseNoLevels)
+            {
+                throw new Exception(ExceptionConstants.LevelsShouldBeImported);
+            }
+
+            if (_defaultFeatures.Count == 0 && !UseNoFeatures)
+            {
+                throw new Exception(ExceptionConstants.FeaturesShouldBeDefined);
+            }
+
+            SLTAppData cachedAppData = _repository.GetObjectFromCache<SLTAppData>(SLTConstants.AppDataCacheFileName);
+            _experiments.Clear();
+            _activeFeatures.Clear();
+
+            if (cachedAppData == null)
+            {
+                foreach (var item in _defaultFeatures)
+                {
+                    _activeFeatures.Add(item.Key, item.Value);
+                }
+            }
+            else
+            {
+                if (!cachedAppData.Features.IsNullOrEmpty<SLTFeature>())
+                {
+                    foreach (var feature in cachedAppData.Features)
+                    {
+                        _activeFeatures.Add(feature.Token, feature);
+                    }
+                }
+
+                if (!cachedAppData.Experiments.IsNullOrEmpty<SLTExperiment>())
+                {
+                    _experiments = cachedAppData.Experiments;
+                }
+            }
         }
 
         public void GetAppData(SLTBasicProperties basicProperties = null, Dictionary<string, object> customProperties = null)
@@ -113,14 +182,37 @@ namespace Saltr.UnitySdk
             DownloadManager.Instance.AddDownload(url, OnAppDataGotten);
         }
 
-        public void LoadLevelContentFromSaltr(SLTLevel level)
+        public void LoadLevelContent(SLTLevel level, bool useCache = true)
         {
-            string levelContentUrl = string.Format(LevelContentUrlFormat, level.Url, DateTime.Now.ToShortTimeString());
+            //    object content = null;
+            //    if (_isConected == false)
+            //    {
+            //        if (useCache)
+            //        {
+            //            content = LoadLevelContentInternally(level);
+            //        }
+            //        else
+            //        {
+            //            content = LoadLevelContentFromDisk(level);
+            //        }
 
-            DownloadManager.Instance.AddDownload(levelContentUrl, OnLevelContentLoad);
+            //        LevelContentLoadSuccessHandler(level, content);
+            //    }
+            //    else
+            //    {
+            //        if (!useCache || level.Version != GetCachedLevelVersion(level))
+            //        {
+            //            LoadLevelContentFromSaltr(level);
+            //        }
+            //        else
+            //        {
+            //            content = LoadLevelContentFromCache(level);
+            //            LevelContentLoadSuccessHandler(level, content);
+            //        }
+            //    }
         }
 
-        private void Sync()
+        public void Sync()
         {
             var urlVars = PrepareSyncRequestParameters();
             var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
@@ -151,7 +243,48 @@ namespace Saltr.UnitySdk
 
         #endregion Public Methods
 
-        #region Internal Methods
+        #region Private Methods
+
+        private void LoadLevelContentFromSaltr(SLTLevel level)
+        {
+            string levelContentUrl = string.Format(LevelContentUrlFormat, level.Url, DateTime.Now.ToShortTimeString());
+
+            DownloadManager.Instance.AddDownload(levelContentUrl, OnLevelContentLoad);
+        }
+
+        private SLTLevelContent GetLevelContentLocally(SLTLevel level)
+        {
+            SLTLevelContent levelContent = GetLevelContentFromCache(level);
+            if (levelContent == null)
+            {
+                levelContent = GetLevelContentFromApplication(level);
+            }
+            return levelContent;
+        }
+
+        private void CacheLevelContent(SLTLevel level)
+        {
+            string cachedFileName = string.Format(SLTConstants.LocalLevelContentCachePathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            _repository.CacheObject<SLTLevelContent>(cachedFileName, level.Content, level.Version.ToString());
+        }
+
+        private SLTLevelContent GetLevelContentFromCache(SLTLevel level)
+        {
+            string path = string.Format(SLTConstants.LocalLevelContentCachePathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            return _repository.GetObjectFromCache<SLTLevelContent>(path);
+        }
+
+        private SLTLevelContent GetLevelContentFromApplication(SLTLevel level)
+        {
+            string path = string.Format(SLTConstants.LocalLevelContentPathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            return _repository.GetObjectFromApplication<SLTLevelContent>(path);
+        }
+
+        private string GetCachedLevelVersion(SLTLevel level)
+        {
+            string cachedFileName = string.Format(SLTConstants.LocalLevelContentCachePathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
+            return _repository.GetObjectVersion(cachedFileName);
+        }
 
         private Dictionary<string, string> PrepareAppDataRequestParameters(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
@@ -204,7 +337,7 @@ namespace Saltr.UnitySdk
 
             args.IsDevMode = IsDevMode;
 
-            if (SocialId != null)
+            if (!string.IsNullOrEmpty(SocialId))
             {
                 args.SocialId = SocialId;
             }
@@ -278,7 +411,7 @@ namespace Saltr.UnitySdk
                 {
                     androidVersion = SystemInfo.operatingSystem.Substring(SystemInfo.operatingSystem.IndexOf("API-") + 4, 2).ToString();
                 }
-                catch 
+                catch
                 {
                     androidVersion = SLTConstants.Unknown;
                 }
@@ -362,7 +495,7 @@ namespace Saltr.UnitySdk
             return url;
         }
 
-        #endregion Internal Methods
+        #endregion Private Methods
 
         #region Handlers
 
@@ -375,11 +508,11 @@ namespace Saltr.UnitySdk
                 OnGetAppDataFail(result);
             }
 
-            Dictionary<string, List<SLTAppData>> responseData = JsonConvert.DeserializeObject<Dictionary<string, List<SLTAppData>>>(result.Text);
+            SLTResponse<SLTAppData> response = JsonConvert.DeserializeObject<SLTResponse<SLTAppData>>(result.Text);
 
-            if (responseData != null && responseData.ContainsKey(SLTConstants.Response))
+            if (response != null && !response.Response.IsNullOrEmpty<SLTAppData>())
             {
-                sltAppData = responseData[SLTConstants.Response].FirstOrDefault<SLTAppData>();
+                sltAppData = response.Response.FirstOrDefault<SLTAppData>();
 
                 if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {
@@ -393,9 +526,9 @@ namespace Saltr.UnitySdk
                         Sync();
                     }
 
-                    if (AppDataGotten != null)
+                    if (GetAppDataSuccess != null)
                     {
-                        AppDataGotten(sltAppData);
+                        GetAppDataSuccess(sltAppData);
                     }
 
                     //// if developer didn't announce use without levels, and levelType in returned JSON is not "noLevels",
@@ -425,18 +558,17 @@ namespace Saltr.UnitySdk
                 }
                 else
                 {
-                    if (responseData.ContainsKey(SLTConstants.Error))
-                    {
-                        //OnConnectFail(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Code)), response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Message)));
-                    }
-                    else
-                    {
-                        //int errorCode;
-                        //int.TryParse(response.GetValue<string>(SLTConstants.ErrorCode), out errorCode);
+                    //if (responseData.ContainsKey(SLTConstants.Error))
+                    //{
+                    //OnConnectFail(new SLTStatus(int.Parse(response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Code)), response.GetValue<Dictionary<string, object>>(SLTConstants.Error).GetValue<string>(SLTConstants.Message)));
+                    //}
+                    //else
+                    //{
+                    //int errorCode;
+                    //int.TryParse(response.GetValue<string>(SLTConstants.ErrorCode), out errorCode);
 
-                        //OnConnectFail(new SLTStatus(errorCode, response.GetValue<string>(SLTConstants.ErrorMessage)));
-                    }
-
+                    //OnConnectFail(new SLTStatus(errorCode, response.GetValue<string>(SLTConstants.ErrorMessage)));
+                    //}
                 }
             }
         }
@@ -445,71 +577,105 @@ namespace Saltr.UnitySdk
         {
             if (GetAppDataFail != null)
             {
-                GetAppDataFail(new SLTStatus(SLTStatusCode.UnknownError, result.Error)); //implement correct fail mechanism with correct data.
+                //GetAppDataFail(new SLTErrorStatus(SLTErrorStatusCode.UnknownError, result.Error)); //implement correct fail mechanism with correct data.
             }
         }
 
         private void OnSync(DownloadResult result)
         {
+            SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
 
+            if (response != null && !response.Response.IsNullOrEmpty<SLTBaseEntity>())
+            {
+                SLTBaseEntity sltStatusEntity = response.Response.FirstOrDefault<SLTBaseEntity>();
+
+                if (sltStatusEntity.Success.HasValue && !sltStatusEntity.Success.Value)
+                {
+                    if (IsAutoRegisteredDevice 
+                        && sltStatusEntity.Error != null 
+                        && sltStatusEntity.Error.Code == SLTErrorStatusCode.RegistrationRequired)
+                    {
+                        DeviceRegistrationRequired();
+                    }
+                }
+                else 
+                {
+                    _isSynced = true;
+                }
+            }
         }
 
         private void OnRegisterDevice(DownloadResult result)
         {
+            SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
 
+            Debug.Log("[Saltr] Dev register new device is complete.");
+
+            if (response != null && !response.Response.IsNullOrEmpty<SLTBaseEntity>())
+            {
+                SLTBaseEntity sltStatusEntity = response.Response.FirstOrDefault<SLTBaseEntity>();
+
+                if (sltStatusEntity.Success.HasValue && sltStatusEntity.Success.Value)
+                {
+                    RegisterDeviceSuccess();
+
+                    Sync();
+                }
+                else if (sltStatusEntity.Error != null)
+                {
+                    RegisterDeviceFail(sltStatusEntity.Error);
+                }
+            }
+            else
+            {
+                RegisterDeviceFail(new SLTErrorStatus() { Code = SLTErrorStatusCode.UnknownError, Message = result.Text });
+            }
         }
 
         private void OnAddProperties(DownloadResult result)
         {
-            
+
         }
 
         private void OnLevelContentLoad(DownloadResult result)
         {
+            SLTLevel sltLevel = null;
+
             if (result != null && !string.IsNullOrEmpty(result.Text))
             {
-                SLTLevel sltLevel = (result.StateObject as SLTLevel) ?? new SLTLevel();
+                sltLevel = (result.StateObject as SLTLevel) ?? new SLTLevel();
                 sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
-
-                if (LevelContentLoadSuccess != null)
-                {
-                    LevelContentLoadSuccess(sltLevel);
-                    return;
-                }
             }
 
-            OnLevelContentLoadFail(result);
+            if (sltLevel == null)
+            {
+                OnLevelContentLoadFail(result);
+            }
 
-            //object contentData = result.Text;
-            //if (contentData != null)
-            //{
-            //    CacheLevelContent(level, contentData);
-            //}
-            //else
-            //{
-            //    contentData = LoadLevelContentInternally(level);
-            //}
+            if (sltLevel.Content != null)
+            {
+                CacheLevelContent(sltLevel);
+            }
+            else
+            {
+                sltLevel.Content = GetLevelContentLocally(sltLevel);
+            }
 
-            //if (contentData != null)
-            //{
-            //    LevelContentLoadSuccessHandler(level, contentData);
-            //}
-            //else
-            //{
-            //    LevelContentLoadFailHandler();
-            //}
+            if (sltLevel.Content != null)
+            {
+                LoadLevelContentSuccess(sltLevel);
+                return;
+            }
+            else
+            {
+                OnLevelContentLoadFail(result);
+            }
         }
 
         private void OnLevelContentLoadFail(DownloadResult result)
         {
             throw new NotImplementedException();
         }
-
-        //private void LevelContentLoadSuccessHandler(SLTLevel level, object content)
-        //{
-        //    level.UpdateContent(content as Dictionary<string, object>);
-        //    _onLevelContentLoadSuccess();
-        //}
 
         //private void AppDataLoadSuccessCallback(Dictionary<string, object> resource)
         //{
@@ -629,100 +795,6 @@ namespace Saltr.UnitySdk
         //    resource.Dispose();
         //}
 
-        //private void SyncSuccessHandler(Dictionary<string, object> resource)
-        //{
-        //    object data = resource.Data;
-
-        //    if (data == null)
-        //    {
-        //        Debug.Log("[Saltr] Dev feature Sync's data is null.");
-        //        return;
-        //    }
-
-        //    var dataDict = data as Dictionary<string, object>;
-        //    if (dataDict != null)
-        //    {
-        //        IEnumerable<object> response = (IEnumerable<object>)dataDict.GetValue(SLTConstants.Response);
-        //        if (response == null)
-        //        {
-        //            Debug.Log("[Saltr] Dev feature Sync's response is null.");
-        //            return;
-        //        }
-
-        //        if (response.Count() <= 0)
-        //        {
-        //            Debug.Log("[Saltr] Dev feature Sync response's length is <= 0.");
-        //            return;
-        //        }
-
-        //        Dictionary<string, object> responseObject = response.ElementAt(0) as Dictionary<string, object>;
-
-        //        if ((bool)responseObject.GetValue(SLTConstants.Success) == false)
-        //        {
-
-        //            Dictionary<string, object> errorDict = responseObject.GetValue(SLTConstants.Error) as Dictionary<string, object>;
-        //            if (errorDict != null)
-        //            {
-        //                int errorCode;
-        //                int.TryParse(errorDict.GetValue(SLTConstants.Code).ToString(), out errorCode);
-        //                //TODO: change below casting to use Enum.Parse() method.
-        //                if ((SLTStatusCode)errorCode == SLTStatusCode.RegistrationRequired && _isAutoRegisteredDevice)
-        //                {
-        //                    RegisterDevice();
-        //                }
-
-        //                Debug.Log("[Saltr] Sync error: " + errorDict.GetValue<string>(SLTConstants.Message));
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Debug.Log("[Saltr] Dev feature Sync is complete.");
-        //            _isSynced = true;
-        //        }
-        //    }
-        //}
-
-        //private void SyncFailHandler(Dictionary<string, object> resource)
-        //{
-        //    Debug.Log("[Saltr] Dev feature Sync has failed.");
-        //}
-
-        //private void AddDeviceSuccessHandler(Dictionary<string, object> resource)
-        //{
-        //    Debug.Log("[Saltr] Dev adding new device is complete.");
-        //    Dictionary<string, object> data = resource.Data as Dictionary<string, object>;
-        //    bool isSuccess = false;
-        //    Dictionary<string, object> response;
-        //    if (data.ContainsKey(SLTConstants.Response))
-        //    {
-        //        response = ((IEnumerable<object>)(data[SLTConstants.Response])).ElementAt(0) as Dictionary<string, object>;
-        //        isSuccess = (bool)response.GetValue(SLTConstants.Success);
-        //        if (isSuccess)
-        //        {
-        //            //_wrapper.SetStatus(SLTConstants.Success);
-        //            Sync();
-        //        }
-        //        else
-        //        {
-        //            Dictionary<string, object> errorDict = response.GetValue(SLTConstants.Error) as Dictionary<string, object>;
-        //            if (errorDict != null)
-        //            {
-        //                //_wrapper.SetStatus(errorDict.GetValue<string>(SLTConstants.Message));
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        AddDeviceFailHandler(resource);
-        //    }
-        //}
-
-        //private void AddDeviceFailHandler(Dictionary<string, object> resource)
-        //{
-        //    Debug.Log("[Saltr] Dev adding new device has failed.");
-        //    //_wrapper.SetStatus(SLTConstants.Failed);
-        //}
-
         //private void AppDataLoadFailCallback(Dictionary<string, object> resource)
         //{
         //    resource.Dispose();
@@ -730,13 +802,7 @@ namespace Saltr.UnitySdk
         //    _onConnectFail(new SLTStatusAppDataLoadFail());
         //}
 
-        //private void LevelContentLoadFailHandler()
-        //{
-        //    _onLevelContentLoadFail(new SLTStatusLevelContentLoadFail());
-        //}
-
         #endregion Handlers
-
 
     }
 

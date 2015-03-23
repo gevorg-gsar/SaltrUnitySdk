@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Saltr.UnitySdk
+namespace Saltr.UnitySdk.Domain
 {
 	/// <summary>
 	/// The SLTExperiment class provides the currently running experiment data.

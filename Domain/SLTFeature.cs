@@ -5,7 +5,7 @@ using System.Text;
 using Saltr.UnitySdk.Utils;
 //using GAFEditor.Utils;
 
-namespace Saltr.UnitySdk
+namespace Saltr.UnitySdk.Domain
 {
     /// <summary>
     /// Represents an application feature - a uniquely identifiable set of properties.

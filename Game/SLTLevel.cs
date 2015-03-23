@@ -5,7 +5,6 @@ using System.Text;
 using UnityEngine;
 using Saltr.UnitySdk.Game.Matching;
 using Saltr.UnitySdk.Utils;
-using Saltr.UnitySdk.Status;
 using Newtonsoft.Json;
 
 namespace Saltr.UnitySdk.Game
@@ -23,6 +22,8 @@ namespace Saltr.UnitySdk.Game
         /// Gets the index of the level in all levels.
         /// </summary>
         public int Index { get; set; }
+
+        public int PackIndex { get; set; }
 
         /// <summary>
         /// Gets the index of the level within its pack.
