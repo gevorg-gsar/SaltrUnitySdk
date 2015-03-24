@@ -10,6 +10,7 @@ using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain;
+using Newtonsoft.Json.Serialization;
 
 namespace Saltr.UnitySdk
 {
@@ -320,7 +321,12 @@ namespace Saltr.UnitySdk
                 args.CustomProperties = customProperties;
             }
 
-            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+            var settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
 
             return urlVars;
         }
@@ -358,7 +364,14 @@ namespace Saltr.UnitySdk
             }
 
             urlVars[SLTConstants.UrlParamDevMode] = IsDevMode.ToString();
-            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+
+            var settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
 
             return urlVars;
         }
@@ -432,7 +445,13 @@ namespace Saltr.UnitySdk
             args.Source = deviceModel;
             args.OS = os;
 
-            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+            var settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
 
             return urlVars;
         }
@@ -471,7 +490,13 @@ namespace Saltr.UnitySdk
                 args.CustomProperties = customProperties;
             }
 
-            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData);
+            var settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
 
             return urlVars;
         }

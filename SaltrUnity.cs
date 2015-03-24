@@ -7,6 +7,7 @@ using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Saltr.UnitySdk.Game;
 using Saltr.UnitySdk.Domain;
+using Newtonsoft.Json;
 
 namespace Saltr.UnitySdk
 {
@@ -191,6 +192,7 @@ namespace Saltr.UnitySdk
                         
             _saltrConnector.RegisterDeviceSuccess += SaltrConnector_RegisterDeviceSuccess;
             _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
+
         }
         
         protected virtual void Start()

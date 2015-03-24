@@ -32,8 +32,8 @@ namespace Saltr.UnitySdk.Domain
 
         public string Client
         {
-            get { return RawData.GetValue<string>("CLIENT"); }
-            set { RawData["CLIENT"] = value; }
+            get { return RawData.GetValue<string>("client"); }
+            set { RawData["client"] = value; }
         }
 
         public string DeviceId

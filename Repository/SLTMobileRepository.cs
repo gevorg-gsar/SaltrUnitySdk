@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 //using GAFEditor.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -119,7 +120,14 @@ namespace Saltr.UnitySdk.Repository
                 using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
                 {
                 }
-                File.WriteAllText(filePath, JsonConvert.SerializeObject(objectToSave));
+
+                var settings = new JsonSerializerSettings()
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+
+                File.WriteAllText(filePath, JsonConvert.SerializeObject(objectToSave, Formatting.None, settings));
             }
             catch (Exception e)
             {

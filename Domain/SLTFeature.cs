@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using Saltr.UnitySdk.Utils;
 //using GAFEditor.Utils;
 
@@ -22,6 +23,7 @@ namespace Saltr.UnitySdk.Domain
 
         public string Token { get; set; }
 
+        [JsonProperty("required")]
         public bool? IsRequired { get; set; }
 
         public SLTFeatureType? FeatureType { get; set; }
