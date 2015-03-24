@@ -73,6 +73,7 @@ namespace Saltr.UnitySdk
             set { _socialId = value; }
             get { return _socialId; }
         }
+
         public bool UseNoFeatures
         {
             set { _useNoFeatures = value; }
@@ -104,6 +105,64 @@ namespace Saltr.UnitySdk
 
         #endregion
 
+        #region Events
+
+        public event Action DeviceRegistrationRequired
+        {
+            add { _saltrConnector.DeviceRegistrationRequired += value; }
+            remove { _saltrConnector.DeviceRegistrationRequired -= value; }
+        }
+
+        public event Action<SLTAppData> GetAppDataSuccess
+        {
+            add { _saltrConnector.GetAppDataSuccess += value; }
+            remove { _saltrConnector.GetAppDataSuccess -= value; }
+        }
+
+        public event Action<SLTErrorStatus> GetAppDataFail
+        {
+            add { _saltrConnector.GetAppDataFail += value; }
+            remove { _saltrConnector.GetAppDataFail -= value; }
+        }
+
+        public event Action<SLTLevel> LoadLevelContentSuccess
+        {
+            add { _saltrConnector.LoadLevelContentSuccess += value; }
+            remove { _saltrConnector.LoadLevelContentSuccess -= value; }
+        }
+
+        public event Action<SLTErrorStatus> LoadLevelConnectFail
+        {
+            add { _saltrConnector.LoadLevelConnectFail += value; }
+            remove { _saltrConnector.LoadLevelConnectFail -= value; }
+        }
+
+        public event Action RegisterDeviceSuccess
+        {
+            add { _saltrConnector.RegisterDeviceSuccess += value; }
+            remove { _saltrConnector.RegisterDeviceSuccess -= value; }
+        }
+
+        public event Action<SLTErrorStatus> RegisterDeviceFail
+        {
+            add { _saltrConnector.RegisterDeviceFail += value; }
+            remove { _saltrConnector.RegisterDeviceFail -= value; }
+        }
+
+        public event Action AddPropertiesSuccess
+        {
+            add { _saltrConnector.AddPropertiesSuccess += value; }
+            remove { _saltrConnector.AddPropertiesSuccess -= value; }
+        }
+
+        public event Action<SLTErrorStatus> AddPropertiesFail
+        {
+            add { _saltrConnector.AddPropertiesFail += value; }
+            remove { _saltrConnector.AddPropertiesFail -= value; }
+        }
+
+        #endregion Events
+
         #region MonoBehaviour
 
         protected virtual void Awake()
@@ -129,10 +188,7 @@ namespace Saltr.UnitySdk
 
             _saltrConnector.UseNoLevels = _useNoLevels;
             _saltrConnector.UseNoFeatures = _useNoFeatures;
-
-            _saltrConnector.GetAppDataSuccess += SaltrConnector_OnGetAppDataSuccess;
-            _saltrConnector.LoadLevelContentSuccess += SaltrConnector_OnLoadLevelContentSuccess;
-            
+                        
             _saltrConnector.RegisterDeviceSuccess += SaltrConnector_RegisterDeviceSuccess;
             _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
         }
@@ -209,12 +265,22 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public void DefineDefaultFeature(string token, Dictionary<string, object> properties, bool isRequired)
+        public virtual void DefineDefaultFeature(string token, Dictionary<string, object> properties, bool isRequired)
         {
             _saltrConnector.DefineDefaultFeature(token, properties, isRequired);
         }
 
-        public void RegisterDevice()
+        public virtual void GetAppData()
+        {
+            _saltrConnector.GetAppData();
+        }
+
+        public virtual void LodLevelContent(SLTLevel level, bool useCache = true)
+        {
+            _saltrConnector.LoadLevelContent(level, useCache);
+        }
+
+        public virtual void RegisterDevice()
         {
             if (!IsStarted)
             {
@@ -226,34 +292,21 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
+        public virtual void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
         {
             _saltrConnector.AddProperties(basicProperties, customProperties);
-        }
-
-        public void GetAppData()
-        {
-            _saltrConnector.GetAppData();
-        }
-
-        public void LodLevelContent(SLTLevel level, bool useCache = true)
-        {
-            _saltrConnector.LoadLevelContent(level, useCache);
         }
 
         #endregion Public Methods
 
         #region Event Handlers
 
-        private void SaltrConnector_OnLoadLevelContentSuccess(SLTLevel sltLevel)
-        {
 
-        }
+        //private void SaltrConnector_OnGetAppDataSuccess(SLTAppData sltAppData)
+        //{
+        //    _saltrConnector.LoadLevelContent(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing is finished.
+        //}
 
-        private void SaltrConnector_OnGetAppDataSuccess(SLTAppData sltAppData)
-        {
-            //_saltrConnector.LoadLevelContentFromSaltr(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing is finished.
-        }
 
         private void SaltrConnector_OnDeviceRegistrationRequired()
         {
@@ -402,15 +455,7 @@ namespace Saltr.UnitySdk
         //    return null;
         //}
 
-        ///// <summary>
-        ///// See <see cref="saltr.SLTUnity.ImportLevels"/>.
-        ///// </summary>
-        //public void ImportLevels()
-        //{
-        //    ImportLevels(null);
-        //}
-
-
+        
 
         #region Nested Classes
 

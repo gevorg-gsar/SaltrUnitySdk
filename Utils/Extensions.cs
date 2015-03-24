@@ -6,15 +6,8 @@ using UnityEngine;
 
 namespace Saltr.UnitySdk.Utils
 {
-    /// <summary>
-    /// Some usefull extensions for parsing string->object dictionaries.
-    /// </summary>
-    public static class Extensions // TODO @gyln: add null-checks all over the place?
+    public static class Extensions
     {
-        /// <summary>
-        /// Gets the value corresponding to the given key.
-        /// </summary>
-        /// <returns>The corresponding value, if the key excists, otherwise <c>null</c>.</returns>
         public static object GetValue(this Dictionary<string, object> dictionary, string key)
         {
             if (dictionary.ContainsKey(key))
@@ -25,11 +18,6 @@ namespace Saltr.UnitySdk.Utils
             return null;
         }
 
-        /// <summary>
-        /// Gets the value corresponding to the given key.
-        /// </summary>
-        /// <returns>The corresponding value, if the key excists, otherwise <c>null</c>.</returns>
-        /// <typeparam name="Type">The value will be cast to this type.</typeparam>
         public static Type GetValue<Type>(this Dictionary<string, object> dictionary, string key) where Type : class
         {
             if (dictionary.ContainsKey(key))
@@ -40,14 +28,6 @@ namespace Saltr.UnitySdk.Utils
             return null;
         }
 
-        /// <summary>
-        /// Determines whether the collection is null or contains no elements.
-        /// </summary>
-        /// <typeparam name="T">The IEnumerable type.</typeparam>
-        /// <param name="enumerable">The enumerable, which may be null or empty.</param>
-        /// <returns>
-        ///     <c>true</c> if the IEnumerable is null or empty; otherwise, <c>false</c>.
-        /// </returns>
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
         {
             if (enumerable == null)

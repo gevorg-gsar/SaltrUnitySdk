@@ -232,6 +232,8 @@ namespace Saltr.UnitySdk
 
         #region Private Methods
 
+        #region LevelContent
+
         private void CacheLevelContent(SLTLevel level)
         {
             string cachedFileName = string.Format(SLTConstants.LocalLevelContentCachePathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
@@ -280,6 +282,10 @@ namespace Saltr.UnitySdk
             return _repository.GetObjectVersion(cachedFileName);
         }
 
+        #endregion LevelContent
+
+        #region Request Parameters
+        
         private Dictionary<string, string> PrepareAppDataRequestParameters(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
@@ -489,6 +495,8 @@ namespace Saltr.UnitySdk
             return url;
         }
 
+        #endregion Request Parameters
+
         #endregion Private Methods
 
         #region Handlers
@@ -543,6 +551,32 @@ namespace Saltr.UnitySdk
                 }
             }
         }
+        
+        private void OnLoadLevelContentFromSaltr(DownloadResult result)
+        {
+            SLTLevel sltLevel = result.StateObject as SLTLevel;
+
+            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
+
+            if (sltLevel.Content != null)
+            {
+                CacheLevelContent(sltLevel);
+            }
+            else
+            {
+                sltLevel.Content = LoadLevelContentLocally(sltLevel);
+            }
+
+            if (sltLevel.Content != null)
+            {
+                LoadLevelContentSuccess(sltLevel);
+                return;
+            }
+            else
+            {
+                LoadLevelConnectFail(new SLTErrorStatus() { Message = result.Text });
+            }
+        }
 
         private void OnSync(DownloadResult result)
         {
@@ -594,33 +628,7 @@ namespace Saltr.UnitySdk
                 RegisterDeviceFail(new SLTErrorStatus() { Code = SLTErrorStatusCode.UnknownError, Message = result.Text });
             }
         }
-
-        private void OnLoadLevelContentFromSaltr(DownloadResult result)
-        {
-            SLTLevel sltLevel = result.StateObject as SLTLevel;
-
-            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
-
-            if (sltLevel.Content != null)
-            {
-                CacheLevelContent(sltLevel);
-            }
-            else
-            {
-                sltLevel.Content = LoadLevelContentLocally(sltLevel);
-            }
-
-            if (sltLevel.Content != null)
-            {
-                LoadLevelContentSuccess(sltLevel);
-                return;
-            }
-            else
-            {
-                LoadLevelConnectFail(new SLTErrorStatus() { Message = result.Text });
-            }
-        }
-
+        
         private void OnAddProperties(DownloadResult result)
         {
             SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
@@ -649,8 +657,7 @@ namespace Saltr.UnitySdk
 
             }
         }
-
-
+        
         #endregion Handlers
 
     }
