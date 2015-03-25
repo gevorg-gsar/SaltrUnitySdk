@@ -11,47 +11,47 @@ namespace Saltr.UnitySdk.Game.Matching
     // </summary>
     public class SLTChunk
     {
-        #region Fields
+        #region Properties
 
         public int? ChunkId { get; set; }
 
         public List<List<int>> Cells { get; set; }
 
-        public List<SLTChunkAsset> Assets { get; set; }
+        public List<SLTChunkAssetConfig> Assets { get; set; }
 
-        #endregion Fields
+        #endregion Properties
 
         #region Public Methods
 
-        public void GenerateContent(string layerToken, int layerIndex, SLTCell[,] boardCells)
+        public void GenerateContent(string layerToken, int layerIndex, SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes)
         {
             List<SLTCell> chunkCells = FilterChunkCells(boardCells);
 
             ResetChunkCells(chunkCells, layerToken, layerIndex);
 
-            List<SLTChunkAsset> countChunkAssets = new List<SLTChunkAsset>();
-            List<SLTChunkAsset> ratioChunkAssets = new List<SLTChunkAsset>();
-            List<SLTChunkAsset> randomChunkAssets = new List<SLTChunkAsset>();
+            List<SLTChunkAssetConfig> countChunkAssetConfigs = new List<SLTChunkAssetConfig>();
+            List<SLTChunkAssetConfig> ratioChunkAssetConfigs = new List<SLTChunkAssetConfig>();
+            List<SLTChunkAssetConfig> randomChunkAssetConfigs = new List<SLTChunkAssetConfig>();
 
             foreach (var chunkAsset in Assets)
             {
                 switch (chunkAsset.DistributionType)
                 {
                     case ChunkAssetDistributionType.Count:
-                        countChunkAssets.Add(chunkAsset);
+                        countChunkAssetConfigs.Add(chunkAsset);
                         break;
                     case ChunkAssetDistributionType.Ratio:
-                        ratioChunkAssets.Add(chunkAsset);
+                        ratioChunkAssetConfigs.Add(chunkAsset);
                         break;
                     case ChunkAssetDistributionType.Random:
-                        randomChunkAssets.Add(chunkAsset);
+                        randomChunkAssetConfigs.Add(chunkAsset);
                         break;
                 }
             }
 
-            GenerateChunkAssetsByCount(countChunkAssets, chunkCells, layerToken, layerIndex);
-            GenerateChunkAssetsByRatio(ratioChunkAssets, chunkCells, layerToken, layerIndex);
-            //GenerateChunkAssetsRandomly(randomChunkAssets);
+            GenerateChunkAssetsByCount(countChunkAssetConfigs, chunkCells, assetTypes, layerToken, layerIndex);
+            GenerateChunkAssetsByRatio(ratioChunkAssetConfigs, chunkCells, assetTypes, layerToken, layerIndex);
+            GenerateChunkAssetsRandomly(randomChunkAssetConfigs, chunkCells, assetTypes, layerToken, layerIndex);
         }
 
         #endregion public Methods
@@ -66,8 +66,8 @@ namespace Saltr.UnitySdk.Game.Matching
             foreach (List<int> cell in Cells)
             {
 
-                int chunkAssetRowIndex = cell.ElementAt<int>(0);
-                int chunkAssetColIndex = cell.ElementAt<int>(1);
+                int chunkAssetRowIndex = cell.ElementAt<int>(1);
+                int chunkAssetColIndex = cell.ElementAt<int>(0);
 
                 chunkCells.Add(boardCells[chunkAssetRowIndex, chunkAssetColIndex]);
             }
@@ -80,11 +80,11 @@ namespace Saltr.UnitySdk.Game.Matching
             chunkCells.ForEach(cell => cell.RemoveAsset(layerToken, layerIndex));
         }
 
-        private void GenerateChunkAssetsRandomly(List<SLTChunkAsset> chunkAssets, List<SLTCell> chunkCells, string layerToken, int layerIndex)
+        private void GenerateChunkAssetsRandomly(List<SLTChunkAssetConfig> chunkAssetConfigs, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex)
         {
-            if (!chunkAssets.IsNullOrEmpty<SLTChunkAsset>())
+            if (!chunkAssetConfigs.IsNullOrEmpty<SLTChunkAssetConfig>())
             {
-                int chunkAssetsCount = chunkAssets.Count;
+                int chunkAssetsCount = chunkAssetConfigs.Count;
                 
                 if (chunkAssetsCount > 0)
                 {
@@ -92,12 +92,12 @@ namespace Saltr.UnitySdk.Game.Matching
                     int minAssetCount = (int)(assetConcentration <= 2 ? 1 : assetConcentration - 2);
                     int maxAssetCount = (int)(assetConcentration == 1 ? 1 : assetConcentration + 2);
 
-                    SLTChunkAsset chunkAsset;
+                    SLTChunkAssetConfig chunkAssetConfig;
                     int toBeGeneratedAssetsCount = 0;
 
                     for (int i = 0; (0 < chunkCells.Count && i < chunkAssetsCount); i++)
                     {
-                        chunkAsset = chunkAssets[i];
+                        chunkAssetConfig = chunkAssetConfigs[i];
                         
                         if(i == chunkAssetsCount - 1)
                         {
@@ -108,15 +108,15 @@ namespace Saltr.UnitySdk.Game.Matching
                             toBeGeneratedAssetsCount = new Random().Next(minAssetCount, maxAssetCount);
                         }                        
                         
-                        GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAsset, chunkCells, layerToken, layerIndex);
+                        GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex);
                     }
                 }
             }
         }
 
-        private void GenerateChunkAssetsByRatio(List<SLTChunkAsset> chunkAssets, List<SLTCell> chunkCells, string layerToken, int layerIndex)
+        private void GenerateChunkAssetsByRatio(List<SLTChunkAssetConfig> chunkAssets, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex)
         {
-            if (!chunkAssets.IsNullOrEmpty<SLTChunkAsset>())
+            if (!chunkAssets.IsNullOrEmpty<SLTChunkAssetConfig>())
             {
                 float ratioSum = 0;
                 chunkAssets.ForEach(chunkAsset => ratioSum += chunkAsset.DistributionValue.Value);
@@ -127,61 +127,67 @@ namespace Saltr.UnitySdk.Game.Matching
                     float proportion = 0;
                     List<TempAssetFraction> fractionAssets = new List<TempAssetFraction>();
 
-                    foreach (var chunkAsset in chunkAssets)
+                    foreach (var chunkAssetConfig in chunkAssets)
                     {
                         if (!chunkCells.Any())
                         {
                             return;
                         }
 
-                        proportion = chunkAsset.DistributionValue.Value * chunkCells.Count / ratioSum;
+                        proportion = chunkAssetConfig.DistributionValue.Value * chunkCells.Count / ratioSum;
                         toBeGeneratedAssetsCount = (int)proportion;
 
                         TempAssetFraction fractObject = new TempAssetFraction()
                         {
                             Fraction = proportion - toBeGeneratedAssetsCount,
-                            ChunkAsset = chunkAsset
+                            ChunkAssetConfig = chunkAssetConfig
                         };
 
                         fractionAssets.Add(fractObject);
 
-                        GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAsset, chunkCells, layerToken, layerIndex);
+                        GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex);
                     }
 
+                    //fractionAssets = fractionAssets.OrderBy(fa => fa.Fraction).ToList();
                     fractionAssets = fractionAssets.OrderByDescending(fa => fa.Fraction).ToList();
-                    
-                    for (int i = 0; i < chunkCells.Count; i++)
+                    int remainingCellsCount = chunkCells.Count;
+
+                    for (int i = 0; i < remainingCellsCount; i++)
                     {
-                        GenerateChunkAssets(1, fractionAssets[i].ChunkAsset, chunkCells, layerToken, layerIndex);
+                        GenerateChunkAssets(1, fractionAssets[i].ChunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex);
                     }
                 }
             }
         }
 
-        private void GenerateChunkAssetsByCount(List<SLTChunkAsset> chunkAssets, List<SLTCell> chunkCells, string layerToken, int layerIndex)
+        private void GenerateChunkAssetsByCount(List<SLTChunkAssetConfig> chunkAssetConfigs, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex)
         {
-            if (!chunkAssets.IsNullOrEmpty<SLTChunkAsset>())
+            if (!chunkAssetConfigs.IsNullOrEmpty<SLTChunkAssetConfig>())
             {
-                chunkAssets.ForEach(chunkAsset => GenerateChunkAssets(chunkAsset.DistributionValue.Value, chunkAsset, chunkCells, layerToken, layerIndex));
+                chunkAssetConfigs.ForEach(chunkAssetConfig => GenerateChunkAssets(chunkAssetConfig.DistributionValue.Value, chunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex));
             }
         }
 
-        private void GenerateChunkAssets(int count, SLTChunkAsset chunkAsset, List<SLTCell> chunkCells, string layerToken, int layerIndex)
+        private void GenerateChunkAssets(int count, SLTChunkAssetConfig chunkAssetConfig, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex)
         {
+            SLTMatchingAssetType assetType = assetTypes[chunkAssetConfig.AssetId];
+
             for (int i = 0; i < count; i++)
             {
-                if (chunkCells.Any())
+                if (!chunkCells.Any())
                 {
                     return;
                 }
 
                 SLTCell randomCell = null;
-                int randomCellIndex = new Random().Next(0, chunkCells.Count);
+                int randomCellIndex = new Random().Next(0, chunkCells.Count - 1);
 
                 randomCell = chunkCells.ElementAt<SLTCell>(randomCellIndex);
                 chunkCells.Remove(randomCell);
 
-                randomCell.SetAsset(layerToken, layerIndex, chunkAsset);
+                SLTMatchingAsset matchingAsset = new SLTMatchingAsset() { Token = assetType.Token, State = assetType.States[chunkAssetConfig.StateId], Properties = assetType.Properties };
+
+                randomCell.SetAsset(layerToken, layerIndex, matchingAsset);
             }
         }
 
@@ -192,7 +198,7 @@ namespace Saltr.UnitySdk.Game.Matching
         public struct TempAssetFraction
         {
             public float Fraction { get; set; }
-            public SLTChunkAsset ChunkAsset { get; set; }
+            public SLTChunkAssetConfig ChunkAssetConfig { get; set; }
         }
 
         #endregion TempFractionObject

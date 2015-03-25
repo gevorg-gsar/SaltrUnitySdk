@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
-    public class SLTChunkAsset : SLTAsset
+    public class SLTChunkAssetConfig : SLTAssetConfig
     {
         #region Properties
 

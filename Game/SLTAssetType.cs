@@ -5,13 +5,11 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game
 {
-    public class SLTAssetType
+    public abstract class SLTAssetType
     {
         #region Properties
 
         public string Token { get; set; }
-
-        public Dictionary<string, SLTAssetState> States { get; set; }
 
         public Dictionary<string, object> Properties { get; set; }
 

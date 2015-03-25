@@ -56,6 +56,12 @@ namespace Saltr.UnitySdk
 
         public bool IsAutoRegisteredDevice { get; set; }
 
+        public List<SLTLevelPack> LevelPacks { get { return _levelPacks; } }
+
+        public List<SLTExperiment> Experiments { get { return _experiments; } }
+
+        public Dictionary<string, SLTFeature> ActiveFeatures { get { return _activeFeatures; } }
+
         #endregion Properties
 
         #region Events
@@ -245,7 +251,8 @@ namespace Saltr.UnitySdk
         {
             string levelContentUrl = string.Format(LevelContentUrlFormat, level.Url, DateTime.Now.ToShortTimeString());
 
-            DownloadManager.Instance.AddDownload(levelContentUrl, OnLoadLevelContentFromSaltr);
+            DownloadManager.Instance.AddDownload(new DownloadRequest(levelContentUrl, OnLoadLevelContentFromSaltr) { StateObject = level });
+            //DownloadManager.Instance.AddDownload(levelContentUrl, OnLoadLevelContentFromSaltr);
         }
 
         private SLTLevelContent LoadLevelContentLocally(SLTLevel level, bool useCache = true)
@@ -286,7 +293,7 @@ namespace Saltr.UnitySdk
         #endregion LevelContent
 
         #region Request Parameters
-        
+
         private Dictionary<string, string> PrepareAppDataRequestParameters(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties)
         {
             Dictionary<string, string> urlVars = new Dictionary<string, string>();
@@ -576,13 +583,13 @@ namespace Saltr.UnitySdk
                 }
             }
         }
-        
+
         private void OnLoadLevelContentFromSaltr(DownloadResult result)
         {
             SLTLevel sltLevel = result.StateObject as SLTLevel;
 
-            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text);
-
+            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+            
             if (sltLevel.Content != null)
             {
                 CacheLevelContent(sltLevel);
@@ -653,7 +660,7 @@ namespace Saltr.UnitySdk
                 RegisterDeviceFail(new SLTErrorStatus() { Code = SLTErrorStatusCode.UnknownError, Message = result.Text });
             }
         }
-        
+
         private void OnAddProperties(DownloadResult result)
         {
             SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
@@ -665,7 +672,7 @@ namespace Saltr.UnitySdk
                 if (sltStatusEntity.Success.HasValue && sltStatusEntity.Success.Value)
                 {
                     Debug.Log("[SALTR] Success: Add Properties");
-                    AddPropertiesSuccess();                    
+                    AddPropertiesSuccess();
                 }
                 else
                 {
@@ -676,13 +683,13 @@ namespace Saltr.UnitySdk
                     else
                     {
                         Debug.Log("[SALTR] Fail: Add Properties");
-                        AddPropertiesFail(new SLTErrorStatus() { Message = result.Text });                        
+                        AddPropertiesFail(new SLTErrorStatus() { Message = result.Text });
                     }
                 }
 
             }
         }
-        
+
         #endregion Handlers
 
     }

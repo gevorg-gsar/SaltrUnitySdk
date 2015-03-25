@@ -5,15 +5,16 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Game
 {
-    public abstract class SLTAssetState
+    public abstract class SLTAssetConfig
     {
         #region Properties
 
-        public string Token { get; set; }
+        public string AssetId { get; set; }
 
-        public Dictionary<string, object> Properties { get; set; }
+        public string StateId { get; set; }
 
+        public List<string> States { get; set; }
+                
         #endregion Properties
-
     }
 }

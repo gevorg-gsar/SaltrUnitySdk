@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using Saltr.UnitySdk;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
@@ -204,9 +205,6 @@ namespace Saltr.UnitySdk
 
                 Init();
             }
-            GetAppData();
-            //RegisterDevice();
-            //_saltrConnector.Sync();
         }
 
         #endregion Monobehaviour
@@ -302,14 +300,7 @@ namespace Saltr.UnitySdk
         #endregion Public Methods
 
         #region Event Handlers
-
-
-        //private void SaltrConnector_OnGetAppDataSuccess(SLTAppData sltAppData)
-        //{
-        //    _saltrConnector.LoadLevelContent(sltAppData.LevelPacks[0].Levels[0]); //@TODO: GOR Remove when testing is finished.
-        //}
-
-
+        
         private void SaltrConnector_OnDeviceRegistrationRequired()
         {
             RegisterDevice();
@@ -322,140 +313,66 @@ namespace Saltr.UnitySdk
 
         #endregion Event Handlers
 
+        #region Saltr Connector Methods/Properties
 
+        public List<SLTLevelPack> LevelPacks
+        {
+            get { return _saltrConnector.LevelPacks; }
+        }
 
-        //public List<SLTLevelPack> LevelPacks
-        //{
-        //    get { return _levelPacks; }
-        //}
+        public List<SLTExperiment> Experiments
+        {
+            get { return _saltrConnector.Experiments; }
+        }
 
-        /// <summary>
-        /// Gets a list all levels.
-        /// </summary>
-        //public List<SLTLevel> AllLevels
-        //{
-        //    get
-        //    {
-        //        List<SLTLevel> allLevels = new List<SLTLevel>();
-        //        for (int i = 0; i < _levelPacks.Count; i++)
-        //        {
-        //            List<SLTLevel> packLevels = _levelPacks[i].Levels;
-        //            for (int j = 0; j < packLevels.Count; j++)
-        //            {
-        //                allLevels.Add(packLevels[j]);
-        //            }
-        //        }
-        //        return allLevels;
-        //    }
-        //}
+        public Dictionary<string, SLTFeature> ActiveFeatures
+        {
+            get { return _saltrConnector.ActiveFeatures; }
+        }
 
-        /// <summary>
-        /// Gets the count of all levels.
-        /// </summary>
-        //public uint AllLevelsCount
-        //{
-        //    get
-        //    {
-        //        uint count = 0;
-        //        for (int i = 0; i < _levelPacks.Count; i++)
-        //        {
-        //            count += (uint)_levelPacks[i].Levels.Count;
-        //        }
-        //        return count;
-        //    }
-        //}
+        public List<SLTLevel> AllLevels
+        {
+            get
+            {
+                return LevelPacks.SelectMany(lp => lp.Levels).ToList<SLTLevel>();
+            }
+        }
 
-        ///// <summary>
-        ///// Gets a list of all experiments.
-        ///// </summary>
-        //public List<SLTExperiment> Experiments
-        //{
-        //    get { return _experiments; }
-        //}
+        public int AllLevelsCount
+        {
+            get
+            {
+                return LevelPacks.Sum(lp => lp.Levels.Count);
+            }
+        }
 
+        public SLTLevel GetLevelByGlobalIndex(int index)
+        {
+            return AllLevels.ElementAt<SLTLevel>(index);
+        }
 
-        /// <summary>
-        /// Gets a level by its global index in all levels.
-        /// </summary>
-        /// <param name="index">Index in all levels.</param>
-        //public SLTLevel GetLevelByGlobalIndex(int index)
-        //{
-        //    int levelSum = 0;
-        //    foreach (var levelPack in _levelPacks)
-        //    {
-        //        int packLenght = levelPack.Levels.Count;
-        //        if (index >= levelSum + packLenght)
-        //        {
-        //            levelSum += packLenght;
-        //        }
-        //        else
-        //        {
-        //            int localIndex = index - levelSum;
-        //            return levelPack.Levels[localIndex];
-        //        }
-        //    }
-        //    return null;
-        //}
+        public SLTLevelPack GetPackByLevelGlobalIndex(int index)
+        {
+            SLTLevel levelByIndex = GetLevelByGlobalIndex(index);
+            return LevelPacks.FirstOrDefault<SLTLevelPack>(lp => lp.Levels.Contains<SLTLevel>(levelByIndex));
+        }
 
-        ///// <summary>
-        ///// Gets the level pack that contains the level with given global index in all levels.
-        ///// </summary>
-        ///// <param name="index">Index of the level in all levels.</param>
-        //public SLTLevelPack GetPackByLevelGlobalIndex(int index)
-        //{
-        //    int levelSum = 0;
-        //    foreach (var levelPack in _levelPacks)
-        //    {
-        //        int packLenght = levelPack.Levels.Count;
-        //        if (index >= levelSum + packLenght)
-        //        {
-        //            levelSum += packLenght;
-        //        }
+        public List<string> GetActiveFeatureTokens()
+        {
+            return ActiveFeatures.Keys.ToList<String>();
+        }
 
-        //        else
-        //        {
-        //            return levelPack;
-        //        }
-        //    }
-        //    return null;
-        //}
+        public Dictionary<string, object> GetFeatureProperties(string token)
+        {
+            if (ActiveFeatures.ContainsKey(token))
+            {
+                return (ActiveFeatures[token]).Properties as Dictionary<string, object>;
+            }
 
-        ///// <summary>
-        ///// Gets a list of tokens(unique identifiers) of all features, active in Saltr.
-        ///// </summary>
-        //public List<string> GetActiveFeatureTokens()
-        //{
-        //    var tokens = from feature in _activeFeatures.Values
-        //                 where feature != null && feature.Token != null
-        //                 select feature.Token;
+            return null;
+        }        
 
-        //    return tokens.ToList<string>();
-        //}
-
-        ///// <summary>
-        ///// Gets the properties of the feature specified by the token. 
-        ///// If a feature is set to be isRequired and is not active in, or cannot be retrieved from, Saltr, 
-        ///// the properties will be retrieved from default developer defined features.
-        ///// </summary>
-        ///// <param name="token">The feature token.</param>
-        //public Dictionary<string, object> GetFeatureProperties(string token)
-        //{
-        //    if (_activeFeatures.ContainsKey(token))
-        //    {
-        //        return (_activeFeatures[token]).Properties as Dictionary<string, object>;
-        //    }
-        //    else
-        //        if (_developerFeatures.ContainsKey(token))
-        //        {
-        //            SLTFeature devFeature = _developerFeatures[token];
-        //            if (devFeature != null && devFeature.Required)
-        //            {
-        //                return devFeature.Properties as Dictionary<string, object>;
-        //            }
-        //        }
-
-        //    return null;
-        //}
+        #endregion  Saltr Connector Methods/Properties
 
         
 

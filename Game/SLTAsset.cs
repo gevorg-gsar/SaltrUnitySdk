@@ -9,19 +9,9 @@ namespace Saltr.UnitySdk.Game
     {
         #region Properties
 
-        public string AssetId { get; set; }
+        public string Token { get; set; }
 
-        public string StateId { get; set; }
-
-        public float? X { get; set; }
-
-        public float? Y { get; set; }
-
-        public float? Rotation { get; set; }
-
-        public List<string> States { get; set; }
-
-        public List<List<int>> Cells { get; set; }        
+        public Dictionary<string, object> Properties { get; set; }
         
         #endregion Properties
     }
