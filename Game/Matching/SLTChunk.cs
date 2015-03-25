@@ -135,7 +135,7 @@ namespace Saltr.UnitySdk.Game.Matching
                         }
 
                         proportion = chunkAssetConfig.DistributionValue.Value * chunkCells.Count / ratioSum;
-                        toBeGeneratedAssetsCount = (int)proportion;
+                        toBeGeneratedAssetsCount = UnityEngine.Mathf.FloorToInt(proportion);
 
                         TempAssetFraction fractObject = new TempAssetFraction()
                         {
