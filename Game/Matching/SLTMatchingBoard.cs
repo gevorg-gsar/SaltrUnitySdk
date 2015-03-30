@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Game.Matching
@@ -20,6 +22,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
         public List<int> CellSize { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public SLTMatchingBoardOrientation? Orientation { get; set; }
 
         public List<CellProperty> CellProperties { get; set; }

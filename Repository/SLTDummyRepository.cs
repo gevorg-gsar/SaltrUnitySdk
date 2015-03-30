@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 //using GAFEditor.Utils;
 using Newtonsoft.Json;
+using Saltr.UnitySdk.Game;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -28,7 +29,7 @@ namespace Saltr.UnitySdk.Repository
 
         public T GetObjectFromApplication<T>(string fileName) where T : class
         {
-            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text);
+            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
         }
 
         public T GetObjectFromCache<T>(string fileName) where T : class

@@ -154,14 +154,17 @@ namespace Saltr.UnitySdk
 
             if (cachedAppData == null)
             {
-                foreach (var item in _defaultFeatures)
+                if (!UseNoFeatures)
                 {
-                    _activeFeatures.Add(item.Key, item.Value);
+                    foreach (var item in _defaultFeatures)
+                    {
+                        _activeFeatures.Add(item.Key, item.Value);
+                    }
                 }
             }
             else
             {
-                if (!cachedAppData.Features.IsNullOrEmpty<SLTFeature>())
+                if (!UseNoFeatures && !cachedAppData.Features.IsNullOrEmpty<SLTFeature>())
                 {
                     foreach (var feature in cachedAppData.Features)
                     {
@@ -331,7 +334,7 @@ namespace Saltr.UnitySdk
             var settings = new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
             };
             urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
 
@@ -375,7 +378,7 @@ namespace Saltr.UnitySdk
             var settings = new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
             };
 
             urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
@@ -455,7 +458,7 @@ namespace Saltr.UnitySdk
             var settings = new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
             };
 
             urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
@@ -500,7 +503,7 @@ namespace Saltr.UnitySdk
             var settings = new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
             };
 
             urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
@@ -544,7 +547,7 @@ namespace Saltr.UnitySdk
 
                 if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {
-                    if (IsDevMode && !_isSynced)
+                    if (IsDevMode && !_isSynced && !UseNoFeatures)
                     {
                         Sync();
                     }
@@ -582,6 +585,8 @@ namespace Saltr.UnitySdk
                     GetAppDataFail(new SLTErrorStatus() { Message = result.Text });
                 }
             }
+
+            _isLoading = false;
         }
 
         private void OnLoadLevelContentFromSaltr(DownloadResult result)
@@ -589,7 +594,7 @@ namespace Saltr.UnitySdk
             SLTLevel sltLevel = result.StateObject as SLTLevel;
 
             sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
-            
+
             if (sltLevel.Content != null)
             {
                 CacheLevelContent(sltLevel);

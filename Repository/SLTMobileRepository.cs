@@ -7,6 +7,7 @@ using UnityEngine;
 //using GAFEditor.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Saltr.UnitySdk.Game;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -45,17 +46,17 @@ namespace Saltr.UnitySdk.Repository
             string filePath = Path.Combine(_cacheDirectory.FullName, name);
             SaveObjectInFile<T>(filePath, objectToSave);
 
-            if (string.IsNullOrEmpty(version))
+            if (!string.IsNullOrEmpty(version))
             {
                 filePath = Path.Combine(_cacheDirectory.FullName, name.Replace(".", string.Empty) + "_VERSION_");
-                SaveObjectInFile<object>(filePath, new { _VERSION_ = version });
+                SaveObjectInFile<SaltrVersion>(filePath, new SaltrVersion { Version = version });
             }
         }
 
         public T GetObjectFromApplication<T>(string fileName) where T : class
         {
             TextAsset file = Resources.Load<TextAsset>(fileName);
-            return file != null ? JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text) : null;
+            return file != null ? JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching }) : null;
         }
 
         public T GetObjectFromCache<T>(string fileName) where T : class
@@ -68,21 +69,15 @@ namespace Saltr.UnitySdk.Repository
         {
             //@TODO: Gor it seems Path.Combine method call is missing here.
             Debug.Log(name);
-            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(name).text);
+            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(name).text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
         }
 
         public string GetObjectVersion(string name)
         {
             string filePath = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
-            object obj = GetObjectFromFile<object>(filePath);
-            Dictionary<string, object> dict = (Dictionary<string, object>)obj;
-
-            if (dict != null && dict.ContainsKey("_VERSION_"))
-            {
-                return dict["_VERSION_"].ToString();
-            }
-
-            return string.Empty;
+            SaltrVersion saltrVersion = GetObjectFromFile<SaltrVersion>(filePath);
+        
+            return saltrVersion !=null ? saltrVersion.Version : null;
         }
 
         #endregion Public Methods
@@ -101,12 +96,12 @@ namespace Saltr.UnitySdk.Repository
 
                     if (!string.IsNullOrEmpty(strObject))
                     {
-                        return JsonConvert.DeserializeObject<T>(strObject);
+                        return JsonConvert.DeserializeObject<T>(strObject, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
                     }
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("[Caching] : error while getting object from a file.\nError : " + e.Message);
+                    Debug.LogError("[Caching] : error while getting object from a file.\nError : " + e.Message);
                 }
             }
 
@@ -124,7 +119,7 @@ namespace Saltr.UnitySdk.Repository
                 var settings = new JsonSerializerSettings()
                 {
                     NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
                 };
 
                 File.WriteAllText(filePath, JsonConvert.SerializeObject(objectToSave, Formatting.None, settings));
@@ -137,5 +132,11 @@ namespace Saltr.UnitySdk.Repository
 
         #endregion Internal Methods
 
+    }
+
+    public class SaltrVersion
+    {
+        [JsonProperty("_VERSION_")]
+        public string Version { get; set; }
     }
 }
