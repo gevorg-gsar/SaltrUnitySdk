@@ -21,13 +21,12 @@ namespace Saltr.UnitySdk
         public const string SaltrApiUrl = "https://api.saltr.com/call";
         public const string SaltrDevApiUrl = "https://devapi.saltr.com/call";
 
-        //used to
+        
         public const string AppDataCacheFileName = "app_data_cache.json";
-        /// <summary>
-        /// Default path to the local level files.
-        /// </summary>
-        public const string LocalLevelPacksPath = "Saltr/level_packs.json";
-        public const string LocalLevelContentPathFormat = "Saltr/pack_{0}/level_{1}.json";
+        
+        //Resource.Load doesn't need .json extension.
+        public const string LocalLevelPacksPath = "Saltr/level_packs";
+        public const string LocalLevelContentPathFormat = "Saltr/pack_{0}/level_{1}";
         public const string LocalLevelContentCachePathFormat = "pack_{0}_level_{1}.json";
 
         public const string ResultSuccess = "SUCCEED";

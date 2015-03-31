@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Saltr.UnitySdk.Domain;
 
 namespace Saltr.UnitySdk.Game
@@ -10,6 +12,7 @@ namespace Saltr.UnitySdk.Game
     {
         #region Properties
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public SLTLevelType? LevelType { get; set; }
 
         public List<SLTFeature> Features { get; set; }

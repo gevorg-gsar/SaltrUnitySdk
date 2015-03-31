@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Saltr.UnitySdk.Utils;
+using UnityEngine;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
@@ -105,7 +105,8 @@ namespace Saltr.UnitySdk.Game.Matching
                         }
                         else
                         {
-                            toBeGeneratedAssetsCount = new Random().Next(minAssetCount, maxAssetCount);
+                            //toBeGeneratedAssetsCount = new Random().Next(minAssetCount, maxAssetCount);
+                            toBeGeneratedAssetsCount = Random.Range(minAssetCount, maxAssetCount);
                         }                        
                         
                         GenerateChunkAssets(toBeGeneratedAssetsCount, chunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex);
@@ -121,6 +122,8 @@ namespace Saltr.UnitySdk.Game.Matching
                 float ratioSum = 0;
                 chunkAssets.ForEach(chunkAsset => ratioSum += chunkAsset.DistributionValue.Value);
 
+                int availableCellsCount = chunkCells.Count;
+
                 if (ratioSum != 0)
                 {
                     int toBeGeneratedAssetsCount;
@@ -134,7 +137,7 @@ namespace Saltr.UnitySdk.Game.Matching
                             return;
                         }
 
-                        proportion = chunkAssetConfig.DistributionValue.Value * chunkCells.Count / ratioSum;
+                        proportion = chunkAssetConfig.DistributionValue.Value * availableCellsCount / ratioSum;
                         toBeGeneratedAssetsCount = UnityEngine.Mathf.FloorToInt(proportion);
 
                         TempAssetFraction fractObject = new TempAssetFraction()
@@ -150,9 +153,9 @@ namespace Saltr.UnitySdk.Game.Matching
 
                     //fractionAssets = fractionAssets.OrderBy(fa => fa.Fraction).ToList();
                     fractionAssets = fractionAssets.OrderByDescending(fa => fa.Fraction).ToList();
-                    int remainingCellsCount = chunkCells.Count;
+                    availableCellsCount = chunkCells.Count;
 
-                    for (int i = 0; i < remainingCellsCount; i++)
+                    for (int i = 0; i < availableCellsCount; i++)
                     {
                         GenerateChunkAssets(1, fractionAssets[i].ChunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex);
                     }
@@ -180,7 +183,8 @@ namespace Saltr.UnitySdk.Game.Matching
                 }
 
                 SLTCell randomCell = null;
-                int randomCellIndex = new Random().Next(0, chunkCells.Count - 1);
+                //int randomCellIndex = new Random().Next(0, chunkCells.Count - 1);
+                int randomCellIndex = Random.Range(0, chunkCells.Count - 1);
 
                 randomCell = chunkCells.ElementAt<SLTCell>(randomCellIndex);
                 chunkCells.Remove(randomCell);

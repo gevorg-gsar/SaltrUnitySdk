@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Saltr.UnitySdk.Game.Matching
 {
@@ -11,6 +13,7 @@ namespace Saltr.UnitySdk.Game.Matching
 
         public int? DistributionValue { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public ChunkAssetDistributionType? DistributionType { get; set; }
 
         #endregion Properties

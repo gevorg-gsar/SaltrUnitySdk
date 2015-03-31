@@ -29,7 +29,15 @@ namespace Saltr.UnitySdk.Repository
 
         public T GetObjectFromApplication<T>(string fileName) where T : class
         {
-            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+            TextAsset textAsset = Resources.Load<TextAsset>(fileName);
+            if (textAsset != null)
+            {
+                return JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+            }
+            else
+            {
+                return default(T);
+            }
         }
 
         public T GetObjectFromCache<T>(string fileName) where T : class

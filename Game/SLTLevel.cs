@@ -21,20 +21,20 @@ namespace Saltr.UnitySdk.Game
         /// <summary>
         /// Gets the index of the level in all levels.
         /// </summary>
-        public int Index { get; set; }
+        public int? Index { get; set; }
 
-        public int PackIndex { get; set; }
+        public int? PackIndex { get; set; }
 
         /// <summary>
         /// Gets the index of the level within its pack.
         /// </summary>
-        public int LocalIndex { get; set; }
+        public int? LocalIndex { get; set; }
 
-        public int Version { get; set; }
+        public int? Version { get; set; }
 
-        public int VariationId { get; set; }
+        public int? VariationId { get; set; }
 
-        public int VariationVersion { get; set; }
+        public int? VariationVersion { get; set; }
 
         /// <summary>
         /// Gets the URL, used to retrieve level content from Saltr.

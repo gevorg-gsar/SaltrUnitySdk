@@ -266,7 +266,7 @@ namespace Saltr.UnitySdk
             {
                 levelContent = LoadLevelContentFromCache(level);
             }
-
+            
             if (levelContent == null)
             {
                 levelContent = LoadLevelContentFromApplication(level);
@@ -556,6 +556,10 @@ namespace Saltr.UnitySdk
                     {
                         _levelPacks = sltAppData.LevelPacks;
                     }
+                    else
+                    {
+                        sltAppData.LevelPacks = null;
+                    }
 
                     if (!UseNoFeatures && !sltAppData.Features.IsNullOrEmpty<SLTFeature>())
                     {
@@ -564,6 +568,10 @@ namespace Saltr.UnitySdk
                         {
                             _activeFeatures.Add(feature.Token, feature);
                         }
+                    }
+                    else
+                    {
+                        sltAppData.Features = null;
                     }
 
                     _experiments = sltAppData.Experiments;
@@ -584,6 +592,10 @@ namespace Saltr.UnitySdk
                 {
                     GetAppDataFail(new SLTErrorStatus() { Message = result.Text });
                 }
+            }
+            else
+            {
+                GetAppDataFail(new SLTErrorStatus() { Message = result.Text });
             }
 
             _isLoading = false;
