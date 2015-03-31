@@ -172,6 +172,9 @@ namespace Saltr.UnitySdk
             if (_saltrConnector != null)
                 return;
 
+            BoardConverter.LevelType = SLTLevelType.Matching;
+            SLTAssetTypeConverter.LevelType = SLTLevelType.Matching;
+
             gameObject.name = SLTConstants.SaltrGameObjectName;
             gameObject.AddComponent<DownloadManager>();
 

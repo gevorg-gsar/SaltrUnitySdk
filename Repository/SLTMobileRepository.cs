@@ -56,7 +56,7 @@ namespace Saltr.UnitySdk.Repository
         public T GetObjectFromApplication<T>(string fileName) where T : class
         {
             TextAsset file = Resources.Load<TextAsset>(fileName);
-            return file != null ? JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching }) : null;
+            return file != null ? JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text, new BoardConverter(), new SLTAssetTypeConverter()) : null;
         }
 
         public T GetObjectFromCache<T>(string fileName) where T : class
@@ -69,7 +69,7 @@ namespace Saltr.UnitySdk.Repository
         {
             //@TODO: Gor it seems Path.Combine method call is missing here.
             Debug.Log(name);
-            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(name).text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(name).text, new BoardConverter(), new SLTAssetTypeConverter());
         }
 
         public string GetObjectVersion(string name)
@@ -96,7 +96,7 @@ namespace Saltr.UnitySdk.Repository
 
                     if (!string.IsNullOrEmpty(strObject))
                     {
-                        return JsonConvert.DeserializeObject<T>(strObject, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+                        return JsonConvert.DeserializeObject<T>(strObject, new BoardConverter(), new SLTAssetTypeConverter());
                     }
                 }
                 catch (Exception e)

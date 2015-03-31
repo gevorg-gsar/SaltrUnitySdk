@@ -28,7 +28,7 @@ namespace Saltr.UnitySdk.Game
 
     public class BoardConverter : CustomCreationConverter<SLTBoard>
     {
-        public SLTLevelType LevelType { get; set; }
+        public static SLTLevelType LevelType { get; set; }
 
         public override SLTBoard Create(Type objectType)
         {
@@ -49,7 +49,7 @@ namespace Saltr.UnitySdk.Game
 
     public class SLTAssetTypeConverter : CustomCreationConverter<SLTAssetType>
     {
-        public SLTLevelType LevelType { get; set; }
+        public static SLTLevelType LevelType { get; set; }
 
         public override SLTAssetType Create(Type objectType)
         {

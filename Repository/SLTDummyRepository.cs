@@ -32,7 +32,7 @@ namespace Saltr.UnitySdk.Repository
             TextAsset textAsset = Resources.Load<TextAsset>(fileName);
             if (textAsset != null)
             {
-                return JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+                return JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter());
             }
             else
             {

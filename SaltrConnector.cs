@@ -605,7 +605,7 @@ namespace Saltr.UnitySdk
         {
             SLTLevel sltLevel = result.StateObject as SLTLevel;
 
-            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter() { LevelType = SLTLevelType.Matching }, new SLTAssetTypeConverter() { LevelType = SLTLevelType.Matching });
+            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter());
 
             if (sltLevel.Content != null)
             {
