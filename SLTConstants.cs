@@ -12,6 +12,8 @@ namespace Saltr.UnitySdk
     {
         public const string SaltrGameObjectName = "Saltr";
 
+        public const string RegexPatternFeatureToken = @"^[\w\-\.]+$"; //The same as @"^[a-zA-Z0-9_\-\.]+$";
+
         //TODO @gyln: Group these actions in an enum or a struct?
         public const string ActionDevSync = "sync";
         public const string ActionGetAppData = "getAppData";

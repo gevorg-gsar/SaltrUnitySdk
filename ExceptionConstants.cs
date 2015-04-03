@@ -9,6 +9,8 @@ namespace Saltr.UnitySdk
     {
         public const string EmailIsRequired = "Email is required.";
         public const string DeviceIdIsRequired = "Field 'deviceId' is required.";
+        
+        public const string InvalidToken = @"Token should be a letter, number, - , _ or .";
 
         public const string AppDataShouldBeInitialized = "AppData should be initialized.";
         public const string LevelsShouldBeImported = "Levels should be imported.";

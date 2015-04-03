@@ -11,6 +11,7 @@ using Plexonic.Core.Network;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain;
 using Newtonsoft.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Saltr.UnitySdk
 {
@@ -120,9 +121,16 @@ namespace Saltr.UnitySdk
 
         public void DefineDefaultFeature(string featureToken, Dictionary<string, object> properties, bool isRequired)
         {
-            if (!string.IsNullOrEmpty(featureToken))
+            Regex regex = new Regex(SLTConstants.RegexPatternFeatureToken);
+            Match match = regex.Match(featureToken);
+
+            if (match.Success)
             {
                 _defaultFeatures[featureToken] = new SLTFeature() { Token = featureToken, Properties = properties, IsRequired = isRequired };
+            }
+            else
+            {
+                throw new Exception(ExceptionConstants.InvalidToken);
             }
         }
 
