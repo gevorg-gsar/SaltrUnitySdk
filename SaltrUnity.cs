@@ -336,6 +336,11 @@ namespace Saltr.UnitySdk
             get { return _saltrConnector.ActiveFeatures; }
         }
 
+        public Dictionary<string, SLTFeature> DefaultFeatures
+        {
+            get { return _saltrConnector.DefaultFeatures; }
+        }
+
         public List<SLTLevel> AllLevels
         {
             get
@@ -373,6 +378,10 @@ namespace Saltr.UnitySdk
             if (ActiveFeatures.ContainsKey(token))
             {
                 return (ActiveFeatures[token]).Properties as Dictionary<string, object>;
+            }
+            else if(DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired.HasValue && DefaultFeatures[token].IsRequired.Value)
+            {
+                return (DefaultFeatures[token]).Properties as Dictionary<string, object>;
             }
 
             return null;

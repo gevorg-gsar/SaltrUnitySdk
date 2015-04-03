@@ -61,6 +61,8 @@ namespace Saltr.UnitySdk
 
         public List<SLTExperiment> Experiments { get { return _experiments; } }
 
+        public Dictionary<string, SLTFeature> DefaultFeatures { get { return _defaultFeatures; } }
+
         public Dictionary<string, SLTFeature> ActiveFeatures { get { return _activeFeatures; } }
 
         #endregion Properties
