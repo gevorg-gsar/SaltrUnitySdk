@@ -16,7 +16,7 @@ namespace Saltr.UnitySdk.Repository
         #region Fields
 
         private DirectoryInfo _cacheDirectory;
-        private DirectoryInfo _storageDirectory;
+        private DirectoryInfo _persistentStorageDirectory;
 
         #endregion Fields
 
@@ -25,20 +25,38 @@ namespace Saltr.UnitySdk.Repository
         public SLTMobileRepository()
         {
             _cacheDirectory = new DirectoryInfo(Application.temporaryCachePath);
-            _storageDirectory = new DirectoryInfo(Application.persistentDataPath);
+            _persistentStorageDirectory = new DirectoryInfo(Application.persistentDataPath);
 
-            Debug.Log("cacheDir: " + _cacheDirectory.FullName);
-            Debug.Log("storageDirectory: " + _storageDirectory.FullName);
+            Debug.Log("cacheDirectory: " + _cacheDirectory.FullName);
+            Debug.Log("persistentStorageDirectory: " + _persistentStorageDirectory.FullName);
         }
 
         #endregion Ctor
 
         #region Public Methods
 
-        public void SaveObject<T>(string name, T objectToSave)
+        public string GetObjectVersion(string name)
         {
-            string filePath = Path.Combine(_storageDirectory.FullName, name);
+            string filePath = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
+
+            SaltrVersion saltrVersion = GetObjectFromFile<SaltrVersion>(filePath);
+
+            return saltrVersion != null ? saltrVersion.Version : null;
+        }
+
+        public void SaveObjectInPersistentStorage<T>(string fileName, T objectToSave)
+        {
+            string filePath = Path.Combine(_persistentStorageDirectory.FullName, fileName);
             SaveObjectInFile<T>(filePath, objectToSave);
+        }
+
+        public T GetObjectFromPersistentStorage<T>(string fileName) where T : class
+        {
+            string filePath = Path.Combine(_persistentStorageDirectory.FullName, fileName);
+
+            TextAsset textAsset = Resources.Load<TextAsset>(filePath);
+
+            return textAsset != null ? JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter()) : null;
         }
 
         public void CacheObject<T>(string name, T objectToSave, string version = null)
@@ -52,32 +70,17 @@ namespace Saltr.UnitySdk.Repository
                 SaveObjectInFile<SaltrVersion>(filePath, new SaltrVersion { Version = version });
             }
         }
-
-        public T GetObjectFromApplication<T>(string fileName) where T : class
-        {
-            TextAsset file = Resources.Load<TextAsset>(fileName);
-            return file != null ? JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(fileName).text, new BoardConverter(), new SLTAssetTypeConverter()) : null;
-        }
-
+        
         public T GetObjectFromCache<T>(string fileName) where T : class
         {
             string filePath = Path.Combine(_cacheDirectory.FullName, fileName);
             return GetObjectFromFile<T>(filePath);
         }
 
-        public T GetObjectFromStorage<T>(string name) where T : class
+        public T GetObjectFromApplication<T>(string fileName) where T : class
         {
-            //@TODO: Gor it seems Path.Combine method call is missing here.
-            Debug.Log(name);
-            return JsonConvert.DeserializeObject<T>(Resources.Load<TextAsset>(name).text, new BoardConverter(), new SLTAssetTypeConverter());
-        }
-
-        public string GetObjectVersion(string name)
-        {
-            string filePath = Path.Combine(_cacheDirectory.FullName, (name.Replace(".", string.Empty) + "_VERSION_"));
-            SaltrVersion saltrVersion = GetObjectFromFile<SaltrVersion>(filePath);
-        
-            return saltrVersion !=null ? saltrVersion.Version : null;
+            TextAsset textAsset = Resources.Load<TextAsset>(fileName);
+            return textAsset != null ? JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter()) : null;
         }
 
         #endregion Public Methods

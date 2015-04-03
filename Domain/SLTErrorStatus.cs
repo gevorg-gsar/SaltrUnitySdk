@@ -17,34 +17,7 @@ namespace Saltr.UnitySdk.Domain
 
         public SLTErrorStatusCode Code { get; set; }
 
-        #endregion
-
-        #region Ctor
-
-        //public SLTErrorStatus(int statusCode, string statusMessage)
-        //{
-        //    if (Enum.IsDefined(typeof(SLTErrorStatusCode), statusCode))
-        //    {
-        //        Code = (SLTErrorStatusCode)statusCode;
-        //    }
-        //    else
-        //    { 
-        //        Code = SLTErrorStatusCode.UnknownError;
-        //    }
-
-        //    Message = statusMessage;
-        //    Debug.Log(statusMessage);
-        //}
-
-        //public SLTErrorStatus(SLTErrorStatusCode statusCode, string statusMessage)
-        //{
-        //    Code = statusCode;
-        //    Message = statusMessage;
-        //    Debug.Log(statusMessage);
-        //}
-
-        #endregion Ctor
-        
+        #endregion 
     }
 
     /// <summary>

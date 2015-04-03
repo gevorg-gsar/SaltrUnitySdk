@@ -21,10 +21,29 @@ namespace Saltr.UnitySdk.Repository
         #endregion Ctor
 
         #region Public Methods
+        
+        public void SaveObjectInPersistentStorage<T>(string name, T obj)
+        {
+
+        }
+        public T GetObjectFromPersistentStorage<T>(string name) where T : class
+        {
+            return null;
+        }
 
         public void CacheObject<T>(string name, T obj, string version = null)
         {
 
+        }
+
+        public T GetObjectFromCache<T>(string fileName) where T : class
+        {
+            return null;
+        }
+
+        public string GetObjectVersion(string name)
+        {
+            return string.Empty;
         }
 
         public T GetObjectFromApplication<T>(string fileName) where T : class
@@ -38,26 +57,6 @@ namespace Saltr.UnitySdk.Repository
             {
                 return default(T);
             }
-        }
-
-        public T GetObjectFromCache<T>(string fileName) where T : class
-        {
-            return null;
-        }
-
-        public T GetObjectFromStorage<T>(string name) where T : class
-        {
-            return null;
-        }
-
-        public string GetObjectVersion(string name)
-        {
-            return string.Empty;
-        }
-
-        public void SaveObject<T>(string name, T obj)
-        {
-
         }
 
         #endregion Public Methods

@@ -183,7 +183,6 @@ namespace Saltr.UnitySdk.Game.Matching
                 }
 
                 SLTCell randomCell = null;
-                //int randomCellIndex = new Random().Next(0, chunkCells.Count - 1);
                 int randomCellIndex = Random.Range(0, chunkCells.Count - 1);
 
                 randomCell = chunkCells.ElementAt<SLTCell>(randomCellIndex);

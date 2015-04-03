@@ -9,13 +9,13 @@ namespace Saltr.UnitySdk.Repository
     {
         string GetObjectVersion(string name);
 
-        T GetObjectFromStorage<T>(string name) where T : class;
+        void SaveObjectInPersistentStorage<T>(string name, T objectToSave);
 
-        T GetObjectFromCache<T>(string fileName) where T : class;
-
-        void SaveObject<T>(string name, T objectToSave);
+        T GetObjectFromPersistentStorage<T>(string name) where T : class;
 
         void CacheObject<T>(string name, T objectToSave, string version = null);
+
+        T GetObjectFromCache<T>(string fileName) where T : class;
 
         T GetObjectFromApplication<T>(string fileName) where T : class;
     }

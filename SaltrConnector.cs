@@ -205,6 +205,9 @@ namespace Saltr.UnitySdk
             else
             {
                 level.Content = LoadLevelContentLocally(level, useCache);
+
+                SLTBoardGenerator.RegenerateBoards(level.Content.Boards, level.Content.Assets, BoardConverter.LevelType);
+
                 LoadLevelContentSuccess(level);
             }
         }
@@ -603,22 +606,23 @@ namespace Saltr.UnitySdk
 
         private void OnLoadLevelContentFromSaltr(DownloadResult result)
         {
-            SLTLevel sltLevel = result.StateObject as SLTLevel;
+            SLTLevel level = result.StateObject as SLTLevel;
 
-            sltLevel.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter());
+            level.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter());
 
-            if (sltLevel.Content != null)
+            if (level.Content != null)
             {
-                CacheLevelContent(sltLevel);
+                CacheLevelContent(level);
             }
             else
             {
-                sltLevel.Content = LoadLevelContentLocally(sltLevel);
+                level.Content = LoadLevelContentLocally(level);
             }
 
-            if (sltLevel.Content != null)
+            if (level.Content != null)
             {
-                LoadLevelContentSuccess(sltLevel);
+                SLTBoardGenerator.RegenerateBoards(level.Content.Boards, level.Content.Assets, BoardConverter.LevelType);
+                LoadLevelContentSuccess(level);
                 return;
             }
             else

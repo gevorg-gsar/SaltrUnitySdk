@@ -23,6 +23,9 @@ namespace Saltr.UnitySdk
         private SaltrConnector _saltrConnector;
 
         [SerializeField]
+        private SLTLevelType levelType = SLTLevelType.NoLevels;
+
+        [SerializeField]
         private string _clientKey = string.Empty;
 
         [SerializeField]
@@ -172,8 +175,8 @@ namespace Saltr.UnitySdk
             if (_saltrConnector != null)
                 return;
 
-            BoardConverter.LevelType = SLTLevelType.Matching;
-            SLTAssetTypeConverter.LevelType = SLTLevelType.Matching;
+            BoardConverter.LevelType = levelType;
+            SLTAssetTypeConverter.LevelType = levelType;
 
             gameObject.name = SLTConstants.SaltrGameObjectName;
             gameObject.AddComponent<DownloadManager>();
