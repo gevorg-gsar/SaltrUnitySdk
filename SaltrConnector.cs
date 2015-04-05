@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Linq;
 using Saltr.UnitySdk.Repository;
-using Saltr.UnitySdk.Game;
+using Saltr.UnitySdk.Domain.Game;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain;
 using Newtonsoft.Json.Serialization;
 using System.Text.RegularExpressions;
+using Saltr.UnitySdk.Domain.Model;
 
 namespace Saltr.UnitySdk
 {
@@ -214,9 +215,9 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                level.Content = LoadLevelContentLocally(level, useCache);
+                level.InternalLevelContent = LoadLevelContentLocally(level, useCache);
 
-                SLTBoardGenerator.RegenerateBoards(level.Content.Boards, level.Content.Assets, BoardConverter.LevelType);
+                level.RegenerateBoards();
 
                 LoadLevelContentSuccess(level);
             }
@@ -260,7 +261,7 @@ namespace Saltr.UnitySdk
         private void CacheLevelContent(SLTLevel level)
         {
             string cachedFileName = string.Format(SLTConstants.LocalLevelContentCachePathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
-            _repository.CacheObject<SLTLevelContent>(cachedFileName, level.Content, level.Version.ToString());
+            _repository.CacheObject<SLTInternalLevelContent>(cachedFileName, level.InternalLevelContent, level.Version.ToString());
         }
 
         private void LoadLevelContentFromSaltr(SLTLevel level)
@@ -271,9 +272,9 @@ namespace Saltr.UnitySdk
             //DownloadManager.Instance.AddDownload(levelContentUrl, OnLoadLevelContentFromSaltr);
         }
 
-        private SLTLevelContent LoadLevelContentLocally(SLTLevel level, bool useCache = true)
+        private SLTInternalLevelContent LoadLevelContentLocally(SLTLevel level, bool useCache = true)
         {
-            SLTLevelContent levelContent = null;
+            SLTInternalLevelContent levelContent = null;
 
             if (useCache)
             {
@@ -288,16 +289,16 @@ namespace Saltr.UnitySdk
             return levelContent;
         }
 
-        private SLTLevelContent LoadLevelContentFromCache(SLTLevel level)
+        private SLTInternalLevelContent LoadLevelContentFromCache(SLTLevel level)
         {
             string path = string.Format(SLTConstants.LocalLevelContentCachePathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
-            return _repository.GetObjectFromCache<SLTLevelContent>(path);
+            return _repository.GetObjectFromCache<SLTInternalLevelContent>(path);
         }
 
-        private SLTLevelContent LoadLevelContentFromApplication(SLTLevel level)
+        private SLTInternalLevelContent LoadLevelContentFromApplication(SLTLevel level)
         {
             string path = string.Format(SLTConstants.LocalLevelContentPathFormat, level.PackIndex.ToString(), level.LocalIndex.ToString());
-            return _repository.GetObjectFromApplication<SLTLevelContent>(path);
+            return _repository.GetObjectFromApplication<SLTInternalLevelContent>(path);
         }
 
         private string GetCachedLevelVersion(SLTLevel level)
@@ -618,20 +619,20 @@ namespace Saltr.UnitySdk
         {
             SLTLevel level = result.StateObject as SLTLevel;
 
-            level.Content = JsonConvert.DeserializeObject<SLTLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter());
+            level.InternalLevelContent = JsonConvert.DeserializeObject<SLTInternalLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter());
 
-            if (level.Content != null)
+            if (level.InternalLevelContent != null)
             {
                 CacheLevelContent(level);
             }
             else
             {
-                level.Content = LoadLevelContentLocally(level);
+                level.InternalLevelContent = LoadLevelContentLocally(level);
             }
 
-            if (level.Content != null)
+            if (level.InternalLevelContent != null)
             {
-                SLTBoardGenerator.RegenerateBoards(level.Content.Boards, level.Content.Assets, BoardConverter.LevelType);
+                level.RegenerateBoards();
                 LoadLevelContentSuccess(level);
                 return;
             }

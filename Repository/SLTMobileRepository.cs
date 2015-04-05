@@ -7,7 +7,7 @@ using UnityEngine;
 //using GAFEditor.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Saltr.UnitySdk.Game;
+using Saltr.UnitySdk.Domain.Game;
 
 namespace Saltr.UnitySdk.Repository
 {

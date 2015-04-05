@@ -6,9 +6,10 @@ using System.Linq;
 using Saltr.UnitySdk;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
-using Saltr.UnitySdk.Game;
+using Saltr.UnitySdk.Domain.Game;
 using Saltr.UnitySdk.Domain;
 using Newtonsoft.Json;
+using Saltr.UnitySdk.Domain.Model;
 
 namespace Saltr.UnitySdk
 {
@@ -196,12 +197,14 @@ namespace Saltr.UnitySdk
 
             _saltrConnector.UseNoLevels = _useNoLevels;
             _saltrConnector.UseNoFeatures = _useNoFeatures;
-                        
+
+            _saltrConnector.RegisterDeviceSuccess -= SaltrConnector_RegisterDeviceSuccess;
             _saltrConnector.RegisterDeviceSuccess += SaltrConnector_RegisterDeviceSuccess;
+            _saltrConnector.DeviceRegistrationRequired -= SaltrConnector_OnDeviceRegistrationRequired;
             _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
 
         }
-        
+
         protected virtual void Start()
         {
             if (_autoStart)
@@ -316,7 +319,7 @@ namespace Saltr.UnitySdk
         {
             HideDeviceRegistationDialog();
         }
-
+        
         #endregion Event Handlers
 
         #region Saltr Connector Methods/Properties
@@ -388,8 +391,6 @@ namespace Saltr.UnitySdk
         }        
 
         #endregion  Saltr Connector Methods/Properties
-
-        
 
         #region Nested Classes
 
