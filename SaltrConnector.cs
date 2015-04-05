@@ -32,6 +32,7 @@ namespace Saltr.UnitySdk
         private string _deviceId;
         private string _clientKey;
 
+        private bool _useCache;
         private bool _isSynced;
         private bool _isLoading;
         private bool _isAppDataGotten;
@@ -90,6 +91,8 @@ namespace Saltr.UnitySdk
 
         public SaltrConnector(string clientKey, string deviceId, bool useCache = true)
         {
+            _useCache = useCache;
+
             _clientKey = clientKey;
             _deviceId = deviceId;
             _isLoading = false;
@@ -216,8 +219,6 @@ namespace Saltr.UnitySdk
             else
             {
                 level.InternalLevelContent = LoadLevelContentLocally(level, useCache);
-
-                level.RegenerateBoards();
 
                 LoadLevelContentSuccess(level);
             }
@@ -632,7 +633,6 @@ namespace Saltr.UnitySdk
 
             if (level.InternalLevelContent != null)
             {
-                level.RegenerateBoards();
                 LoadLevelContentSuccess(level);
                 return;
             }

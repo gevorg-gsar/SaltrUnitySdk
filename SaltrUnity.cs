@@ -200,6 +200,8 @@ namespace Saltr.UnitySdk
 
             _saltrConnector.RegisterDeviceSuccess -= SaltrConnector_RegisterDeviceSuccess;
             _saltrConnector.RegisterDeviceSuccess += SaltrConnector_RegisterDeviceSuccess;
+            _saltrConnector.LoadLevelContentSuccess -= SaltrConnector_LoadLevelContentSuccess; 
+            _saltrConnector.LoadLevelContentSuccess += SaltrConnector_LoadLevelContentSuccess; 
             _saltrConnector.DeviceRegistrationRequired -= SaltrConnector_OnDeviceRegistrationRequired;
             _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
 
@@ -309,7 +311,13 @@ namespace Saltr.UnitySdk
         #endregion Public Methods
 
         #region Event Handlers
-        
+
+        private void SaltrConnector_LoadLevelContentSuccess(SLTLevel level)
+        {
+            level.RegenerateBoards();
+        }
+
+
         private void SaltrConnector_OnDeviceRegistrationRequired()
         {
             RegisterDevice();
