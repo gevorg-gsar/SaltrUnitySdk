@@ -49,7 +49,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         private static void RegenerateLayerFixedAsset(SLTMatchingFixedAssetConfig fixedAssetConfig, SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex)
         {
             SLTMatchingAssetType assetType = assetTypes[fixedAssetConfig.AssetId];
-            foreach (var position in fixedAssetConfig.Cells)
+            foreach (List<int> position in fixedAssetConfig.Cells)
             {
                 SLTCell fixedAssetCell = boardCells[position.Last<int>(), position.First<int>()];
                 SLTMatchingAsset fixedAsset = new SLTMatchingAsset() { Token = assetType.Token, State = assetType.States[fixedAssetConfig.StateId], Properties = assetType.Properties };
