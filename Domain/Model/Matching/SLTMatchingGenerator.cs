@@ -51,7 +51,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
             SLTMatchingAssetType assetType = assetTypes[fixedAssetConfig.AssetId];
             foreach (List<int> position in fixedAssetConfig.Cells)
             {
-                SLTCell fixedAssetCell = boardCells[position.Last<int>(), position.First<int>()];
+                SLTCell fixedAssetCell = boardCells[position[1], position[0]];
                 SLTMatchingAsset fixedAsset = new SLTMatchingAsset() { Token = assetType.Token, State = assetType.States[fixedAssetConfig.StateId], Properties = assetType.Properties };
                 fixedAssetCell.SetAsset(layerToken, layerIndex, fixedAsset);
             }
