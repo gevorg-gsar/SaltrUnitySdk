@@ -592,7 +592,7 @@ namespace Saltr.UnitySdk
                     _experiments = sltAppData.Experiments;
 
                     _isAppDataGotten = true;
-                    _repository.CacheObject(SLTConstants.AppDataCacheFileName, sltAppData);
+                    _repository.CacheObject<SLTAppData>(SLTConstants.AppDataCacheFileName, sltAppData);
 
                     GetAppDataSuccess(sltAppData);
 
