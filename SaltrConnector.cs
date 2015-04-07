@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Linq;
 using Saltr.UnitySdk.Repository;
-using Saltr.UnitySdk.Domain.Game;
+using Saltr.UnitySdk.Domain.InternalModel;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
 using Newtonsoft.Json;

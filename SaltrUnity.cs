@@ -6,7 +6,7 @@ using System.Linq;
 using Saltr.UnitySdk;
 using Saltr.UnitySdk.Utils;
 using Plexonic.Core.Network;
-using Saltr.UnitySdk.Domain.Game;
+using Saltr.UnitySdk.Domain.InternalModel;
 using Saltr.UnitySdk.Domain;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain.Model;

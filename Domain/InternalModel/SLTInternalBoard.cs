@@ -2,17 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Saltr.UnitySdk.Domain.InternalModel.Matching;
 
-namespace Saltr.UnitySdk.Domain.Game
+
+namespace Saltr.UnitySdk.Domain.InternalModel
 {
-    public abstract class SLTAssetType
+    public abstract class SLTInternalBoard
     {
         #region Properties
-
-        public string Token { get; set; }
-
+        
+        public List<int> Position { get; set; }
+        
         public Dictionary<string, object> Properties { get; set; }
 
+
         #endregion Properties
+        
     }
 }

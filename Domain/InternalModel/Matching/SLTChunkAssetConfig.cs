@@ -5,7 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Saltr.UnitySdk.Domain.Game.Matching
+namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 {
     public class SLTChunkAssetConfig : SLTAssetConfig
     {

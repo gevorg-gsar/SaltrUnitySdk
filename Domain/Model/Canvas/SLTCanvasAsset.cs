@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Saltr.UnitySdk.Domain.Game.Canvas;
+using Saltr.UnitySdk.Domain.InternalModel.Canvas;
 using Saltr.UnitySdk.Utils;
 
 namespace Saltr.UnitySdk.Domain.Model.Canvas

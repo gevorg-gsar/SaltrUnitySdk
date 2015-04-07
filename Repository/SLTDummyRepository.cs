@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 //using GAFEditor.Utils;
 using Newtonsoft.Json;
-using Saltr.UnitySdk.Domain.Game;
+using Saltr.UnitySdk.Domain.InternalModel;
 
 namespace Saltr.UnitySdk.Repository
 {

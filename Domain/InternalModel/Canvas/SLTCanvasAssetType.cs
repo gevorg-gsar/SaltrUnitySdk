@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Saltr.UnitySdk.Utils;
 
-namespace Saltr.UnitySdk.Domain.Game.Canvas
+namespace Saltr.UnitySdk.Domain.InternalModel.Canvas
 {
     public class SLTCanvasAssetType : SLTAssetType
     {

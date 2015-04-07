@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using Saltr.UnitySdk.Domain.Game.Matching;
+using Saltr.UnitySdk.Domain.InternalModel.Matching;
 using Saltr.UnitySdk.Utils;
 using Newtonsoft.Json;
-using Saltr.UnitySdk.Domain.Game;
+using Saltr.UnitySdk.Domain.InternalModel;
 
 namespace Saltr.UnitySdk.Domain.Model
 {

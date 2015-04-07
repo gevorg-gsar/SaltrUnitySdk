@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Saltr.UnitySdk.Utils;
 
-namespace Saltr.UnitySdk.Domain.Game.Matching
+namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 {
     public class SLTMatchingAssetType : SLTAssetType
     {

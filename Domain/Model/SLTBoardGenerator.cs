@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Saltr.UnitySdk.Domain.Game;
-using Saltr.UnitySdk.Domain.Game.Canvas;
-using Saltr.UnitySdk.Domain.Game.Matching;
+using Saltr.UnitySdk.Domain.InternalModel;
+using Saltr.UnitySdk.Domain.InternalModel.Canvas;
+using Saltr.UnitySdk.Domain.InternalModel.Matching;
 using Saltr.UnitySdk.Domain.Model.Canvas;
 using Saltr.UnitySdk.Domain.Model.Matching;
 using Saltr.UnitySdk.Utils;

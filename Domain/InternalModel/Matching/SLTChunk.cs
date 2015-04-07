@@ -4,7 +4,7 @@ using System.Text;
 using Saltr.UnitySdk.Utils;
 using UnityEngine;
 
-namespace Saltr.UnitySdk.Domain.Game.Matching
+namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 {
     // <summary>
     // Represents a chunk, a collection of cells on matching board that is populated with assets according to certain rules.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Saltr.UnitySdk.Domain.Game.Matching
+namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 {
     public class CellProperty
     {

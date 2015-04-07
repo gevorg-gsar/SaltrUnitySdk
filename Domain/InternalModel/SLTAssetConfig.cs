@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Saltr.UnitySdk.Domain.Game
+namespace Saltr.UnitySdk.Domain.InternalModel
 {
     public abstract class SLTAssetConfig
     {

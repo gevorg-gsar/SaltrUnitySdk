@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Saltr.UnitySdk.Domain.Game
+namespace Saltr.UnitySdk.Domain.InternalModel
 {
-    public abstract class SLTAssetState
+    public abstract class SLTAssetType
     {
         #region Properties
 
@@ -14,6 +14,5 @@ namespace Saltr.UnitySdk.Domain.Game
         public Dictionary<string, object> Properties { get; set; }
 
         #endregion Properties
-
     }
 }

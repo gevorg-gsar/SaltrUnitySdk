@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using Saltr.UnitySdk.Domain.Game.Matching;
+using Saltr.UnitySdk.Domain.InternalModel.Matching;
 using Saltr.UnitySdk.Utils;
 using Newtonsoft.Json;
-using Saltr.UnitySdk.Domain.Game.Canvas;
+using Saltr.UnitySdk.Domain.InternalModel.Canvas;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Converters;
 using Saltr.UnitySdk.Domain.Model;
 
-namespace Saltr.UnitySdk.Domain.Game
+namespace Saltr.UnitySdk.Domain.InternalModel
 {
     public class SLTInternalLevelContent
     {

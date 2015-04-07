@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using Saltr.UnitySdk.Domain.Game.Matching;
+using Saltr.UnitySdk.Domain.InternalModel.Matching;
 
-namespace Saltr.UnitySdk.Domain.Game
+namespace Saltr.UnitySdk.Domain.InternalModel
 {
 	/// <summary>
 	/// Represents any kind of a board layer.
