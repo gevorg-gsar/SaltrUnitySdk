@@ -26,11 +26,22 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     for (int col = 0; col < boardModel.Cells.GetLength(1); col++)
                     {
                         boardModel.Cells[row, col] = new SLTCell(row, col);
+                    }
+                }
 
-                        if (!board.BlockedCells.IsNullOrEmpty<List<int>>())
-                        {
-                            boardModel.Cells[row, col].IsBlocked = board.BlockedCells.Any<List<int>>(cellPosition => row == cellPosition[1] && col == cellPosition[0]);
-                        }
+                if (!board.BlockedCells.IsNullOrEmpty<List<int>>())
+                {
+                    foreach(List<int> blockedCellPosition in board.BlockedCells)
+                    {
+                        boardModel.Cells[blockedCellPosition[1], blockedCellPosition[0]].IsBlocked = true;
+                    }
+                }
+
+                if (!board.CellProperties.IsNullOrEmpty<CellProperty>())
+                {
+                    foreach (CellProperty cellProperty in board.CellProperties)
+                    {
+                        boardModel.Cells[cellProperty.Coords[1], cellProperty.Coords[0]].Properties = cellProperty.Value;
                     }
                 }
 
