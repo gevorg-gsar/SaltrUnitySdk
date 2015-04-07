@@ -26,6 +26,11 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     for (int col = 0; col < boardModel.Cells.GetLength(1); col++)
                     {
                         boardModel.Cells[row, col] = new SLTCell(row, col);
+
+                        if (!board.BlockedCells.IsNullOrEmpty<List<int>>())
+                        {
+                            boardModel.Cells[row, col].IsBlocked = board.BlockedCells.Any<List<int>>(cellPosition => row == cellPosition[1] && col == cellPosition[0]);
+                        }
                     }
                 }
 
@@ -37,8 +42,8 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
 
             return null;
         }
-        
-        private static void RegenerateLayer(this SLTMatchingBoardLayer boardLayer,  SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes, int index)
+
+        private static void RegenerateLayer(this SLTMatchingBoardLayer boardLayer, SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes, int index)
         {
             boardLayer.Index = index;
 
