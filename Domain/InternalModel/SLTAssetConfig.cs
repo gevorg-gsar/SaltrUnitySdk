@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Domain.InternalModel
 {
-    public abstract class SLTAssetConfig
+    public class SLTAssetConfig
     {
         #region Properties
 

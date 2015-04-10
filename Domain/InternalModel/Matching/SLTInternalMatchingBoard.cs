@@ -15,9 +15,7 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
         public int? Rows { get; set; }
 
         public int? Cols { get; set; }
-
-        public bool? MatchingRulesEnabled { get; set; }
-
+        
         public List<int> CellSize { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -27,6 +25,13 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 
         public List<List<int>> BlockedCells { get; set; }
 
+        public bool? MatchingRulesEnabled { get; set; }
+
+        public bool? SquareMatchingRuleEnabled { get; set; }
+        
+        public List<SLTAssetConfig> AlternativeMatchAssets {get;set;}
+
+        public List<SLTAssetConfig> ExcludedMatchAssets { get; set; }            
     }
 
     public enum SLTMatchingBoardOrientation
