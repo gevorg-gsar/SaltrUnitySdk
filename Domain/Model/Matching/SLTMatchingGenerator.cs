@@ -268,15 +268,16 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     chunkCells.Remove(randomCell);
                     randomCell.SetAsset(layerToken, layerIndex, matchingAsset);
 
-                    if (matchingRulesEnabled.HasValue && matchingRulesEnabled.Value)
+                    if (matchingRulesEnabled.HasValue && matchingRulesEnabled.Value 
+                        && !excludedMatchAssets.Any(sltConfig => (sltConfig.AssetId == chunkAssetConfig.AssetId && sltConfig.StateId == chunkAssetConfig.StateId)))
                     {
-                        Dictionary<SLTMatchPattern, List<List<SLTCell>>> matchGroups = SLTMatchManager.GetMatchGroups(boardCells, layerToken, layerIndex);
+                        Dictionary<SLTMatchPattern, List<List<SLTCell>>> matchGroups = SLTMatchManager.GetMatchGroups(boardCells, layerToken, layerIndex, squareMatchingRuleEnabled.Value);
                         if (SLTMatchManager.IsInAllMatchCells(matchGroups, randomCell))
                         {
                             chunkCells.Add(randomCell);
                             randomCell.RemoveAsset(layerToken, layerIndex);
 
-                            unresolvedAssetCount += CorrectGeneratedAsssetsToMatchRules(boardCells, chunkCells, matchingAsset, layerToken, layerIndex);
+                            unresolvedAssetCount += CorrectGeneratedAsssetsToMatchRules(boardCells, chunkCells, matchingAsset, layerToken, layerIndex, squareMatchingRuleEnabled.Value);
                         }
                     }
                 }
@@ -289,7 +290,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
             return unresolvedAssetCount;
         }
 
-        public static int CorrectGeneratedAsssetsToMatchRules(SLTCell[,] boardCells, List<SLTCell> chunkCells, SLTMatchingAsset matchingAsset, string layerToken, int layerIndex)
+        public static int CorrectGeneratedAsssetsToMatchRules(SLTCell[,] boardCells, List<SLTCell> chunkCells, SLTMatchingAsset matchingAsset, string layerToken, int layerIndex, bool squareMatchingRuleEnabled)
         {
             int unresolvedAssetCount = 0;
 
@@ -301,7 +302,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                 chunkCells.Remove(matchingRuleEnabledChunkCell);
                 matchingRuleEnabledChunkCell.SetAsset(layerToken, layerIndex, matchingAsset);
 
-                Dictionary<SLTMatchPattern, List<List<SLTCell>>> matchGroups = SLTMatchManager.GetMatchGroups(boardCells, layerToken, layerIndex);
+                Dictionary<SLTMatchPattern, List<List<SLTCell>>> matchGroups = SLTMatchManager.GetMatchGroups(boardCells, layerToken, layerIndex, squareMatchingRuleEnabled);
                 if (SLTMatchManager.IsInAllMatchCells(matchGroups, matchingRuleEnabledChunkCell))
                 {
                     ++unresolvedAssetCount;
@@ -338,9 +339,8 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                         }
                     }
                 }
-
-                
-                while(chunkCells.Count > 0)
+                                
+                while(chunkCells.Any())
                 {
                     SLTCell chunkCell = chunkCells[0];
                     int alternativeAssetConfigIndex = Random.Range(0, alternativeMatchAssets.Count);

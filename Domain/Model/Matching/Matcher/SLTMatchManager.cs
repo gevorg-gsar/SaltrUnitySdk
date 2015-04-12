@@ -19,9 +19,9 @@ namespace Saltr.UnitySdk.Domain.Model.Matching.Matcher
     {
         #region Public Methods
 
-        public static Dictionary<SLTMatchPattern, List<List<SLTCell>>> GetMatchGroups(SLTCell[,] cells, string layerToken, int layerIndex)
+        public static Dictionary<SLTMatchPattern, List<List<SLTCell>>> GetMatchGroups(SLTCell[,] cells, string layerToken, int layerIndex, bool squareMatchingRuleEnabled)
         {
-            SLTMatchPatternHelper.InitializePatterns();
+            SLTMatchPatternHelper.InitializePatterns(squareMatchingRuleEnabled);
             SLTMatchPatternHelper.MatchPatterns.OrderBy(p => p.Priority).ToList();
 
             Dictionary<SLTMatchPattern, List<List<SLTCell>>>  matchCells = new Dictionary<SLTMatchPattern, List<List<SLTCell>>>();
