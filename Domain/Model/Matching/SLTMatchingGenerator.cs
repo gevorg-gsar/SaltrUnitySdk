@@ -338,6 +338,25 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                         }
                     }
                 }
+
+                
+                while(chunkCells.Count > 0)
+                {
+                    SLTCell chunkCell = chunkCells[0];
+                    int alternativeAssetConfigIndex = Random.Range(0, alternativeMatchAssets.Count);
+                    SLTAssetConfig alternativeAssetConfig = alternativeMatchAssets.ElementAt<SLTAssetConfig>(alternativeAssetConfigIndex);
+                    SLTMatchingAssetType assetType = assetTypes[alternativeAssetConfig.AssetId];
+
+                    SLTMatchingAsset alternativeAsset = new SLTMatchingAsset()
+                    {
+                        Token = assetType.Token,
+                        State = assetType.States[alternativeAssetConfig.StateId],
+                        Properties = assetType.Properties
+                    };
+
+                    chunkCells.Remove(chunkCell);
+                    chunkCell.SetAsset(layerToken, layerIndex, alternativeAsset);
+                }
             }
         }
     }
