@@ -152,12 +152,12 @@ namespace Saltr.UnitySdk
             //    throw new Exception(ExceptionConstants.AppDataShouldBeInitialized);
             //}
 
-            if (_levelPacks.Count == 0 && !UseNoLevels)
+            if (_levelPacks.IsNullOrEmpty<SLTLevelPack>() && !UseNoLevels)
             {
                 throw new Exception(SLTExceptionConstants.LevelsShouldBeImported);
             }
 
-            if (_defaultFeatures.Count == 0 && !UseNoFeatures)
+            if ((_defaultFeatures == null || _defaultFeatures.Count == 0) && !UseNoFeatures)
             {
                 throw new Exception(SLTExceptionConstants.FeaturesShouldBeDefined);
             }
