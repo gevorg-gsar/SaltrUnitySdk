@@ -340,7 +340,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     }
                 }
 
-                while (chunkCells.Any() && unresolvedAssetCount > 0)
+                while (chunkCells.Any() && unresolvedAssetCount > 0 && !alternativeMatchAssets.IsNullOrEmpty<SLTAssetConfig>())
                 {
                     SLTCell chunkCell = chunkCells[0];
                     int alternativeAssetConfigIndex = Random.Range(0, alternativeMatchAssets.Count);
