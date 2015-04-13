@@ -7,12 +7,12 @@ using System.Linq;
 using Saltr.UnitySdk.Repository;
 using Saltr.UnitySdk.Domain.InternalModel;
 using Saltr.UnitySdk.Utils;
-using Plexonic.Core.Network;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain;
 using Newtonsoft.Json.Serialization;
 using System.Text.RegularExpressions;
 using Saltr.UnitySdk.Domain.Model;
+using Saltr.UnitySdk.Network;
 
 namespace Saltr.UnitySdk
 {
@@ -206,7 +206,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareAppDataRequestParameters(basicProperties, customProperties);
             var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
-            DownloadManager.Instance.AddDownload(url, OnAppDataGotten);
+            SLTDownloadManager.Instance.AddDownload(url, OnAppDataGotten);
         }
 
         public void LoadLevelContent(SLTLevel level, bool useCache = true)
@@ -229,7 +229,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareSyncRequestParameters();
             var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
 
-            DownloadManager.Instance.AddDownload(url, OnSync);
+            SLTDownloadManager.Instance.AddDownload(url, OnSync);
         }
 
         public void RegisterDevice(string email)
@@ -237,7 +237,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareRegisterDeviceRequestParameters(email);
             var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
 
-            DownloadManager.Instance.AddDownload(url, OnRegisterDevice);
+            SLTDownloadManager.Instance.AddDownload(url, OnRegisterDevice);
         }
 
         public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
@@ -250,7 +250,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareAddPropertiesRequestParameters(basicProperties, customProperties);
             var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
-            DownloadManager.Instance.AddDownload(url, OnAddProperties);
+            SLTDownloadManager.Instance.AddDownload(url, OnAddProperties);
         }
 
         #endregion Public Methods
@@ -269,8 +269,7 @@ namespace Saltr.UnitySdk
         {
             string levelContentUrl = string.Format(LevelContentUrlFormat, level.Url, DateTime.Now.ToShortTimeString());
 
-            DownloadManager.Instance.AddDownload(new DownloadRequest(levelContentUrl, OnLoadLevelContentFromSaltr) { StateObject = level });
-            //DownloadManager.Instance.AddDownload(levelContentUrl, OnLoadLevelContentFromSaltr);
+            SLTDownloadManager.Instance.AddDownload(new SLTDownloadRequest(levelContentUrl, OnLoadLevelContentFromSaltr) { StateObject = level });
         }
 
         private SLTInternalLevelContent LoadLevelContentLocally(SLTLevel level, bool useCache = true)
@@ -551,7 +550,7 @@ namespace Saltr.UnitySdk
 
         #region Handlers
 
-        private void OnAppDataGotten(DownloadResult result)
+        private void OnAppDataGotten(SLTDownloadResult result)
         {
             SLTAppData sltAppData = null;
             SLTResponse<SLTAppData> response = JsonConvert.DeserializeObject<SLTResponse<SLTAppData>>(result.Text);
@@ -616,7 +615,7 @@ namespace Saltr.UnitySdk
             _isLoading = false;
         }
 
-        private void OnLoadLevelContentFromSaltr(DownloadResult result)
+        private void OnLoadLevelContentFromSaltr(SLTDownloadResult result)
         {
             SLTLevel level = result.StateObject as SLTLevel;
 
@@ -642,7 +641,7 @@ namespace Saltr.UnitySdk
             }
         }
 
-        private void OnSync(DownloadResult result)
+        private void OnSync(SLTDownloadResult result)
         {
             SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
 
@@ -666,7 +665,7 @@ namespace Saltr.UnitySdk
             }
         }
 
-        private void OnRegisterDevice(DownloadResult result)
+        private void OnRegisterDevice(SLTDownloadResult result)
         {
             SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
 
@@ -693,7 +692,7 @@ namespace Saltr.UnitySdk
             }
         }
 
-        private void OnAddProperties(DownloadResult result)
+        private void OnAddProperties(SLTDownloadResult result)
         {
             SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
 

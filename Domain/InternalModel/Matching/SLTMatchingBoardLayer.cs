@@ -17,7 +17,6 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
         public bool? MatchingRulesEnabled { get; set; }
 
         #endregion
-
        
     }
 }

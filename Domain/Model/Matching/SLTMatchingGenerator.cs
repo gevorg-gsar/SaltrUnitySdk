@@ -47,7 +47,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                 }
 
                 int index = 0;
-                board.Layers.ForEach(layer => layer.RegenerateLayer(boardModel.Cells, assetTypes, index++, board.MatchingRulesEnabled, board.SquareMatchingRuleEnabled, board.AlternativeMatchAssets, board.ExcludedMatchAssets));
+                board.Layers.ForEach(layer => layer.RegenerateLayer(boardModel.Cells, assetTypes, index++, layer.MatchingRulesEnabled, board.SquareMatchingRuleEnabled, board.AlternativeMatchAssets, board.ExcludedMatchAssets));
 
                 return boardModel;
             }
@@ -340,7 +340,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     }
                 }
 
-                while (chunkCells.Any())
+                while (chunkCells.Any() && unresolvedAssetCount > 0)
                 {
                     SLTCell chunkCell = chunkCells[0];
                     int alternativeAssetConfigIndex = Random.Range(0, alternativeMatchAssets.Count);
@@ -356,6 +356,8 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
 
                     chunkCells.Remove(chunkCell);
                     chunkCell.SetAsset(layerToken, layerIndex, alternativeAsset);
+
+                    unresolvedAssetCount--;
                 }
             }
         }

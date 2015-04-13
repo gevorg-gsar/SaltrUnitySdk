@@ -5,11 +5,11 @@ using System;
 using System.Linq;
 using Saltr.UnitySdk;
 using Saltr.UnitySdk.Utils;
-using Plexonic.Core.Network;
 using Saltr.UnitySdk.Domain.InternalModel;
 using Saltr.UnitySdk.Domain;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain.Model;
+using Saltr.UnitySdk.Network;
 
 namespace Saltr.UnitySdk
 {
@@ -180,7 +180,7 @@ namespace Saltr.UnitySdk
             SLTAssetTypeConverter.LevelType = levelType;
 
             gameObject.name = SLTConstants.SaltrGameObjectName;
-            gameObject.AddComponent<DownloadManager>();
+            gameObject.AddComponent<SLTDownloadManager>();
 
             if (string.IsNullOrEmpty(_deviceId))
             {
