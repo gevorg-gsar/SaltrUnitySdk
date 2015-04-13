@@ -21,7 +21,7 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
         [JsonConverter(typeof(StringEnumConverter))]
         public SLTMatchingBoardOrientation? Orientation { get; set; }
 
-        public List<CellProperty> CellProperties { get; set; }
+        public List<SLTCellProperty> CellProperties { get; set; }
 
         public List<List<int>> BlockedCells { get; set; }
 

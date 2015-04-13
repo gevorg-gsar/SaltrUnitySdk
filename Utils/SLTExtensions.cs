@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Saltr.UnitySdk.Utils
 {
-    public static class Extensions
+    public static class SLTExtensions
     {
         public static object GetValue(this Dictionary<string, object> dictionary, string key)
         {

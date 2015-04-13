@@ -136,7 +136,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception(ExceptionConstants.InvalidToken);
+                throw new Exception(SLTExceptionConstants.InvalidToken);
             }
         }
 
@@ -144,7 +144,7 @@ namespace Saltr.UnitySdk
         {
             if (_deviceId == null)
             {
-                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+                throw new Exception(SLTExceptionConstants.DeviceIdIsRequired);
             }
 
             //if (AppData == null)
@@ -154,12 +154,12 @@ namespace Saltr.UnitySdk
 
             if (_levelPacks.Count == 0 && !UseNoLevels)
             {
-                throw new Exception(ExceptionConstants.LevelsShouldBeImported);
+                throw new Exception(SLTExceptionConstants.LevelsShouldBeImported);
             }
 
             if (_defaultFeatures.Count == 0 && !UseNoFeatures)
             {
-                throw new Exception(ExceptionConstants.FeaturesShouldBeDefined);
+                throw new Exception(SLTExceptionConstants.FeaturesShouldBeDefined);
             }
 
             SLTAppData cachedAppData = _repository.GetObjectFromCache<SLTAppData>(SLTConstants.AppDataCacheFileName);
@@ -197,7 +197,7 @@ namespace Saltr.UnitySdk
         {
             if (_isLoading)
             {
-                GetAppDataFail(new SLTErrorStatus { Message = ExceptionConstants.SaltrAppDataLoadRefused });
+                GetAppDataFail(new SLTErrorStatus { Message = SLTExceptionConstants.SaltrAppDataLoadRefused });
                 return;
             }
 
@@ -327,7 +327,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+                throw new Exception(SLTExceptionConstants.DeviceIdIsRequired);
             }
 
             if (SocialId != null)
@@ -379,7 +379,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+                throw new Exception(SLTExceptionConstants.DeviceIdIsRequired);
             }
 
             if (_defaultFeatures != null)
@@ -417,7 +417,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+                throw new Exception(SLTExceptionConstants.DeviceIdIsRequired);
             }
 
             if (!string.IsNullOrEmpty(email))
@@ -426,7 +426,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception(ExceptionConstants.EmailIsRequired);
+                throw new Exception(SLTExceptionConstants.EmailIsRequired);
             }
 
             string deviceModel = SLTConstants.Unknown;
@@ -435,7 +435,7 @@ namespace Saltr.UnitySdk
             //@TODO: Gor check if os value is retrived correctly.
             if (Application.platform == RuntimePlatform.IPhonePlayer)
             {
-                deviceModel = Util.GetHumanReadableIOSDeviceModel(SystemInfo.deviceModel);
+                deviceModel = SLTUtil.GetHumanReadableIOSDeviceModel(SystemInfo.deviceModel);
                 os = SystemInfo.operatingSystem.Replace("Phone ", string.Empty);
             }
             else if (Application.platform == RuntimePlatform.Android)
@@ -496,7 +496,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                throw new Exception(ExceptionConstants.DeviceIdIsRequired);
+                throw new Exception(SLTExceptionConstants.DeviceIdIsRequired);
             }
 
             if (SocialId != null)

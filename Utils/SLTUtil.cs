@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Saltr.UnitySdk.Utils
 {
-    public static class Util
+    public static class SLTUtil
     {
         public const string EmailPattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
 

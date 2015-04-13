@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Saltr.UnitySdk
 {
-    public class ExceptionConstants
+    public class SLTExceptionConstants
     {
         public const string EmailIsRequired = "Email is required.";
         public const string DeviceIdIsRequired = "Field 'deviceId' is required.";

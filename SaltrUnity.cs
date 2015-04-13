@@ -226,7 +226,7 @@ namespace Saltr.UnitySdk
         {
             if (_saltrConnector == null)
             {
-                throw new Exception(ExceptionConstants.SaltrConnectorShouldBeCreated);
+                throw new Exception(SLTExceptionConstants.SaltrConnectorShouldBeCreated);
             }
 
             _saltrConnector.Init();
@@ -473,7 +473,7 @@ namespace Saltr.UnitySdk
                 }
                 if (GUILayout.Button(SLTConstants.GuiSubmit) && !_loading)
                 {
-                    if (Util.IsValidEmail(_email))
+                    if (SLTUtil.IsValidEmail(_email))
                     {
                         _deviceRegistationDialogCallback(_email);
                         _status = SLTConstants.StatusLoading;

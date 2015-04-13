@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 {
-    public class CellProperty
+    public class SLTCellProperty
     {
         public List<int> Coords { get; set; }
 

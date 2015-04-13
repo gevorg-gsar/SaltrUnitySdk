@@ -38,9 +38,9 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     }
                 }
 
-                if (!board.CellProperties.IsNullOrEmpty<CellProperty>())
+                if (!board.CellProperties.IsNullOrEmpty<SLTCellProperty>())
                 {
-                    foreach (CellProperty cellProperty in board.CellProperties)
+                    foreach (SLTCellProperty cellProperty in board.CellProperties)
                     {
                         boardModel.Cells[cellProperty.Coords[1], cellProperty.Coords[0]].Properties = cellProperty.Value;
                     }
