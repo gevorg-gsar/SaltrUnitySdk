@@ -7,6 +7,7 @@ using UnityEngine;
 //using GAFEditor.Utils;
 using Newtonsoft.Json;
 using Saltr.UnitySdk.Domain.InternalModel;
+using Newtonsoft.Json.Converters;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -51,7 +52,7 @@ namespace Saltr.UnitySdk.Repository
             TextAsset textAsset = Resources.Load<TextAsset>(fileName);
             if (textAsset != null)
             {
-                return JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter());
+                return JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter(), new DictionaryConverter());
             }
             else
             {

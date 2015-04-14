@@ -13,6 +13,7 @@ using Newtonsoft.Json.Serialization;
 using System.Text.RegularExpressions;
 using Saltr.UnitySdk.Domain.Model;
 using Saltr.UnitySdk.Network;
+using Newtonsoft.Json.Converters;
 
 namespace Saltr.UnitySdk
 {
@@ -299,7 +300,7 @@ namespace Saltr.UnitySdk
             {
                 levelContent = LoadLevelContentFromCache(level);
             }
-            
+
             if (levelContent == null)
             {
                 levelContent = LoadLevelContentFromApplication(level);
@@ -608,7 +609,8 @@ namespace Saltr.UnitySdk
         private void OnAppDataGotten(SLTDownloadResult result)
         {
             SLTAppData sltAppData = null;
-            SLTResponse<SLTAppData> response = JsonConvert.DeserializeObject<SLTResponse<SLTAppData>>(result.Text);
+
+            SLTResponse<SLTAppData> response = JsonConvert.DeserializeObject<SLTResponse<SLTAppData>>(result.Text, new DictionaryConverter());
 
             if (response != null && !response.Response.IsNullOrEmpty<SLTAppData>())
             {
@@ -674,7 +676,7 @@ namespace Saltr.UnitySdk
         {
             SLTLevel level = result.StateObject as SLTLevel;
 
-            level.InternalLevelContent = JsonConvert.DeserializeObject<SLTInternalLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter());
+            level.InternalLevelContent = JsonConvert.DeserializeObject<SLTInternalLevelContent>(result.Text, new BoardConverter(), new SLTAssetTypeConverter(), new DictionaryConverter());
 
             if (level.InternalLevelContent != null)
             {
@@ -768,7 +770,7 @@ namespace Saltr.UnitySdk
 
         private void OnAddProperties(SLTDownloadResult result)
         {
-            SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
+            SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text, new DictionaryConverter());
 
             if (response != null && !response.Response.IsNullOrEmpty<SLTBaseEntity>())
             {

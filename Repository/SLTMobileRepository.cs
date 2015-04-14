@@ -8,6 +8,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Saltr.UnitySdk.Domain.InternalModel;
+using Newtonsoft.Json.Converters;
 
 namespace Saltr.UnitySdk.Repository
 {
@@ -56,7 +57,7 @@ namespace Saltr.UnitySdk.Repository
 
             TextAsset textAsset = Resources.Load<TextAsset>(filePath);
 
-            return textAsset != null ? JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter()) : null;
+            return textAsset != null ? JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter(), new DictionaryConverter()) : null;
         }
 
         public void CacheObject<T>(string name, T objectToSave, string version = null)
@@ -80,7 +81,7 @@ namespace Saltr.UnitySdk.Repository
         public T GetObjectFromApplication<T>(string fileName) where T : class
         {
             TextAsset textAsset = Resources.Load<TextAsset>(fileName);
-            return textAsset != null ? JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter()) : null;
+            return textAsset != null ? JsonConvert.DeserializeObject<T>(textAsset.text, new BoardConverter(), new SLTAssetTypeConverter(), new DictionaryConverter()) : null;
         }
 
         #endregion Public Methods
@@ -99,7 +100,7 @@ namespace Saltr.UnitySdk.Repository
 
                     if (!string.IsNullOrEmpty(strObject))
                     {
-                        return JsonConvert.DeserializeObject<T>(strObject, new BoardConverter(), new SLTAssetTypeConverter());
+                        return JsonConvert.DeserializeObject<T>(strObject, new BoardConverter(), new SLTAssetTypeConverter(), new DictionaryConverter());
                     }
                 }
                 catch (Exception e)
@@ -122,7 +123,8 @@ namespace Saltr.UnitySdk.Repository
                 var settings = new JsonSerializerSettings()
                 {
                     NullValueHandling = NullValueHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver(),
+                    Converters = { new DictionaryConverter() },
                 };
 
                 File.WriteAllText(filePath, JsonConvert.SerializeObject(objectToSave, Formatting.None, settings));
