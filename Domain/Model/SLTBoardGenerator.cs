@@ -102,7 +102,7 @@ namespace Saltr.UnitySdk.Domain.Model
 
                 foreach (var item in internalBoards)
                 {
-                    item.Value.RegenerateBoard(assetTypes);
+                    boards.Add(item.Key, item.Value.RegenerateBoard(assetTypes));
                 }
 
                 return boards;

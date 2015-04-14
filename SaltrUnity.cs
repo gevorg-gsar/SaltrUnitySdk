@@ -320,8 +320,7 @@ namespace Saltr.UnitySdk
         {
             level.RegenerateBoards();
         }
-
-
+        
         private void SaltrConnector_OnDeviceRegistrationRequired()
         {
             RegisterDevice();
