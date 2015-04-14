@@ -254,7 +254,7 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public virtual void DefineDefaultFeatures(FeatureEntry[] features)
+        public virtual void DefineDefaultFeatures(FeatureEntry[] features = null)
         {
             if (_useNoFeatures)
             {
@@ -263,6 +263,8 @@ namespace Saltr.UnitySdk
 
             if (!IsStarted)
             {
+                _defaultFeatures = features ?? _defaultFeatures;
+
                 foreach (FeatureEntry featureEntry in _defaultFeatures)
                 {
                     Dictionary<string, object> properties = new Dictionary<string, object>();
