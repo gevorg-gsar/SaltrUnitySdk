@@ -181,6 +181,7 @@ namespace Saltr.UnitySdk
             BoardConverter.LevelType = levelType;
             SLTAssetTypeConverter.LevelType = levelType;
 
+            DontDestroyOnLoad(gameObject);
             gameObject.name = SLTConstants.SaltrGameObjectName;
             gameObject.AddComponent<SLTDownloadManager>();
 
