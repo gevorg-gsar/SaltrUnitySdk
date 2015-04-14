@@ -37,6 +37,8 @@ namespace Saltr.UnitySdk
         private bool _isLoading;
         private bool _isAppDataGotten;
 
+        private bool _isHeartBeatEnabled;
+
         private ISLTRepository _repository;
         private List<SLTLevelPack> _levelPacks;
         private List<SLTExperiment> _experiments;
@@ -97,6 +99,8 @@ namespace Saltr.UnitySdk
             _deviceId = deviceId;
             _isLoading = false;
             _isAppDataGotten = false;
+
+            _isHeartBeatEnabled = false;
 
             _levelPacks = new List<SLTLevelPack>();
             _experiments = new List<SLTExperiment>();
@@ -251,6 +255,21 @@ namespace Saltr.UnitySdk
             var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
             SLTDownloadManager.Instance.AddDownload(url, OnAddProperties);
+        }
+
+        public IEnumerator StartHeartBeat(int seconds = 2)
+        {
+            _isHeartBeatEnabled = true;
+
+            while (_isHeartBeatEnabled)
+            {
+                yield return new WaitForSeconds(seconds);
+
+                var urlVars = PrepareHeartBeatRequestParameters();
+                var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
+
+                SLTDownloadManager.Instance.AddDownload(url, OnHeartBeat);
+            }
         }
 
         #endregion Public Methods
@@ -525,6 +544,42 @@ namespace Saltr.UnitySdk
             return urlVars;
         }
 
+        private Dictionary<string, string> PrepareHeartBeatRequestParameters()
+        {
+            Dictionary<string, string> urlVars = new Dictionary<string, string>();
+            urlVars[SLTConstants.UrlParamAction] = SLTConstants.ActionHeartBeat;
+
+            SLTRequestArguments args = new SLTRequestArguments();
+            args.ApiVersion = ApiVersion;
+            args.Client = Client;
+            args.ClientKey = _clientKey;
+
+            if (!string.IsNullOrEmpty(SocialId))
+            {
+                args.SocialId = SocialId;
+            }
+
+            if (_deviceId != null)
+            {
+                args.DeviceId = _deviceId;
+                urlVars[SLTConstants.DeviceId] = _deviceId;
+            }
+            else
+            {
+                throw new Exception(SLTExceptionConstants.DeviceIdIsRequired);
+            }
+
+            var settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesExceptDictionaryKeysContractResolver()
+            };
+
+            urlVars[SLTConstants.UrlParamArguments] = JsonConvert.SerializeObject(args.RawData, Formatting.None, settings);
+
+            return urlVars;
+        }
+
         private string FillRequestPrameters(string url, Dictionary<string, string> parameters)
         {
             if (parameters != null)
@@ -661,6 +716,25 @@ namespace Saltr.UnitySdk
                 else
                 {
                     _isSynced = true;
+                }
+            }
+        }
+
+        private void OnHeartBeat(SLTDownloadResult result)
+        {
+            SLTResponse<SLTBaseEntity> response = JsonConvert.DeserializeObject<SLTResponse<SLTBaseEntity>>(result.Text);
+
+            if (response != null && !response.Response.IsNullOrEmpty<SLTBaseEntity>())
+            {
+                SLTBaseEntity sltStatusEntity = response.Response.FirstOrDefault<SLTBaseEntity>();
+
+                if (!sltStatusEntity.Success.HasValue || (sltStatusEntity.Success.HasValue && !sltStatusEntity.Success.Value))
+                {
+                    _isHeartBeatEnabled = false;
+                }
+                else
+                {
+                    _isHeartBeatEnabled = true;
                 }
             }
         }

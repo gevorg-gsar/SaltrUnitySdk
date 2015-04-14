@@ -23,6 +23,8 @@ namespace Saltr.UnitySdk
 
         private SaltrConnector _saltrConnector;
 
+        private Coroutine _heartBeat;
+
         [SerializeField]
         private SLTLevelType levelType = SLTLevelType.NoLevels;
 
@@ -198,10 +200,12 @@ namespace Saltr.UnitySdk
             _saltrConnector.UseNoLevels = _useNoLevels;
             _saltrConnector.UseNoFeatures = _useNoFeatures;
 
+            _saltrConnector.GetAppDataSuccess -= SaltrConnector_GetAppDataSuccess;
+            _saltrConnector.GetAppDataSuccess += SaltrConnector_GetAppDataSuccess;
             _saltrConnector.RegisterDeviceSuccess -= SaltrConnector_RegisterDeviceSuccess;
             _saltrConnector.RegisterDeviceSuccess += SaltrConnector_RegisterDeviceSuccess;
-            _saltrConnector.LoadLevelContentSuccess -= SaltrConnector_LoadLevelContentSuccess; 
-            _saltrConnector.LoadLevelContentSuccess += SaltrConnector_LoadLevelContentSuccess; 
+            _saltrConnector.LoadLevelContentSuccess -= SaltrConnector_LoadLevelContentSuccess;
+            _saltrConnector.LoadLevelContentSuccess += SaltrConnector_LoadLevelContentSuccess;
             _saltrConnector.DeviceRegistrationRequired -= SaltrConnector_OnDeviceRegistrationRequired;
             _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
 
@@ -327,7 +331,17 @@ namespace Saltr.UnitySdk
         {
             HideDeviceRegistationDialog();
         }
-        
+
+        private void SaltrConnector_GetAppDataSuccess(SLTAppData obj)
+        {
+            if (_heartBeat != null)
+            {
+                StopCoroutine(_heartBeat);
+            }
+
+            _heartBeat = StartCoroutine(_saltrConnector.StartHeartBeat());
+        }
+
         #endregion Event Handlers
 
         #region Saltr Connector Methods/Properties
@@ -390,13 +404,13 @@ namespace Saltr.UnitySdk
             {
                 return (ActiveFeatures[token]).Properties as Dictionary<string, object>;
             }
-            else if(DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired.HasValue && DefaultFeatures[token].IsRequired.Value)
+            else if (DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired.HasValue && DefaultFeatures[token].IsRequired.Value)
             {
                 return (DefaultFeatures[token]).Properties as Dictionary<string, object>;
             }
 
             return null;
-        }        
+        }
 
         #endregion  Saltr Connector Methods/Properties
 
