@@ -285,7 +285,7 @@ namespace Saltr.UnitySdk
 
         #region Public Methods
 
-        public virtual void Init()
+        public virtual void Init() /// Initializes Saltr engine.
         {
             if (_saltrConnector == null)
             {
@@ -296,7 +296,7 @@ namespace Saltr.UnitySdk
             IsStarted = true;
         }
 
-        public virtual void ImportLevels(string path)
+        public virtual void ImportLevels(string path) /// Imports local levels from application. Should be called before Init call if useNoLevels is set to false otherwide no need to call this method.
         {
             if (_useNoLevels)
             {
@@ -313,7 +313,7 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public virtual void DefineDefaultFeatures(FeatureEntry[] features = null)
+        public virtual void DefineDefaultFeatures(FeatureEntry[] features = null) /// Defines default features. If the feature is required then it's synced with Saltr. Should be called before Init call if useNoFeatures is set to false otherwise no need to call this method.
         {
             if (_useNoFeatures)
             {
@@ -341,22 +341,22 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public virtual void DefineDefaultFeature(string token, Dictionary<string, object> properties, bool isRequired)
+        public virtual void DefineDefaultFeature(string token, Dictionary<string, object> properties, bool isRequired) /// Define default feature. Also called within DefineDefaultFeatures method.
         {
             _saltrConnector.DefineDefaultFeature(token, properties, isRequired);
         }
 
-        public virtual void GetAppData()
+        public virtual void GetAppData() /// Loads application data from server or uses cached data.
         {
             _saltrConnector.GetAppData();
         }
 
-        public virtual void LodLevelContent(SLTLevel level)
+        public virtual void LodLevelContent(SLTLevel level) /// Loads specified level content from Saltr or from cached data.
         {
             _saltrConnector.LoadLevelContent(level, _useCache);
         }
 
-        public virtual void RegisterDevice()
+        public virtual void RegisterDevice() /// Device registration dialog is shown. Should be called after Init call.
         {
             if (!IsStarted)
             {
@@ -368,7 +368,7 @@ namespace Saltr.UnitySdk
             }
         }
 
-        public virtual void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
+        public virtual void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null) /// Add properties to saltr.
         {
             _saltrConnector.AddProperties(basicProperties, customProperties);
         }
@@ -407,7 +407,7 @@ namespace Saltr.UnitySdk
         #region Nested Classes
 
         [System.Serializable]
-        public class FeatureEntry
+        public class FeatureEntry /// Used to represent feature
         {
             public string token = string.Empty;
             public PropertyEntry[] properties = null;
@@ -415,7 +415,7 @@ namespace Saltr.UnitySdk
         }
 
         [System.Serializable]
-        public class PropertyEntry
+        public class PropertyEntry /// Used to represent feature properties
         {
             public string key = string.Empty;
             public string value = string.Empty;
