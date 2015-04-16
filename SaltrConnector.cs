@@ -76,7 +76,7 @@ namespace Saltr.UnitySdk
 
         public event Action DeviceRegistrationRequired = delegate() { };
 
-        public event Action<SLTAppData> GetAppDataSuccess = delegate(SLTAppData appData) { };
+        public event Action GetAppDataSuccess = delegate() { };
         public event Action<SLTErrorStatus> GetAppDataFail = delegate(SLTErrorStatus errorStatus) { };
 
         public event Action<SLTLevel> LoadLevelContentSuccess = delegate(SLTLevel sltLevel) { };
@@ -650,7 +650,7 @@ namespace Saltr.UnitySdk
                     _isAppDataGotten = true;
                     _repository.CacheObject<SLTAppData>(SLTConstants.AppDataCacheFileName, sltAppData);
 
-                    GetAppDataSuccess(sltAppData);
+                    GetAppDataSuccess();
 
                     Debug.Log("[SALTR] AppData load success.");
 

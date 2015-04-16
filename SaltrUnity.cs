@@ -118,12 +118,12 @@ namespace Saltr.UnitySdk
             get { return _saltrConnector.Experiments; }
         }
 
-        public Dictionary<string, SLTFeature> ActiveFeatures /// Represents current active features. Default Features are used when there's no internet connection available otherwise syncs with Saltr.
+        private Dictionary<string, SLTFeature> ActiveFeatures /// Represents current active features. Default Features are used when there's no internet connection available otherwise syncs with Saltr.
         {
             get { return _saltrConnector.ActiveFeatures; }
         }
 
-        public Dictionary<string, SLTFeature> DefaultFeatures /// Represents default features which are used locally when there's no internet connection.
+        private Dictionary<string, SLTFeature> DefaultFeatures /// Represents default features which are used locally when there's no internet connection.
         {
             get { return _saltrConnector.DefaultFeatures; }
         }
@@ -155,11 +155,6 @@ namespace Saltr.UnitySdk
             return LevelPacks.FirstOrDefault<SLTLevelPack>(lp => lp.Levels.Contains<SLTLevel>(levelByIndex));
         }
 
-        public List<string> GetActiveFeatureTokens() /// Gets list of all active feature tokens.
-        {
-            return ActiveFeatures.Keys.ToList<String>();
-        }
-
         public Dictionary<string, object> GetFeatureProperties(string token) /// Gets feature properties with specified token.
         {
             if (ActiveFeatures.ContainsKey(token))
@@ -178,7 +173,7 @@ namespace Saltr.UnitySdk
 
         #region Events
 
-        public event Action<SLTAppData> GetAppDataSuccess /// Event fires when app data is gotten.
+        public event Action GetAppDataSuccess /// Event fires when app data is gotten.
         {
             add { _saltrConnector.GetAppDataSuccess += value; }
             remove { _saltrConnector.GetAppDataSuccess -= value; }
@@ -397,7 +392,7 @@ namespace Saltr.UnitySdk
             HideDeviceRegistationDialog();
         }
 
-        private void SaltrConnector_GetAppDataSuccess(SLTAppData obj)
+        private void SaltrConnector_GetAppDataSuccess()
         {
             if (_heartBeat != null)
             {
