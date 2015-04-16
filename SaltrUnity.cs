@@ -21,60 +21,53 @@ namespace Saltr.UnitySdk
     {
         #region Fields
 
+        private Coroutine _heartBeat;
         private SaltrConnector _saltrConnector;
 
-        private Coroutine _heartBeat;
+        [SerializeField]
+        private SLTLevelType _levelType = SLTLevelType.NoLevels; /// Specifies the type of the game: Matching, Canvas2D, etc...
 
         [SerializeField]
-        private SLTLevelType levelType = SLTLevelType.NoLevels;
+        private string _clientKey = string.Empty; /// Client key provided by Saltr.
 
         [SerializeField]
-        private string _clientKey = string.Empty;
+        private string _deviceId = string.Empty; /// Device Identifier: Provided device identifier is used otherwise gets current device identifier.
 
         [SerializeField]
-        private string _deviceId = string.Empty;
+        private string _socialId = string.Empty; /// Social Identifier: FacebookId, GoogleId, etc...
 
         [SerializeField]
-        private string _socialId = string.Empty;
+        private bool _autoStart = false; /// If is set to true ImportLevels, DefineDefaultFeatures and Init methods are called during application start.
 
         [SerializeField]
-        private bool _autoStart = false;
+        private bool _isDevMode = false; /// Indicates if the game is in development mode. If set true, developer features are synced with the saltr after app data is gotten. 
 
         [SerializeField]
-        private bool _isDevMode = false;
+        private bool _isAutoRegisteredDevice = true; /// If set to true, device registration dialog is shown.
 
         [SerializeField]
-        private bool _isAutoRegisteredDevice = true;
+        private bool _useCache = true; /// Specifies if the level contents should be cached locally.
 
         [SerializeField]
-        private bool _useCache = true;
+        private bool _useNoLevels = false; /// Specifies if the game uses levels or no. If set to true, ImportLevels should be called before Init.
 
         [SerializeField]
-        private bool _useNoLevels = false;
+        private bool _useNoFeatures = false; /// Specifies if the game uses features or no. If set to true, DefineDefaultFeatures should be called before Init.
+
+        //[SerializeField]
+        //private int _timeout = 0;
 
         [SerializeField]
-        private bool _useNoFeatures = false;
+        private string _localLevelPacksPath = SLTConstants.LocalLevelPacksPath; /// Specifies Path to local level_packs gotten from Saltr.
 
         [SerializeField]
-        private int _timeout = 0;
-
-        [SerializeField]
-        private string _localLevelPacksPath = SLTConstants.LocalLevelPacksPath;
-
-        [SerializeField]
-        private FeatureEntry[] _defaultFeatures = null;
+        private FeatureEntry[] _defaultFeatures = null; /// Specifies Default Features for the game. This features will be synced with Saltr.
 
         #endregion Fields
 
         #region Properties
 
-        public SaltrConnector SaltrConnector
-        {
-            get { return _saltrConnector; }
-            protected set { _saltrConnector = value; }
-        }
-
-        public bool IsStarted { get; private set; }
+        public bool IsStarted { get; private set; } /// Indicates if Init method is called.
 
         public string SocialId
         {
@@ -82,19 +75,19 @@ namespace Saltr.UnitySdk
             get { return _socialId; }
         }
 
-        public bool UseNoFeatures
+        public bool UseNoFeatures /// Specifies if the game uses features or no. If set to true, DefineDefaultFeatures should be called before Init.
         {
             set { _useNoFeatures = value; }
             get { return _useNoFeatures; }
         }
 
-        public bool UseNoLevels
+        public bool UseNoLevels /// Specifies if the game uses levels or no. If set to true, ImportLevels should be called before Init.
         {
             set { _useNoLevels = value; }
             get { return _useNoLevels; }
         }
 
-        public bool IsDevMode
+        public bool IsDevMode /// Indicates if the game is in development mode. If set true, developer features are synced with the saltr after app data is gotten. 
         {
             set { _isDevMode = value; }
             get { return _isDevMode; }
@@ -104,7 +97,7 @@ namespace Saltr.UnitySdk
         {
             set { _isAutoRegisteredDevice = value; }
             get { return _isAutoRegisteredDevice; }
-        }
+        } /// If set to true, device registration dialog is shown.
 
         //public int RequestIdleTimeout
         //{
@@ -113,57 +106,127 @@ namespace Saltr.UnitySdk
 
         #endregion
 
-        #region Events
+        #region Saltr Connector Methods/Properties
 
-        public event Action DeviceRegistrationRequired
+        public List<SLTLevelPack> LevelPacks /// Level Packs: Each level pack contains a list of levels.
         {
-            add { _saltrConnector.DeviceRegistrationRequired += value; }
-            remove { _saltrConnector.DeviceRegistrationRequired -= value; }
+            get { return _saltrConnector.LevelPacks; }
         }
 
-        public event Action<SLTAppData> GetAppDataSuccess
+        public List<SLTExperiment> Experiments /// Experiments which should be configured in Saltr.
+        {
+            get { return _saltrConnector.Experiments; }
+        }
+
+        public Dictionary<string, SLTFeature> ActiveFeatures /// Represents current active features. Default Features are used when there's no internet connection available otherwise syncs with Saltr.
+        {
+            get { return _saltrConnector.ActiveFeatures; }
+        }
+
+        public Dictionary<string, SLTFeature> DefaultFeatures /// Represents default features which are used locally when there's no internet connection.
+        {
+            get { return _saltrConnector.DefaultFeatures; }
+        }
+
+        public List<SLTLevel> AllLevels /// Represents a all levels in a raw list.
+        {
+            get
+            {
+                return LevelPacks.SelectMany(lp => lp.Levels).ToList<SLTLevel>();
+            }
+        }
+
+        public int AllLevelsCount /// All levels count.
+        {
+            get
+            {
+                return LevelPacks.Sum(lp => lp.Levels.Count);
+            }
+        }
+
+        public SLTLevel GetLevelByGlobalIndex(int index) ///Gets level by global index.
+        {
+            return AllLevels.ElementAt<SLTLevel>(index);
+        }
+
+        public SLTLevelPack GetPackByLevelGlobalIndex(int index) /// Gets level pack of the level with index.
+        {
+            SLTLevel levelByIndex = GetLevelByGlobalIndex(index);
+            return LevelPacks.FirstOrDefault<SLTLevelPack>(lp => lp.Levels.Contains<SLTLevel>(levelByIndex));
+        }
+
+        public List<string> GetActiveFeatureTokens() /// Gets list of all active feature tokens.
+        {
+            return ActiveFeatures.Keys.ToList<String>();
+        }
+
+        public Dictionary<string, object> GetFeatureProperties(string token) /// Gets feature properties with specified token.
+        {
+            if (ActiveFeatures.ContainsKey(token))
+            {
+                return (ActiveFeatures[token]).Properties as Dictionary<string, object>;
+            }
+            else if (DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired.HasValue && DefaultFeatures[token].IsRequired.Value)
+            {
+                return (DefaultFeatures[token]).Properties as Dictionary<string, object>;
+            }
+
+            return null;
+        }
+
+        #endregion  Saltr Connector Methods/Properties
+
+        #region Events
+
+        public event Action<SLTAppData> GetAppDataSuccess /// Event fires when app data is gotten.
         {
             add { _saltrConnector.GetAppDataSuccess += value; }
             remove { _saltrConnector.GetAppDataSuccess -= value; }
         }
 
-        public event Action<SLTErrorStatus> GetAppDataFail
+        public event Action<SLTErrorStatus> GetAppDataFail /// Event fires when app data retrival is failed. Error status contains fail information.
         {
             add { _saltrConnector.GetAppDataFail += value; }
             remove { _saltrConnector.GetAppDataFail -= value; }
         }
 
-        public event Action<SLTLevel> LoadLevelContentSuccess
+        public event Action<SLTLevel> LoadLevelContentSuccess /// Event fires after successfuly level content load.
         {
             add { _saltrConnector.LoadLevelContentSuccess += value; }
             remove { _saltrConnector.LoadLevelContentSuccess -= value; }
         }
 
-        public event Action<SLTErrorStatus> LoadLevelConnectFail
+        public event Action<SLTErrorStatus> LoadLevelConnectFail /// Event fires when level load is failed. Error status contains fail information.
         {
             add { _saltrConnector.LoadLevelConnectFail += value; }
             remove { _saltrConnector.LoadLevelConnectFail -= value; }
         }
 
-        public event Action RegisterDeviceSuccess
+        public event Action DeviceRegistrationRequired /// Event fires when device registration is needed. Same time device registration dialog is shown.
+        {
+            add { _saltrConnector.DeviceRegistrationRequired += value; }
+            remove { _saltrConnector.DeviceRegistrationRequired -= value; }
+        }
+
+        public event Action RegisterDeviceSuccess /// Event fires after successful device registration.
         {
             add { _saltrConnector.RegisterDeviceSuccess += value; }
             remove { _saltrConnector.RegisterDeviceSuccess -= value; }
         }
 
-        public event Action<SLTErrorStatus> RegisterDeviceFail
+        public event Action<SLTErrorStatus> RegisterDeviceFail /// Event fires after failed device registration. Error status contains fail information.
         {
             add { _saltrConnector.RegisterDeviceFail += value; }
             remove { _saltrConnector.RegisterDeviceFail -= value; }
         }
 
-        public event Action AddPropertiesSuccess
+        public event Action AddPropertiesSuccess /// Event fires after successful AddProperties call.
         {
             add { _saltrConnector.AddPropertiesSuccess += value; }
             remove { _saltrConnector.AddPropertiesSuccess -= value; }
         }
 
-        public event Action<SLTErrorStatus> AddPropertiesFail
+        public event Action<SLTErrorStatus> AddPropertiesFail  /// Event fires after failed AddProperties call. Error status contains fail information.
         {
             add { _saltrConnector.AddPropertiesFail += value; }
             remove { _saltrConnector.AddPropertiesFail -= value; }
@@ -173,13 +236,13 @@ namespace Saltr.UnitySdk
 
         #region MonoBehaviour
 
-        protected virtual void Awake()
+        protected virtual void Awake() /// Used to initialize SaltrUnity. Is called automatically after script is added to a game object.
         {
             if (_saltrConnector != null)
                 return;
 
-            BoardConverter.LevelType = levelType;
-            SLTAssetTypeConverter.LevelType = levelType;
+            BoardConverter.LevelType = _levelType;
+            SLTAssetTypeConverter.LevelType = _levelType;
 
             DontDestroyOnLoad(gameObject);
             gameObject.name = SLTConstants.SaltrGameObjectName;
@@ -212,7 +275,7 @@ namespace Saltr.UnitySdk
 
         }
 
-        protected virtual void Start()
+        protected virtual void Start() /// Start is called after awake automatically. When _autoStart is set to true then ImportLevels, DefineDefaultFeatures and Init are called.
         {
             if (_autoStart)
             {
@@ -293,9 +356,9 @@ namespace Saltr.UnitySdk
             _saltrConnector.GetAppData();
         }
 
-        public virtual void LodLevelContent(SLTLevel level, bool useCache = true)
+        public virtual void LodLevelContent(SLTLevel level)
         {
-            _saltrConnector.LoadLevelContent(level, useCache);
+            _saltrConnector.LoadLevelContent(level, _useCache);
         }
 
         public virtual void RegisterDevice()
@@ -306,7 +369,7 @@ namespace Saltr.UnitySdk
             }
             else
             {
-                ShowDeviceRegistationDialog(SaltrConnector.RegisterDevice);
+                ShowDeviceRegistationDialog(_saltrConnector.RegisterDevice);
             }
         }
 
@@ -345,77 +408,7 @@ namespace Saltr.UnitySdk
         }
 
         #endregion Event Handlers
-
-        #region Saltr Connector Methods/Properties
-
-        public List<SLTLevelPack> LevelPacks
-        {
-            get { return _saltrConnector.LevelPacks; }
-        }
-
-        public List<SLTExperiment> Experiments
-        {
-            get { return _saltrConnector.Experiments; }
-        }
-
-        public Dictionary<string, SLTFeature> ActiveFeatures
-        {
-            get { return _saltrConnector.ActiveFeatures; }
-        }
-
-        public Dictionary<string, SLTFeature> DefaultFeatures
-        {
-            get { return _saltrConnector.DefaultFeatures; }
-        }
-
-        public List<SLTLevel> AllLevels
-        {
-            get
-            {
-                return LevelPacks.SelectMany(lp => lp.Levels).ToList<SLTLevel>();
-            }
-        }
-
-        public int AllLevelsCount
-        {
-            get
-            {
-                return LevelPacks.Sum(lp => lp.Levels.Count);
-            }
-        }
-
-        public SLTLevel GetLevelByGlobalIndex(int index)
-        {
-            return AllLevels.ElementAt<SLTLevel>(index);
-        }
-
-        public SLTLevelPack GetPackByLevelGlobalIndex(int index)
-        {
-            SLTLevel levelByIndex = GetLevelByGlobalIndex(index);
-            return LevelPacks.FirstOrDefault<SLTLevelPack>(lp => lp.Levels.Contains<SLTLevel>(levelByIndex));
-        }
-
-        public List<string> GetActiveFeatureTokens()
-        {
-            return ActiveFeatures.Keys.ToList<String>();
-        }
-
-        public Dictionary<string, object> GetFeatureProperties(string token)
-        {
-            if (ActiveFeatures.ContainsKey(token))
-            {
-                return (ActiveFeatures[token]).Properties as Dictionary<string, object>;
-            }
-            else if (DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired.HasValue && DefaultFeatures[token].IsRequired.Value)
-            {
-                return (DefaultFeatures[token]).Properties as Dictionary<string, object>;
-            }
-
-            return null;
-        }
-
-        #endregion  Saltr Connector Methods/Properties
-
+       
         #region Nested Classes
 
         [System.Serializable]
