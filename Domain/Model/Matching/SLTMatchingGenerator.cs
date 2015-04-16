@@ -14,12 +14,11 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
     {
         public static SLTMatchingBoard RegenerateBoard(this SLTInternalMatchingBoard board, Dictionary<string, SLTMatchingAssetType> assetTypes)
         {
-            if (board.Rows.HasValue && board.Rows.Value > 0
-                && board.Cols.HasValue && board.Cols.Value > 0)
+            if (board.Rows > 0 && board.Cols > 0)
             {
                 SLTMatchingBoard boardModel = new SLTMatchingBoard();
-                boardModel.Rows = board.Rows.Value;
-                boardModel.Cols = board.Cols.Value;
+                boardModel.Rows = board.Rows;
+                boardModel.Cols = board.Cols;
                 boardModel.Cells = new SLTCell[boardModel.Rows, boardModel.Cols];
 
                 for (int row = 0; row < boardModel.Cells.GetLength(0); row++)
@@ -56,16 +55,16 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         }
 
         private static void RegenerateLayer(this SLTMatchingBoardLayer boardLayer, SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes, int index,
-            bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
             boardLayer.Index = index;
 
-            boardLayer.FixedAssets.ForEach(fa => RegenerateLayerFixedAsset(fa, boardCells, assetTypes, boardLayer.Token, boardLayer.Index.Value, matchingRulesEnabled, squareMatchingRuleEnabled, alternativeMatchAssets, excludedMatchAssets));
-            boardLayer.Chunks.ForEach(chunk => chunk.RegenerateChunkContent(boardLayer.Token, boardLayer.Index.Value, boardCells, assetTypes, matchingRulesEnabled, squareMatchingRuleEnabled, alternativeMatchAssets, excludedMatchAssets));
+            boardLayer.FixedAssets.ForEach(fa => RegenerateLayerFixedAsset(fa, boardCells, assetTypes, boardLayer.Token, boardLayer.Index, matchingRulesEnabled, squareMatchingRuleEnabled, alternativeMatchAssets, excludedMatchAssets));
+            boardLayer.Chunks.ForEach(chunk => chunk.RegenerateChunkContent(boardLayer.Token, boardLayer.Index, boardCells, assetTypes, matchingRulesEnabled, squareMatchingRuleEnabled, alternativeMatchAssets, excludedMatchAssets));
         }
 
         private static void RegenerateLayerFixedAsset(SLTMatchingFixedAssetConfig fixedAssetConfig, SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex,
-            bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
             SLTMatchingAssetType assetType = assetTypes[fixedAssetConfig.AssetId];
             foreach (List<int> position in fixedAssetConfig.Cells)
@@ -77,7 +76,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         }
 
         public static void RegenerateChunkContent(this SLTChunk chunk, string layerToken, int layerIndex, SLTCell[,] boardCells, Dictionary<string, SLTMatchingAssetType> assetTypes,
-            bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
             List<SLTCell> chunkCells = chunk.FilterChunkCells(boardCells);
 
@@ -134,7 +133,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         }
 
         private static int GenerateChunkAssetsRandomly(List<SLTChunkAssetConfig> chunkAssetConfigs, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex,
-            SLTCell[,] boardCells, bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            SLTCell[,] boardCells, bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
             int unresolvedAssetCount = 0;
 
@@ -174,14 +173,14 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         }
 
         private static int GenerateChunkAssetsByRatio(List<SLTChunkAssetConfig> chunkAssets, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex,
-            SLTCell[,] boardCells, bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            SLTCell[,] boardCells, bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
             int unresolvedAssetCount = 0;
 
             if (!chunkAssets.IsNullOrEmpty<SLTChunkAssetConfig>())
             {
                 float ratioSum = 0;
-                chunkAssets.ForEach(chunkAsset => ratioSum += chunkAsset.DistributionValue.Value);
+                chunkAssets.ForEach(chunkAsset => ratioSum += chunkAsset.DistributionValue);
 
                 int availableCellsCount = chunkCells.Count;
 
@@ -198,7 +197,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                             return unresolvedAssetCount;
                         }
 
-                        proportion = chunkAssetConfig.DistributionValue.Value * availableCellsCount / ratioSum;
+                        proportion = chunkAssetConfig.DistributionValue * availableCellsCount / ratioSum;
                         toBeGeneratedAssetsCount = UnityEngine.Mathf.FloorToInt(proportion);
 
                         TempAssetFraction fractObject = new TempAssetFraction()
@@ -227,20 +226,20 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         }
 
         private static int GenerateChunkAssetsByCount(List<SLTChunkAssetConfig> chunkAssetConfigs, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex,
-            SLTCell[,] boardCells, bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            SLTCell[,] boardCells, bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
             int unresolvedAssetCount = 0;
 
             if (!chunkAssetConfigs.IsNullOrEmpty<SLTChunkAssetConfig>())
             {
-                chunkAssetConfigs.ForEach(chunkAssetConfig => unresolvedAssetCount += GenerateChunkAssets(chunkAssetConfig.DistributionValue.Value, chunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex, boardCells, matchingRulesEnabled, squareMatchingRuleEnabled, excludedMatchAssets));
+                chunkAssetConfigs.ForEach(chunkAssetConfig => unresolvedAssetCount += GenerateChunkAssets(chunkAssetConfig.DistributionValue, chunkAssetConfig, chunkCells, assetTypes, layerToken, layerIndex, boardCells, matchingRulesEnabled, squareMatchingRuleEnabled, excludedMatchAssets));
             }
 
             return unresolvedAssetCount;
         }
 
         private static int GenerateChunkAssets(int count, SLTChunkAssetConfig chunkAssetConfig, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, string layerToken, int layerIndex,
-            SLTCell[,] boardCells, bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> excludedMatchAssets)
+            SLTCell[,] boardCells, bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> excludedMatchAssets)
         {
             int unresolvedAssetCount = 0;
             SLTMatchingAssetType assetType = assetTypes[chunkAssetConfig.AssetId];
@@ -268,16 +267,16 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     chunkCells.Remove(randomCell);
                     randomCell.SetAsset(layerToken, layerIndex, matchingAsset);
 
-                    if (matchingRulesEnabled.HasValue && matchingRulesEnabled.Value
+                    if (matchingRulesEnabled 
                         && !excludedMatchAssets.Any(sltConfig => (sltConfig.AssetId == chunkAssetConfig.AssetId && sltConfig.StateId == chunkAssetConfig.StateId)))
                     {
-                        Dictionary<SLTMatchPattern, List<List<SLTCell>>> matchGroups = SLTMatchManager.GetMatchGroups(boardCells, layerToken, layerIndex, squareMatchingRuleEnabled.Value);
+                        Dictionary<SLTMatchPattern, List<List<SLTCell>>> matchGroups = SLTMatchManager.GetMatchGroups(boardCells, layerToken, layerIndex, squareMatchingRuleEnabled);
                         if (SLTMatchManager.IsInAllMatchCells(matchGroups, randomCell))
                         {
                             chunkCells.Add(randomCell);
                             randomCell.RemoveAsset(layerToken, layerIndex);
 
-                            unresolvedAssetCount += CorrectGeneratedAsssetsToMatchRules(boardCells, chunkCells, matchingAsset, layerToken, layerIndex, squareMatchingRuleEnabled.Value);
+                            unresolvedAssetCount += CorrectGeneratedAsssetsToMatchRules(boardCells, chunkCells, matchingAsset, layerToken, layerIndex, squareMatchingRuleEnabled);
                         }
                     }
                 }
@@ -321,10 +320,9 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         }
 
         public static void CorrectRemainingChunkCellsToMatchRules(SLTCell[,] boardCells, List<SLTCell> chunkCells, Dictionary<string, SLTMatchingAssetType> assetTypes, List<SLTChunkAssetConfig> chunkAssetConfigs, string layerToken, int layerIndex, int unresolvedAssetCount,
-            bool? matchingRulesEnabled, bool? squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
+            bool matchingRulesEnabled, bool squareMatchingRuleEnabled, List<SLTAssetConfig> alternativeMatchAssets, List<SLTAssetConfig> excludedMatchAssets)
         {
-            if ((matchingRulesEnabled.HasValue && matchingRulesEnabled.Value)
-                || squareMatchingRuleEnabled.HasValue && squareMatchingRuleEnabled.Value)
+            if (matchingRulesEnabled || squareMatchingRuleEnabled)
             {
                 int chunkCellsCount = chunkCells.Count;
                 for (int i = 0; (i < chunkCellsCount && unresolvedAssetCount > 0); i++)

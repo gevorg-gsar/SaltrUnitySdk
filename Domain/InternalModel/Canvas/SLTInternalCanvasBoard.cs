@@ -12,9 +12,9 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Canvas
 
         public List<SLTCanvasBoardLayer> Layers { get; set; }
 
-        public float? Width { get; set; }
+        public float Width { get; set; }
 
-        public float? Height { get; set; }
+        public float Height { get; set; }
 
         #endregion Properties
     }

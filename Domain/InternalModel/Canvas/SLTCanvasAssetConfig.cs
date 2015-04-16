@@ -8,10 +8,10 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Canvas
 {
     public class SLTCanvasAssetConfig : SLTAssetConfig
     {
-        public float? X { get; set; }
+        public float X { get; set; }
 
-        public float? Y { get; set; }
+        public float Y { get; set; }
 
-        public float? Rotation { get; set; }
+        public float Rotation { get; set; }
     }
 }

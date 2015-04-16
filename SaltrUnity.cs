@@ -161,7 +161,7 @@ namespace Saltr.UnitySdk
             {
                 return (ActiveFeatures[token]).Properties as Dictionary<string, object>;
             }
-            else if (DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired.HasValue && DefaultFeatures[token].IsRequired.Value)
+            else if (DefaultFeatures.ContainsKey(token) && DefaultFeatures[token].IsRequired)
             {
                 return (DefaultFeatures[token]).Properties as Dictionary<string, object>;
             }

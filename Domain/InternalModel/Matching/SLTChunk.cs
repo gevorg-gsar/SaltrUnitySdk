@@ -14,7 +14,7 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 
         #region Properties
 
-        public int? ChunkId { get; set; }
+        public int ChunkId { get; set; }
 
         public List<List<int>> Cells { get; set; }
 

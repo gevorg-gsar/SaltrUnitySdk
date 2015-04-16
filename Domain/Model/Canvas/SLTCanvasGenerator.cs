@@ -17,8 +17,8 @@ namespace Saltr.UnitySdk.Domain.Model.Canvas
 
             boardModel.Width = board.Width;
             boardModel.Height = board.Height;
+            boardModel.AssetsByLayerIndex = new Dictionary<int, List<SLTCanvasAsset>>();
             boardModel.AssetsByLayerToken = new Dictionary<string, List<SLTCanvasAsset>>();
-            boardModel.AssetsByLayerIndex = new Dictionary<string, List<SLTCanvasAsset>>();
 
             int index = 0;
             board.Layers.ForEach(layer =>
@@ -26,7 +26,7 @@ namespace Saltr.UnitySdk.Domain.Model.Canvas
                 List<SLTCanvasAsset> canvasAssets = layer.RegenerateLayer(assetTypes, index++);
 
                 boardModel.AssetsByLayerToken.Add(layer.Token, canvasAssets);
-                boardModel.AssetsByLayerIndex.Add(layer.Index.Value.ToString(), canvasAssets);
+                boardModel.AssetsByLayerIndex.Add(layer.Index, canvasAssets);
             });
 
             return boardModel;

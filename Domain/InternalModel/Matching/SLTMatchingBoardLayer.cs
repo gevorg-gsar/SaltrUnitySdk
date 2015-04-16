@@ -14,7 +14,7 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
 
         public List<SLTMatchingFixedAssetConfig> FixedAssets { get; set; }
 
-        public bool? MatchingRulesEnabled { get; set; }
+        public bool MatchingRulesEnabled { get; set; }
 
         #endregion
        

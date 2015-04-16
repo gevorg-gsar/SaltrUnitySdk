@@ -25,7 +25,7 @@ namespace Saltr.UnitySdk.Domain
         public string Token { get; set; }
 
         [JsonProperty("required")]
-        public bool? IsRequired { get; set; }
+        public bool IsRequired { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public SLTFeatureType? FeatureType { get; set; }
