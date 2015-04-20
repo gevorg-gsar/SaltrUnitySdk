@@ -11,10 +11,10 @@ namespace Saltr.UnitySdk.Domain.Model.Canvas
     {
         public SLTCanvasAssetState State { get; set; }
 
-        public float? X { get; set; }
+        public float X { get; set; }
 
-        public float? Y { get; set; }
+        public float Y { get; set; }
 
-        public float? Rotation { get; set; }
+        public float Rotation { get; set; }
     }
 }

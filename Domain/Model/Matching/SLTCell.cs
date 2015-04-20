@@ -14,7 +14,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         #region Filds
 
         private Dictionary<string, SLTMatchingAsset> _assetsByLayerToken;
-        private Dictionary<string, SLTMatchingAsset> _assetsByLayerIndex;
+        private Dictionary<int, SLTMatchingAsset> _assetsByLayerIndex;
 
         #endregion Filds
         
@@ -39,7 +39,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
             Col = col;
 
             _assetsByLayerToken = new Dictionary<string, SLTMatchingAsset>();
-            _assetsByLayerIndex = new Dictionary<string, SLTMatchingAsset>();
+            _assetsByLayerIndex = new Dictionary<int, SLTMatchingAsset>();
         }
 
         #endregion Ctor
@@ -51,14 +51,14 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
             if (!IsBlocked)
             {
                 _assetsByLayerToken[layerToken] = asset;
-                _assetsByLayerIndex[layerIndex.ToString()] = asset;
+                _assetsByLayerIndex[layerIndex] = asset;
             }
         }
 
         public void RemoveAsset(string layerToken, int layerIndex)
         {
             _assetsByLayerToken.Remove(layerToken);
-            _assetsByLayerIndex.Remove(layerIndex.ToString());
+            _assetsByLayerIndex.Remove(layerIndex);
 
         }
 
@@ -74,12 +74,12 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
 
         public SLTMatchingAsset GetAssetByLayerIndex(int layerIndex)
         {
-            if (!_assetsByLayerIndex.ContainsKey(layerIndex.ToString()))
+            if (!_assetsByLayerIndex.ContainsKey(layerIndex))
             {
                 return null;
             }
 
-            return _assetsByLayerIndex[layerIndex.ToString()];
+            return _assetsByLayerIndex[layerIndex];
         }
 
         #endregion Business Methods

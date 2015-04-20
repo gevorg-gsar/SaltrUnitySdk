@@ -16,7 +16,7 @@ namespace Saltr.UnitySdk.Domain.InternalModel
         
         public string Token { get; set; }
 
-        public int? Index { get; set; }
+        public int Index { get; set; }
         
         #endregion Properties
 

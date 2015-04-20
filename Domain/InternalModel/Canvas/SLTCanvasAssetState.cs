@@ -8,12 +8,12 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Canvas
 {
     public class SLTCanvasAssetState : SLTAssetState
     {
-        public float? PivotX { get; set; }
+        public float PivotX { get; set; }
 
-        public float? PivotY { get; set; }
+        public float PivotY { get; set; }
 
-        public float? Width { get; set; }
+        public float Width { get; set; }
 
-        public float? Height { get; set; }
+        public float Height { get; set; }
     }
 }

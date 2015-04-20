@@ -16,17 +16,17 @@ namespace Saltr.UnitySdk.Domain.Model
 
         public int Id { get; set; }
 
-        public int? Index { get; set; }
+        public int Index { get; set; }
 
-        public int? PackIndex { get; set; }
+        public int PackIndex { get; set; }
 
-        public int? LocalIndex { get; set; }
+        public int LocalIndex { get; set; }
 
-        public int? Version { get; set; }
+        public int Version { get; set; }
 
-        public int? VariationId { get; set; }
+        public int VariationId { get; set; }
 
-        public int? VariationVersion { get; set; }
+        public int VariationVersion { get; set; }
 
         public string Url { get; set; }
 

@@ -16,6 +16,7 @@ namespace Saltr.UnitySdk
 
         //TODO @gyln: Group these actions in an enum or a struct?
         public const string ActionDevSync = "sync";
+        public const string ActionHeartBeat = "heartBeat";
         public const string ActionGetAppData = "getAppData";
         public const string ActionAddProperties = "addProperties";
         public const string ActionDevRegisterDevice = "registerDevice";

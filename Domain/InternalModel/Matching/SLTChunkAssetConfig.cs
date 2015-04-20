@@ -11,7 +11,7 @@ namespace Saltr.UnitySdk.Domain.InternalModel.Matching
     {
         #region Properties
 
-        public int? DistributionValue { get; set; }
+        public int DistributionValue { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ChunkAssetDistributionType? DistributionType { get; set; }
