@@ -350,7 +350,7 @@ namespace Saltr.UnitySdk
             _saltrConnector.GetAppData();
         }
 
-        public virtual void LodLevelContent(SLTLevel level) /// Loads specified level content from Saltr or from cached data.
+        public virtual void LoadLevelContent(SLTLevel level) /// Loads specified level content from Saltr or from cached data.
         {
             _saltrConnector.LoadLevelContent(level, _useCache);
         }
