@@ -241,7 +241,6 @@ namespace Saltr.UnitySdk
 
             DontDestroyOnLoad(gameObject);
             gameObject.name = SLTConstants.SaltrGameObjectName;
-            gameObject.AddComponent<SLTDownloadManager>();
 
             if (string.IsNullOrEmpty(_deviceId))
             {
