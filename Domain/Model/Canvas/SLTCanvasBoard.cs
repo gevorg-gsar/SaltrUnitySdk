@@ -14,5 +14,7 @@ namespace Saltr.UnitySdk.Domain.Model.Canvas
         public Dictionary<string, List<SLTCanvasAsset>> AssetsByLayerToken { get; set; }
 
         public Dictionary<int, List<SLTCanvasAsset>> AssetsByLayerIndex { get; set; }
+
+        public Dictionary<string, object> Properties { get; set; }
     }
 }

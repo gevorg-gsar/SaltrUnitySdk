@@ -11,23 +11,25 @@ namespace Saltr.UnitySdk.Domain.Model.Canvas
 {
     public static class SLTCanvasGenerator
     {
-        public static SLTCanvasBoard RegenerateBoard(this SLTInternalCanvasBoard board, Dictionary<string, SLTCanvasAssetType> assetTypes)
+        public static SLTCanvasBoard RegenerateBoard(this SLTInternalCanvasBoard internalCanvasBoard, Dictionary<string, SLTCanvasAssetType> assetTypes)
         {
             SLTCanvasBoard boardModel = new SLTCanvasBoard();
 
-            boardModel.Width = board.Width;
-            boardModel.Height = board.Height;
+            boardModel.Width = internalCanvasBoard.Width;
+            boardModel.Height = internalCanvasBoard.Height;
             boardModel.AssetsByLayerIndex = new Dictionary<int, List<SLTCanvasAsset>>();
             boardModel.AssetsByLayerToken = new Dictionary<string, List<SLTCanvasAsset>>();
 
             int index = 0;
-            board.Layers.ForEach(layer =>
+            internalCanvasBoard.Layers.ForEach(layer =>
             {
                 List<SLTCanvasAsset> canvasAssets = layer.RegenerateLayer(assetTypes, index++);
 
                 boardModel.AssetsByLayerToken.Add(layer.Token, canvasAssets);
                 boardModel.AssetsByLayerIndex.Add(layer.Index, canvasAssets);
             });
+
+            boardModel.Properties = internalCanvasBoard.Properties;
 
             return boardModel;
         }

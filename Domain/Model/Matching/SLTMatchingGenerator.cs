@@ -12,13 +12,13 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
 {
     public static class SLTMatchingGenerator
     {
-        public static SLTMatchingBoard RegenerateBoard(this SLTInternalMatchingBoard board, Dictionary<string, SLTMatchingAssetType> assetTypes)
+        public static SLTMatchingBoard RegenerateBoard(this SLTInternalMatchingBoard internalMatchingBoard, Dictionary<string, SLTMatchingAssetType> assetTypes)
         {
-            if (board.Rows > 0 && board.Cols > 0)
+            if (internalMatchingBoard.Rows > 0 && internalMatchingBoard.Cols > 0)
             {
                 SLTMatchingBoard boardModel = new SLTMatchingBoard();
-                boardModel.Rows = board.Rows;
-                boardModel.Cols = board.Cols;
+                boardModel.Rows = internalMatchingBoard.Rows;
+                boardModel.Cols = internalMatchingBoard.Cols;
                 boardModel.Cells = new SLTCell[boardModel.Rows, boardModel.Cols];
 
                 for (int row = 0; row < boardModel.Cells.GetLength(0); row++)
@@ -29,24 +29,26 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
                     }
                 }
 
-                if (!board.BlockedCells.IsNullOrEmpty<List<int>>())
+                if (!internalMatchingBoard.BlockedCells.IsNullOrEmpty<List<int>>())
                 {
-                    foreach (List<int> blockedCellPosition in board.BlockedCells)
+                    foreach (List<int> blockedCellPosition in internalMatchingBoard.BlockedCells)
                     {
                         boardModel.Cells[blockedCellPosition[1], blockedCellPosition[0]].IsBlocked = true;
                     }
                 }
 
-                if (!board.CellProperties.IsNullOrEmpty<SLTCellProperty>())
+                if (!internalMatchingBoard.CellProperties.IsNullOrEmpty<SLTCellProperty>())
                 {
-                    foreach (SLTCellProperty cellProperty in board.CellProperties)
+                    foreach (SLTCellProperty cellProperty in internalMatchingBoard.CellProperties)
                     {
                         boardModel.Cells[cellProperty.Coords[1], cellProperty.Coords[0]].Properties = cellProperty.Value;
                     }
                 }
 
                 int index = 0;
-                board.Layers.ForEach(layer => layer.RegenerateLayer(boardModel.Cells, assetTypes, index++, layer.MatchingRulesEnabled, board.SquareMatchingRuleEnabled, board.AlternativeMatchAssets, board.ExcludedMatchAssets));
+                internalMatchingBoard.Layers.ForEach(layer => layer.RegenerateLayer(boardModel.Cells, assetTypes, index++, layer.MatchingRulesEnabled, internalMatchingBoard.SquareMatchingRuleEnabled, internalMatchingBoard.AlternativeMatchAssets, internalMatchingBoard.ExcludedMatchAssets));
+
+                boardModel.Properties = internalMatchingBoard.Properties;
 
                 return boardModel;
             }

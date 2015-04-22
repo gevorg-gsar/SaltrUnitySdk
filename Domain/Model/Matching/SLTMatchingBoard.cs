@@ -14,5 +14,7 @@ namespace Saltr.UnitySdk.Domain.Model.Matching
         public int Cols { get; set; }
 
         public SLTCell[,] Cells { get; set; }
+
+        public Dictionary<string, object> Properties { get; set; }
     }
 }
