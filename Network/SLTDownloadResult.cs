@@ -22,9 +22,14 @@ namespace Saltr.UnitySdk.Network
         public SLTDownloadResult(WWW www)
             : this(www.error)
         {
-            Text = www.text;
-            Bytes = www.bytes;
-            Texture = www.texture;
+			Text = string.Empty;
+
+			if (www.isDone && string.IsNullOrEmpty (www.error)) 
+			{
+				Text = www.text;
+				Bytes = www.bytes;
+				Texture = www.texture;
+			}
         }
     }
 }
