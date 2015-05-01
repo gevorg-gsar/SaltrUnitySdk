@@ -67,6 +67,8 @@ namespace Saltr.UnitySdk
 
         #region Properties
 
+        public bool IsAppDataGotten { get; set; }
+
         public bool IsStarted { get; private set; } /// Indicates if Init method is called.
 
         public string SocialId
@@ -267,10 +269,6 @@ namespace Saltr.UnitySdk
             _saltrConnector.DeviceRegistrationRequired -= SaltrConnector_OnDeviceRegistrationRequired;
             _saltrConnector.DeviceRegistrationRequired += SaltrConnector_OnDeviceRegistrationRequired;
 
-        }
-
-        protected virtual void Start() /// Start is called after awake automatically. When _autoStart is set to true then ImportLevels, DefineDefaultFeatures and Init are called.
-        {
             if (_autoStart)
             {
                 ImportLevels(_localLevelPacksPath);
@@ -278,6 +276,7 @@ namespace Saltr.UnitySdk
 
                 Init();
             }
+
         }
 
         #endregion Monobehaviour
@@ -393,6 +392,8 @@ namespace Saltr.UnitySdk
 
         private void SaltrConnector_GetAppDataSuccess()
         {
+            IsAppDataGotten = true;
+
             if (_heartBeat != null)
             {
                 StopCoroutine(_heartBeat);
