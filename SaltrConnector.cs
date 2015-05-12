@@ -33,7 +33,6 @@ namespace Saltr.UnitySdk
         private string _deviceId;
         private string _clientKey;
 
-        private bool _useCache;
         private bool _isSynced;
         private bool _isLoading;
         private bool _isAppDataGotten;
@@ -51,6 +50,8 @@ namespace Saltr.UnitySdk
         #region Properties
 
         public SLTAppData AppData { get; private set; }
+
+        public float Timeout { get; set; }
 
         public bool IsDevMode { get; set; }
 
@@ -94,8 +95,6 @@ namespace Saltr.UnitySdk
 
         public SaltrConnector(string clientKey, string deviceId, bool useCache = true)
         {
-            _useCache = useCache;
-
             _clientKey = clientKey;
             _deviceId = deviceId;
             _isLoading = false;
@@ -211,7 +210,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareAppDataRequestParameters(basicProperties, customProperties);
             var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
-            SLTDownloadManager.Instance.AddDownload(url, OnAppDataGotten);
+            SLTDownloadManager.Instance.AddDownload(url, OnAppDataGotten, Timeout);
         }
 
         public void LoadLevelContent(SLTLevel level, bool useCache = true)
@@ -234,7 +233,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareSyncRequestParameters();
             var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
 
-            SLTDownloadManager.Instance.AddDownload(url, OnSync);
+            SLTDownloadManager.Instance.AddDownload(url, OnSync, Timeout);
         }
 
         public void RegisterDevice(string email)
@@ -242,7 +241,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareRegisterDeviceRequestParameters(email);
             var url = FillRequestPrameters(SLTConstants.SaltrDevApiUrl, urlVars);
 
-            SLTDownloadManager.Instance.AddDownload(url, OnRegisterDevice);
+            SLTDownloadManager.Instance.AddDownload(url, OnRegisterDevice, Timeout);
         }
 
         public void AddProperties(SLTBasicProperties basicProperties, Dictionary<string, object> customProperties = null)
@@ -255,7 +254,7 @@ namespace Saltr.UnitySdk
             var urlVars = PrepareAddPropertiesRequestParameters(basicProperties, customProperties);
             var url = FillRequestPrameters(SLTConstants.SaltrApiUrl, urlVars);
 
-            SLTDownloadManager.Instance.AddDownload(url, OnAddProperties);
+            SLTDownloadManager.Instance.AddDownload(url, OnAddProperties, Timeout);
         }
 
         public IEnumerator StartHeartBeat(int seconds = 2)
@@ -289,7 +288,7 @@ namespace Saltr.UnitySdk
         {
             string levelContentUrl = string.Format(LevelContentUrlFormat, level.Url, DateTime.Now.ToShortTimeString());
 
-            SLTDownloadManager.Instance.AddDownload(new SLTDownloadRequest(levelContentUrl, OnLoadLevelContentFromSaltr) { StateObject = level });
+            SLTDownloadManager.Instance.AddDownload(new SLTDownloadRequest(levelContentUrl, OnLoadLevelContentFromSaltr) { StateObject = level, Timeout = Timeout });
         }
 
         private SLTInternalLevelContent LoadLevelContentLocally(SLTLevel level, bool useCache = true)
@@ -608,13 +607,11 @@ namespace Saltr.UnitySdk
 
         private void OnAppDataGotten(SLTDownloadResult result)
         {
-            SLTAppData sltAppData = null;
-
             SLTResponse<SLTAppData> response = JsonConvert.DeserializeObject<SLTResponse<SLTAppData>>(result.Text, new DictionaryConverter());
 
             if (response != null && !response.Response.IsNullOrEmpty<SLTAppData>())
             {
-                sltAppData = response.Response.FirstOrDefault<SLTAppData>();
+                SLTAppData sltAppData = response.Response.FirstOrDefault<SLTAppData>();
 
                 if (sltAppData != null && sltAppData.Success.HasValue && sltAppData.Success.Value)
                 {

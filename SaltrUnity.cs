@@ -55,7 +55,7 @@ namespace Saltr.UnitySdk
         private bool _useNoFeatures = false; /// Specifies if the game uses features or no. If set to true, DefineDefaultFeatures should be called before Init.
 
         [SerializeField]
-        private int _timeout = 0;
+        private float _timeout = 0;
 
         [SerializeField]
         private string _localLevelPacksPath = SLTConstants.LocalLevelPacksPath; /// Specifies Path to local level_packs gotten from Saltr.
@@ -255,7 +255,7 @@ namespace Saltr.UnitySdk
             _saltrConnector.SocialId = _socialId;
 
             _saltrConnector.IsAutoRegisteredDevice = _isAutoRegisteredDevice;
-            //_saltrConnector.RequestIdleTimeout = _requestIdleTimeout;
+            _saltrConnector.Timeout = _timeout;
 
             _saltrConnector.UseNoLevels = _useNoLevels;
             _saltrConnector.UseNoFeatures = _useNoFeatures;

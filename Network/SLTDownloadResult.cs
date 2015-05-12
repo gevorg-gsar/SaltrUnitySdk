@@ -17,19 +17,15 @@ namespace Saltr.UnitySdk.Network
         public SLTDownloadResult(string error)
         {
             Error = error;
+            Text = string.Empty;
         }
 
-        public SLTDownloadResult(WWW www)
-            : this(www.error)
+        public SLTDownloadResult(string error, string text, byte[] bytes = null, Texture2D texture = null)
+            : this(error)
         {
-			Text = string.Empty;
-
-			if (www.isDone && string.IsNullOrEmpty (www.error)) 
-			{
-				Text = www.text;
-				Bytes = www.bytes;
-				Texture = www.texture;
-			}
+            Text = text ?? string.Empty;
+            Bytes = bytes;
+            Texture = texture;
         }
     }
 }

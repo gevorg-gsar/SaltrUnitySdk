@@ -12,12 +12,11 @@ namespace Saltr.UnitySdk.Network
         private const string DownloadManagerGameObjectName = "SLTDownloadManager";
 
         #endregion  Constants
-        
+
         #region Fields
 
         private bool isDownloading = false;
         private static SLTDownloadManager _instance;
-        private SLTDownloadRequest _currentDownloadRequest = null;
         private Queue<SLTDownloadRequest> _downloadRequests = null;
 
         #endregion Fields
@@ -41,7 +40,7 @@ namespace Saltr.UnitySdk.Network
 
         #endregion Properties
 
-        #region Messages
+        #region MonoBehaviour
 
         void Awake()
         {
@@ -55,13 +54,7 @@ namespace Saltr.UnitySdk.Network
                 this.enabled = false;
             }
 
-            if (_currentDownloadRequest != null)
-            {
-                _currentDownloadRequest.CheckTimeout(true);
-            }
-
             Execute();
-
         }
 
         void Destroy()
@@ -70,7 +63,7 @@ namespace Saltr.UnitySdk.Network
             _instance = null;
         }
 
-        #endregion Messages
+        #endregion  MonoBehaviour
 
         #region Public Methods
 
@@ -80,9 +73,9 @@ namespace Saltr.UnitySdk.Network
             this.enabled = true;
         }
 
-        public void AddDownload(string url, Action<SLTDownloadResult> downloadCallback)
+        public void AddDownload(string url, Action<SLTDownloadResult> downloadCallback, float timeout = 0)
         {
-            AddDownload(new SLTDownloadRequest(url, downloadCallback));
+            AddDownload(new SLTDownloadRequest(url, downloadCallback) { Timeout = timeout });
         }
 
         public void Execute()
@@ -91,7 +84,7 @@ namespace Saltr.UnitySdk.Network
             {
                 return;
             }
-            
+
             StartCoroutine(Download());
         }
 
@@ -99,10 +92,7 @@ namespace Saltr.UnitySdk.Network
         {
             isDownloading = false;
             StopAllCoroutines();
-            if (_currentDownloadRequest != null && _currentDownloadRequest.WWW != null)
-            {
-                _currentDownloadRequest.WWW.Dispose();
-            }
+            
             _downloadRequests.Clear();
         }
 
@@ -122,12 +112,35 @@ namespace Saltr.UnitySdk.Network
             while (_downloadRequests.Count > 0)
             {
                 SLTDownloadRequest downloadRequest = _downloadRequests.Dequeue();
-                downloadRequest.CreateRequest();
-                _currentDownloadRequest = downloadRequest;
+                
+                downloadRequest.StartRequest();
+                
+                while (downloadRequest.WWW != null && !downloadRequest.WWW.isDone)
+                {
+                    downloadRequest.CheckTimeout(true);
 
-                yield return _currentDownloadRequest.WWW;
+                    yield return null;
+                }
 
-                downloadRequest.DownloadCallback(new SLTDownloadResult(downloadRequest.WWW) { StateObject = downloadRequest.StateObject });
+                //yield return downloadRequest.WWW;
+
+                SLTDownloadResult downlaodResult = null;
+                if (!downloadRequest.IsTimeout && downloadRequest.WWW != null)
+                {
+                    downlaodResult = new SLTDownloadResult(downloadRequest.WWW.error) 
+                    { 
+                        Text = downloadRequest.WWW.text ?? "",
+                        Bytes = downloadRequest.WWW.bytes,
+                        Texture = downloadRequest.WWW.texture,
+                        StateObject = downloadRequest.StateObject 
+                    };
+                    downloadRequest.DownloadCallback(downlaodResult);
+                }
+                else
+                {
+                    downlaodResult = new SLTDownloadResult(string.Format("{0} - {1} - {2} - {3}", downloadRequest.Url, "Request timeout", downloadRequest.StartTime.ToString(), Time.time.ToString()));
+                    downloadRequest.DownloadCallback(downlaodResult);
+                }
             }
 
             this.isDownloading = false;

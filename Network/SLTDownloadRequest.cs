@@ -10,19 +10,17 @@ namespace Saltr.UnitySdk.Network
 {
     public class SLTDownloadRequest
     {
-        #region Constants
-
-        private const string DownloadResultFormat = @"{0} - {1}";
-
-        #endregion Constants
-
         #region Properties
 
         public string Url { get; set; }
 
         public object StateObject { get; set; }
 
-        public SLTTimeOut TimeOut { get; set; }
+        public float StartTime { get; private set; }
+
+        public bool IsTimeout { get; private set; }
+        
+        public float Timeout { get; set; }
 
         public Action<SLTDownloadResult> DownloadCallback { get; set; }
 
@@ -38,8 +36,14 @@ namespace Saltr.UnitySdk.Network
         {
             get
             {
-                if (WWW == null) { return 0f; }
-                return WWW.progress;
+                if (WWW == null)
+                {
+                    return 0f;
+                }
+                else
+                {
+                    return WWW.progress;
+                }
             }
         }
 
@@ -75,46 +79,49 @@ namespace Saltr.UnitySdk.Network
 
         #region Public Methods
 
-        public WWW CreateRequest()
+        public void StartRequest()
         {
+            StartTime = Time.time;
+
             if (Header != null)
             {
-                return new WWW(Url, Bytes, Header);
+                this.WWW = new WWW(Url, Bytes, Header);
             }
-            if (Bytes != null)
+            else if (Bytes != null)
             {
-                return new WWW(Url, Bytes);
+                this.WWW = new WWW(Url, Bytes);
             }
-            if (Form != null)
+            else if (Form != null)
             {
-                return new WWW(Url, Form);
+                this.WWW = new WWW(Url, Form);
             }
-
-            this.WWW = new WWW(Url);
-
-            return this.WWW;
+            else
+            {
+                this.WWW = new WWW(Url);
+            }
         }
 
-        public bool CheckTimeout(bool notify)
+        public bool CheckTimeout(bool dispose)
         {
-            bool isTimeout = false;
-            if (TimeOut != null)
+            IsTimeout = false;
+            if (Timeout > 0)
             {
-                isTimeout = TimeOut.CheckTimeout(Progress);
-
-                if (notify && isTimeout && DownloadCallback != null)
+                float now = Time.time;
+                if ((now - StartTime) > Timeout)
                 {
-                    DownloadCallback(new SLTDownloadResult(string.Format(DownloadResultFormat, Url, "Request timeout")));
+                    IsTimeout = true;
+                }
 
-                    if (WWW != null) 
-                    {
-                        WWW.Dispose(); //@GORTODO: check if "Download" method returns from yield return.
-                        WWW = null;
-                    }
+                if (dispose && IsTimeout)
+                {
+                    WWW tmpWWW = WWW;
+                    WWW = null;
+
+                    tmpWWW.Dispose(); //@GORTODO: check if "Download" method returns from yield return.
                 }
             }
 
-            return isTimeout;
+            return IsTimeout;
         }
 
         #endregion  Public Methods
