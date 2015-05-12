@@ -77,7 +77,6 @@ namespace Saltr.UnitySdk.Domain.Model.Matching.Matcher
 
             if (isPatternInMatrixBounds)
             {
-                SLTCell currentCell = cells[row, col];
                 SLTAsset currentAsset = null;
                 Dictionary<SLTCell, SLTMatchPatternField> extendableCellsDict = new Dictionary<SLTCell, SLTMatchPatternField>();
 

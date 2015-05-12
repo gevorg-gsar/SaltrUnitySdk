@@ -54,8 +54,8 @@ namespace Saltr.UnitySdk
         [SerializeField]
         private bool _useNoFeatures = false; /// Specifies if the game uses features or no. If set to true, DefineDefaultFeatures should be called before Init.
 
-        //[SerializeField]
-        //private int _timeout = 0;
+        [SerializeField]
+        private int _timeout = 0;
 
         [SerializeField]
         private string _localLevelPacksPath = SLTConstants.LocalLevelPacksPath; /// Specifies Path to local level_packs gotten from Saltr.

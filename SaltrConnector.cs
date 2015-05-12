@@ -217,7 +217,7 @@ namespace Saltr.UnitySdk
         public void LoadLevelContent(SLTLevel level, bool useCache = true)
         {
             if (_isAppDataGotten &&
-                (!useCache || (level != null && level.Version != null && level.Version.ToString() != GetCachedLevelVersion(level))))
+                (!useCache || (level != null && level.Version.ToString() != GetCachedLevelVersion(level))))
             {
                 LoadLevelContentFromSaltr(level);
             }

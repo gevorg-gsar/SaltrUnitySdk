@@ -105,8 +105,12 @@ namespace Saltr.UnitySdk.Network
                 if (notify && isTimeout && DownloadCallback != null)
                 {
                     DownloadCallback(new SLTDownloadResult(string.Format(DownloadResultFormat, Url, "Request timeout")));
-                    WWW.Dispose(); //@GORTODO: check if "Download" method returns from yield return.
-                    //WWW = null;
+
+                    if (WWW != null) 
+                    {
+                        WWW.Dispose(); //@GORTODO: check if "Download" method returns from yield return.
+                        WWW = null;
+                    }
                 }
             }
 
